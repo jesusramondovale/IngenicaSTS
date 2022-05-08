@@ -6,12 +6,76 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>352</width>
-    <height>329</height>
+    <width>989</width>
+    <height>757</height>
    </rect>
   </property>
+  <property name="palette">
+   <palette>
+    <active>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </active>
+    <inactive>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </inactive>
+    <disabled>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </disabled>
+   </palette>
+  </property>
   <property name="windowTitle">
-   <string>User View</string>
+   <string>Cartera de Usuario</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="labelUser">
@@ -86,15 +150,16 @@
      <string/>
     </property>
    </widget>
-   <widget class="PlotWidget" name="graphicsView">
+   <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>0</x>
       <y>80</y>
-      <width>256</width>
-      <height>192</height>
+      <width>991</width>
+      <height>651</height>
      </rect>
     </property>
+    <layout class="QHBoxLayout" name="layout"/>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -102,7 +167,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>352</width>
+     <width>989</width>
      <height>31</height>
     </rect>
    </property>
@@ -126,13 +191,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>PlotWidget</class>
-   <extends>QGraphicsView</extends>
-   <header>pyqtgraph</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>

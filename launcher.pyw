@@ -1,19 +1,12 @@
 # -*- coding: utf-8 -*-
-import json, re, sys, yfinance, requests, sqlite3, hashlib, matplotlib
-
+import json, re, sys, requests, sqlite3, hashlib, matplotlib
+import yfinance as yf
 import pandas as pd
-import numpy as np
-import pyqtgraph as pg
 import plotly.graph_objs as go
-import mplfinance as mpf
 
-from PyQt5 import uic, QtCore
+from PyQt5 import uic, QtCore, QtWebEngineWidgets
 from PyQt5.QtWidgets import *
-from matplotlib import pyplot as plt
-from matplotlib.backends.backend_template import FigureCanvas
-from matplotlib.figure import Figure
-from pandas_datareader import data as pdr
-from pyqtgraph import PlotWidget
+
 
 class registerCompleteDialog(QDialog):
     def __init__(self, parent=None):
@@ -213,8 +206,7 @@ class UserView(QMainWindow):
         view.tfEmail.setText(email[0])
         view.actionLog_Out.triggered.connect(view.logout)
 
-        data = yfinance.download("SPY", start="2022-05-01", end="2022-05-05" , interval='1d')
-
+        data = yf.download("AMZN", start="2022-01-01", end="2022-05-05" , step='1m ')
         print('Descarga Completada!')
 
         fig = go.Figure()
@@ -224,10 +216,10 @@ class UserView(QMainWindow):
                                      high=data['High'],
                                      low=data['Low'],
                                      close=data['Close'],
-                                     name='Market Data'))
+                                     name='Valor de mercado'))
 
         fig.update_layout(
-            title='Título',
+            title='Amazon',
             yaxis_title='$ (USD)'
 
         )
@@ -236,17 +228,19 @@ class UserView(QMainWindow):
             rangeslider_visible=True,
             rangeselector=dict(
                 buttons=list([
-                    dict(count=15, label='15m', step='minute', stepmode='backward'),
-                    dict(count=45, label='45m', step='minute', stepmode='backward'),
-                    dict(count=1, label='HTD', step='hour', stepmode='todate'),
-                    dict(count=2, label='2h', step='hour', stepmode='backward'),
+                    dict(count=15, label='15 M', step='minute', stepmode='backward'),
+                    dict(count=45, label='45 M', step='minute', stepmode='backward'),
+                    dict(count=1, label='1 H', step='hour', stepmode='todate'),
+                    dict(count=2, label='2 H', step='hour', stepmode='backward'),
                     dict(step='all')
 
                 ])
             )
         )
-        #PlotWidget()
-        #fig.show()
+
+        view.browser = QtWebEngineWidgets.QWebEngineView(view)
+        view.layout.addWidget(view.browser)
+        view.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
 
     def logout(self):
         self.hide()
