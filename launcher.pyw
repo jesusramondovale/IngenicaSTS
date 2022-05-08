@@ -13,7 +13,7 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_template import FigureCanvas
 from matplotlib.figure import Figure
 from pandas_datareader import data as pdr
-
+from pyqtgraph import PlotWidget
 
 class registerCompleteDialog(QDialog):
     def __init__(self, parent=None):
@@ -245,7 +245,8 @@ class UserView(QMainWindow):
                 ])
             )
         )
-        fig.show()
+        #PlotWidget()
+        #fig.show()
 
     def logout(self):
         self.hide()
