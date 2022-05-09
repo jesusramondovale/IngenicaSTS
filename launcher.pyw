@@ -222,6 +222,7 @@ class UserView(QMainWindow):
         fig.add_trace(
             go.Candlestick(x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
                            name='Valor de mercado'))
+
         fig.update_layout(title=tickers[0][0], yaxis_title='$ (USD)')
         fig.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=list([
             dict(count=15, label='15 M', step='minute', stepmode='backward'),
