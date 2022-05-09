@@ -4,7 +4,7 @@ import yfinance as yf
 import pandas as pd
 import plotly.graph_objs as go
 
-from PyQt5 import uic, QtCore, QtWebEngineWidgets
+from PyQt5 import uic, QtCore, QtWebEngineWidgets, QtWidgets
 from PyQt5.QtWidgets import *
 
 
@@ -197,46 +197,40 @@ class UserView(QMainWindow):
     def __init__(view, parent=QMainWindow):
         super().__init__(parent)
         uic.loadUi("UserView.ui", view)
+
         usuario = parent.textFieldUser.text()
         view.tfNombre.setText(usuario)
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
         email = db.execute("SELECT email FROM users WHERE nombre = ?", [usuario]).fetchone()
-
+        tickers = db.execute(
+            "SELECT m.ticker  FROM users u INNER JOIN mercados_usuario m ON (u.id == m.id_usuario) WHERE u.nombre = ? ",
+            [usuario]).fetchall()
         view.tfEmail.setText(email[0])
         view.actionLog_Out.triggered.connect(view.logout)
 
-        data = yf.download("AMZN", start="2022-01-01", end="2022-05-05" , step='1m ')
+        for ticker in tickers:
+            action = QtWidgets.QAction(view)
+            view.menuSeleccionar_Mercado.addAction(action)
+            action.setText(QtCore.QCoreApplication.translate("UserView", ticker[0]))
+            action.triggered.connect(lambda clicked, ticker=action.text(): view.updateGraph(ticker))
+
+        data = yf.download(tickers[0][0], start="2022-01-01", end="2022-05-05", step='1m')
         print('Descarga Completada!')
 
         fig = go.Figure()
+        fig.add_trace(
+            go.Candlestick(x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
+                           name='Valor de mercado'))
+        fig.update_layout(title=tickers[0][0], yaxis_title='$ (USD)')
+        fig.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=list([
+            dict(count=15, label='15 M', step='minute', stepmode='backward'),
+            dict(count=45, label='45 M', step='minute', stepmode='backward'),
+            dict(count=1, label='1 H', step='hour', stepmode='todate'),
+            dict(count=2, label='2 H', step='hour', stepmode='backward'),
+            dict(step='all')
 
-        fig.add_trace(go.Candlestick(x=data.index,
-                                     open=data['Open'],
-                                     high=data['High'],
-                                     low=data['Low'],
-                                     close=data['Close'],
-                                     name='Valor de mercado'))
-
-        fig.update_layout(
-            title='Amazon',
-            yaxis_title='$ (USD)'
-
-        )
-
-        fig.update_xaxes(
-            rangeslider_visible=True,
-            rangeselector=dict(
-                buttons=list([
-                    dict(count=15, label='15 M', step='minute', stepmode='backward'),
-                    dict(count=45, label='45 M', step='minute', stepmode='backward'),
-                    dict(count=1, label='1 H', step='hour', stepmode='todate'),
-                    dict(count=2, label='2 H', step='hour', stepmode='backward'),
-                    dict(step='all')
-
-                ])
-            )
-        )
+        ])))
 
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
         view.layout.addWidget(view.browser)
@@ -245,6 +239,26 @@ class UserView(QMainWindow):
     def logout(self):
         self.hide()
         myapp.show()
+
+    def updateGraph(self, ticker):
+        print("Selector de Ticker pulsado: " + ticker)
+        data = yf.download(ticker, start="2022-01-01", end="2022-05-05", step='1m')
+        print('Descarga Completada!')
+        fig = go.Figure()
+        fig.add_trace(
+            go.Candlestick(x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
+                           name='Valor de mercado'))
+        fig.update_layout(title=ticker, yaxis_title='$ (USD)')
+        fig.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=list([
+            dict(count=15, label='15 M', step='minute', stepmode='backward'),
+            dict(count=45, label='45 M', step='minute', stepmode='backward'),
+            dict(count=1, label='1 H', step='hour', stepmode='todate'),
+            dict(count=2, label='2 H', step='hour', stepmode='backward'),
+            dict(step='all')
+
+        ])))
+        self.layout.addWidget(self.browser)
+        self.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
 
 
 # Vista SignInView.ui
