@@ -8,6 +8,23 @@ from PyQt5 import uic, QtCore, QtWebEngineWidgets, QtWidgets
 from PyQt5.QtWidgets import *
 
 
+class TickerAddedSuccesfully(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Éxito!")
+        self.setFixedWidth(330)
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel("El mercado " + parent.tfTicker.text() + " se ha añadido\ncorrectamente a su cartera personal."))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
 class registerCompleteDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -208,6 +225,7 @@ class UserView(QMainWindow):
             [usuario]).fetchall()
         view.tfEmail.setText(email[0])
         view.actionLog_Out.triggered.connect(view.logout)
+        view.actionA_adir_Mercados.triggered.connect(view.showAddMercados)
 
         for ticker in tickers:
             action = QtWidgets.QAction(view)
@@ -236,6 +254,10 @@ class UserView(QMainWindow):
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
         view.layout.addWidget(view.browser)
         view.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
+
+    def showAddMercados(self):
+        merc = AddTickersView(self)
+        merc.show()
 
     def logout(self):
         self.hide()
@@ -309,6 +331,31 @@ class SignIn(QMainWindow):
                 db.close()
                 dlg = registerCompleteDialog(view)
                 dlg.exec()
+
+
+# Vista AddTickersView.ui
+class AddTickersView(QMainWindow):
+
+    def __init__(view, parent=QMainWindow):
+        super().__init__(parent)
+        uic.loadUi("AddTickersView.ui", view)
+        view.buttonAnadir.clicked.connect(lambda clicked, ticker=view.tfTicker.text(): view.addTicker(parent))
+
+    def addTicker(self, parent):
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+        ticker = self.tfTicker.text()
+        id = db.execute("SELECT id FROM users WHERE nombre = ?", [parent.tfNombre.text()]).fetchone()
+        db.execute("INSERT INTO mercados_usuario VALUES ( null , ? , ? )", (id[0], ticker))
+
+        action = QtWidgets.QAction(self)
+        parent.menuSeleccionar_Mercado.addAction(action)
+        action.setText(QtCore.QCoreApplication.translate("UserView", self.tfTicker.text()))
+        action.triggered.connect(lambda clicked, ticker=action.text(): parent.updateGraph(ticker))
+        dlg = TickerAddedSuccesfully(self)
+        dlg.exec()
+        self.hide()
+        db.close()
 
 
 # Main ()
