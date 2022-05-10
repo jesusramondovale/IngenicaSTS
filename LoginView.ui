@@ -31,7 +31,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Usuario :</string>
+     <string>Usuario:</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="textFieldUser">

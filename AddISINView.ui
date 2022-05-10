@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AddTickersView</class>
- <widget class="QMainWindow" name="AddTickersView">
+ <class>AddISINView</class>
+ <widget class="QMainWindow" name="AddISINView">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Añadir Mercado</string>
+   <string>Añadir Fondo</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -29,7 +29,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Ticker de Mercado</string>
+     <string>ISIN del Fondo</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="tfTicker">
@@ -42,7 +42,7 @@
      </rect>
     </property>
     <property name="placeholderText">
-     <string>Ej. IBEX,AMZN,SPY...</string>
+     <string>Ej. ES0113002036</string>
     </property>
    </widget>
    <widget class="QPushButton" name="buttonAnadir">

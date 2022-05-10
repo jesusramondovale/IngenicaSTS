@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import json, re, sys, requests, sqlite3, hashlib, matplotlib
-import yfinance as yf
+import json, re, sys, requests, sqlite3, hashlib
 import pandas as pd
-import plotly.graph_objs as go
-
-from PyQt5 import uic, QtCore, QtWebEngineWidgets, QtWidgets
+from PyQt5 import QtCore, uic, QtWidgets, QtWebEngineWidgets
+from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import *
 
 
@@ -20,7 +18,8 @@ class TickerAddedSuccesfully(QDialog):
         btnOK.setFixedWidth(50)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
-        self.layout.addWidget(QLabel("El mercado " + parent.tfTicker.text() + " se ha añadido\ncorrectamente a su cartera personal."))
+        self.layout.addWidget(QLabel(
+            "El fondo con ISIN: " + parent.tfTicker.text() + " se ha añadido\ncorrectamente a su cartera personal."))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
@@ -125,20 +124,6 @@ class goodLoginDialog(QDialog):
         self.setLayout(self.layout)
 
 
-def cargaDatos():
-    params = {
-        'access_key': '92932b961a38275fe9a60281fe6a6c00'
-    }
-
-    print('Descargando datos de la API...')
-    API_raw_data = requests.get('http://api.marketstack.com/v1/tickers/aapl/eod', params)
-    API_json_data = API_raw_data.json()
-    with open('data.json', 'w', encoding='utf-8') as f:
-        json.dump(API_json_data, f, ensure_ascii=False, indent=4)
-
-    print('Descarga Completada!')
-
-
 # Vista LoginView.ui
 class MainView(QMainWindow):
 
@@ -220,68 +205,42 @@ class UserView(QMainWindow):
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
         email = db.execute("SELECT email FROM users WHERE nombre = ?", [usuario]).fetchone()
-        tickers = db.execute(
-            "SELECT m.ticker  FROM users u INNER JOIN mercados_usuario m ON (u.id == m.id_usuario) WHERE u.nombre = ? ",
+        ISINS = db.execute(
+            "SELECT m.ISIN  FROM users u INNER JOIN mercados_usuario m ON (u.id == m.id_usuario) WHERE u.nombre = ? ",
             [usuario]).fetchall()
         view.tfEmail.setText(email[0])
         view.actionLog_Out.triggered.connect(view.logout)
         view.actionA_adir_Mercados.triggered.connect(view.showAddMercados)
 
-        for ticker in tickers:
+        for ISIN in ISINS:
             action = QtWidgets.QAction(view)
             view.menuSeleccionar_Mercado.addAction(action)
-            action.setText(QtCore.QCoreApplication.translate("UserView", ticker[0]))
+            action.setText(QtCore.QCoreApplication.translate("UserView", ISIN[0]))
             action.triggered.connect(lambda clicked, ticker=action.text(): view.updateGraph(ticker))
 
-        data = yf.download(tickers[0][0], start="2022-01-01", end="2022-05-05", step='1m')
-        print('Descarga Completada!')
-
-        fig = go.Figure()
-        fig.add_trace(
-            go.Candlestick(x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
-                           name='Valor de mercado'))
-
-        fig.update_layout(title=tickers[0][0], yaxis_title='$ (USD)')
-        fig.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=list([
-            dict(count=15, label='15 M', step='minute', stepmode='backward'),
-            dict(count=45, label='45 M', step='minute', stepmode='backward'),
-            dict(count=1, label='1 H', step='hour', stepmode='todate'),
-            dict(count=2, label='2 H', step='hour', stepmode='backward'),
-            dict(step='all')
-
-        ])))
-
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
+        url = 'https://funds.ddns.net/h.php?isin=' + ISINS[0][0]
+        q_url = QUrl(url)
+
+        view.browser.load(q_url)
         view.layout.addWidget(view.browser)
-        view.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
 
     def showAddMercados(self):
-        merc = AddTickersView(self)
+        merc = AddISINView(self)
         merc.show()
 
     def logout(self):
         self.hide()
         myapp.show()
 
-    def updateGraph(self, ticker):
-        print("Selector de Ticker pulsado: " + ticker)
-        data = yf.download(ticker, start="2022-01-01", end="2022-05-05", step='1m')
-        print('Descarga Completada!')
-        fig = go.Figure()
-        fig.add_trace(
-            go.Candlestick(x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'],
-                           name='Valor de mercado'))
-        fig.update_layout(title=ticker, yaxis_title='$ (USD)')
-        fig.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=list([
-            dict(count=15, label='15 M', step='minute', stepmode='backward'),
-            dict(count=45, label='45 M', step='minute', stepmode='backward'),
-            dict(count=1, label='1 H', step='hour', stepmode='todate'),
-            dict(count=2, label='2 H', step='hour', stepmode='backward'),
-            dict(step='all')
+    def updateGraph(self, isin):
+        print("Selector de Isin pulsado: " + isin)
 
-        ])))
+        url = 'https://funds.ddns.net/h.php?isin=' + isin
+        q_url = QUrl(url)
+
+        self.browser.load(q_url)
         self.layout.addWidget(self.browser)
-        self.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
 
 
 # Vista SignInView.ui
@@ -334,19 +293,19 @@ class SignIn(QMainWindow):
 
 
 # Vista AddTickersView.ui
-class AddTickersView(QMainWindow):
+class AddISINView(QMainWindow):
 
     def __init__(view, parent=QMainWindow):
         super().__init__(parent)
-        uic.loadUi("AddTickersView.ui", view)
+        uic.loadUi("AddISINView.ui", view)
         view.buttonAnadir.clicked.connect(lambda clicked, ticker=view.tfTicker.text(): view.addTicker(parent))
 
     def addTicker(self, parent):
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
-        ticker = self.tfTicker.text()
+        ISIN = self.tfTicker.text()
         id = db.execute("SELECT id FROM users WHERE nombre = ?", [parent.tfNombre.text()]).fetchone()
-        db.execute("INSERT INTO mercados_usuario VALUES ( null , ? , ? )", (id[0], ticker))
+        db.execute("INSERT INTO mercados_usuario VALUES ( null , ? , ? )", (id[0], ISIN))
 
         action = QtWidgets.QAction(self)
         parent.menuSeleccionar_Mercado.addAction(action)
