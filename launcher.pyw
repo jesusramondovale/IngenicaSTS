@@ -1,9 +1,21 @@
 # -*- coding: utf-8 -*-
-import json, re, sys, requests, sqlite3, hashlib
+import json, re, sys, requests, sqlite3, hashlib , investpy
+
+import dateutil.utils
+import pandas
 import pandas as pd
+import plotly.graph_objs as go
+from highcharts import Highchart
+import highstock
+from highcharts.highstock.highstock_helper import jsonp_loader
+
 from PyQt5 import QtCore, uic, QtWidgets, QtWebEngineWidgets
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import *
+from datetime import datetime
+
+from highstock import Highstock
+from highstock.highstock_helper import JSONPDecoder
 
 
 class TickerAddedSuccesfully(QDialog):
@@ -218,12 +230,116 @@ class UserView(QMainWindow):
             action.setText(QtCore.QCoreApplication.translate("UserView", ISIN[0]))
             action.triggered.connect(lambda clicked, ticker=action.text(): view.updateGraph(ticker))
 
+
+
+        name = getFundINFO(ISIN[0][0]).at[0,'name']
+        country = getFundINFO(ISIN[0][0]).at[0,'country']
+        currency = getFundINFO(ISIN[0][0]).at[0,'currency']
+
+        data = investpy.funds.get_fund_historical_data(
+            fund=name ,
+            country=country,
+            from_date='01/04/2000',
+            to_date='13/05/2022',
+            as_json=False
+            )
+
+        values = []
+        for i in range(0, len(data.index), 1):
+            tuple = (data.index[i], data['Open'][i])
+            values.append(tuple)
+
+        H = Highstock()
+
+
+        H.add_data_set(values, "line", name)
+
+        options = {
+            'chart': {
+                'zoomType' : 'x'
+            },
+            'title': {
+                'text': name
+            },
+
+            "rangeSelector": {"selected": 6},
+
+            "yAxis": {
+                 'opposite' : True,
+                 'title': {
+                     'text': currency ,
+                     'align': 'middle'
+                 } ,
+                 'labels': {
+                     'align': 'left'
+                 } ,
+
+
+                 "plotLines": [{"value": 0, "width": 2, "color": "silver"}],
+            },
+
+            # "plotOptions": {"series": {"compare": "percent"}},
+
+            "tooltip": {
+                "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
+                "valueDecimals": 2,
+            },
+        }
+
+        H.set_dict_options(options)
+
+        view.browser = QtWebEngineWidgets.QWebEngineView(view)
+        view.browser.setHtml(H.htmlcontent)
+        view.layout.addWidget(view.browser)
+
+
+
+
+        ''' VÍA FIGURE
+        fig = go.Figure()
+
+        fig.add_trace(go.Candlestick(x=data.index,
+                                     open=data['Open'],
+                                     high=data['High'],
+                                     low=data['Low'],
+                                     close=data['Close'],
+                                     name='Valor de mercado'))
+
+        fig.update_layout(
+            title=name,
+            yaxis_title=currency
+
+        )
+
+        fig.update_xaxes(
+            rangeslider_visible=True,
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=15, label='15 M', step='minute', stepmode='backward'),
+                    dict(count=45, label='45 M', step='minute', stepmode='backward'),
+                    dict(count=1, label='1 H', step='hour', stepmode='todate'),
+                    dict(count=2, label='2 H', step='hour', stepmode='backward'),
+                    dict(step='all')
+
+                ])
+            )
+        )
+
+        view.browser = QtWebEngineWidgets.QWebEngineView(view)
+        view.layout.addWidget(view.browser)
+        view.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
+
+
+
+        '''
+        ''' Vía llamada HTML 
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
         url = 'https://funds.ddns.net/h.php?isin=' + ISINS[0][0]
         q_url = QUrl(url)
 
         view.browser.load(q_url)
         view.layout.addWidget(view.browser)
+        '''
 
     def showAddMercados(self):
         merc = AddISINView(self)
@@ -236,10 +352,55 @@ class UserView(QMainWindow):
     def updateGraph(self, isin):
         print("Selector de Isin pulsado: " + isin)
 
-        url = 'https://funds.ddns.net/h.php?isin=' + isin
-        q_url = QUrl(url)
+        name = getFundINFO(isin).at[0, 'name']
+        country = getFundINFO(isin).at[0, 'country']
+        currency = getFundINFO(isin).at[0, 'currency']
 
-        self.browser.load(q_url)
+        data = investpy.funds.get_fund_historical_data(
+            fund=name,
+            country=country,
+            from_date='01/04/2000',
+            to_date='13/05/2022',
+            as_json=False
+        )
+
+        values = []
+        for i in range(0, len(data.index), 1):
+            tuple = (data.index[i], data['Open'][i])
+            values.append(tuple)
+
+        H = Highstock()
+
+        H.add_data_set(values, "line", name)
+
+        options = {
+
+            'title': {
+                'text': name
+            },
+
+            "rangeSelector": {"selected": 6},
+
+            "yAxis": {
+                "labels": {
+                    "formatter": "function () {\
+                                   return (this.value);\
+                               }"
+                },
+                "plotLines": [{"value": 0, "width": 2, "color": "silver"}],
+            },
+
+            # "plotOptions": {"series": {"compare": "percent"}},
+            "tooltip": {
+                "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                "valueDecimals": 2,
+            },
+        }
+
+        H.set_dict_options(options)
+
+
+        self.browser.setHtml(H.htmlcontent)
         self.layout.addWidget(self.browser)
 
 
@@ -317,10 +478,19 @@ class AddISINView(QMainWindow):
         db.close()
 
 
+
+def getFundINFO(isin):
+    return investpy.funds.search_funds( by='isin', value=isin)
+
+def ISINtoFund(isin):
+    df = investpy.funds.search_funds( by='isin', value=isin)
+    name = df.at[0,'name']
+    return name
+
+
 # Main ()
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     myapp = MainView()
     myapp.show()
-    # cargaDatos()
     sys.exit(app.exec_())
