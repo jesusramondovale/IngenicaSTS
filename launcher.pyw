@@ -1,139 +1,12 @@
 # -*- coding: utf-8 -*-
-import json, re, sys, requests, sqlite3, hashlib , investpy
-
-import dateutil.utils
-import pandas
+import re, sys, sqlite3, hashlib
 import pandas as pd
-import plotly.graph_objs as go
-from highcharts import Highchart
-import highstock
-from highcharts.highstock.highstock_helper import jsonp_loader
 
+from fundUtils import *
+from dialogs import *
 from PyQt5 import QtCore, uic, QtWidgets, QtWebEngineWidgets
-from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import *
-from datetime import datetime
-
 from highstock import Highstock
-from highstock.highstock_helper import JSONPDecoder
-
-
-class TickerAddedSuccesfully(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        # TITULO  DE  LA VENTANA
-        self.setWindowTitle("Éxito!")
-        self.setFixedWidth(330)
-        # CONTENIDO
-        btnOK = QPushButton('OK')
-        btnOK.setFixedWidth(50)
-        btnOK.clicked.connect(self.accept)
-        self.layout = QGridLayout()
-        self.layout.addWidget(QLabel(
-            "El fondo con ISIN: " + parent.tfTicker.text() + " se ha añadido\ncorrectamente a su cartera personal."))
-        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
-        self.setLayout(self.layout)
-
-
-class registerCompleteDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        # TITULO  DE  LA VENTANA
-        self.setWindowTitle("Éxito!")
-        self.setFixedWidth(300)
-        # CONTENIDO
-        btnOK = QPushButton('OK')
-        btnOK.setFixedWidth(50)
-        btnOK.clicked.connect(self.accept)
-        self.layout = QGridLayout()
-        self.layout.addWidget(QLabel("El Registro se ha realizado\nadecuadamente"))
-        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
-        self.setLayout(self.layout)
-
-
-class badEmailDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        # TITULO  DE  LA VENTANA
-        self.setWindowTitle("Error!")
-        self.setFixedWidth(300)
-
-        # CONTENIDO
-        btnOK = QPushButton('OK')
-        btnOK.setFixedWidth(50)
-        btnOK.clicked.connect(self.accept)
-
-        self.layout = QGridLayout()
-        self.layout.addWidget(QLabel("La dirección de correo introducida"))
-        self.layout.addWidget(QLabel("no es válida !"))
-        self.layout.addWidget(btnOK, 3, 0, 1, 0, QtCore.Qt.AlignRight)
-        self.setLayout(self.layout)
-
-
-class badQueryDialog(QDialog):
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        # TITULO  DE  LA VENTANA
-        self.setWindowTitle("Vaya...")
-        self.setFixedWidth(300)
-        # CONTENIDO
-        btnOK = QPushButton('OK')
-        btnOK.setFixedWidth(50)
-        btnOK.clicked.connect(self.accept)
-        self.layout = QHBoxLayout()
-        self.layout.addWidget(QLabel("Rellena los campos primero!"))
-        self.layout.addWidget(btnOK, stretch=10)
-        self.setLayout(self.layout)
-
-
-class badLoginDialog(QDialog):
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        # TITULO  DE  LA VENTANA
-        self.setWindowTitle("Error!")
-        self.setFixedWidth(300)
-        self.setFixedHeight(100)
-
-        # CONTENIDO
-        btnOK = QPushButton('OK')
-        btnOK.setFixedWidth(50)
-        btnOK.clicked.connect(self.accept)
-
-        self.layout = QGridLayout()
-        self.layout.addWidget(QLabel("Usuario o contraseña incorrectos !"), 0, 0, 0, 0, QtCore.Qt.AlignTop)
-        self.layout.addWidget(btnOK, 6, 0, 1, 0, QtCore.Qt.AlignRight)
-
-        self.setLayout(self.layout)
-
-
-class goodLoginDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        # TITULO  DE  LA VENTANA
-        self.setWindowTitle("Bienvenido!")
-        self.setFixedWidth(280)
-
-        # CONTENIDO
-        btnEntrar = QPushButton('Entrar')
-        btnSalir = QPushButton('Salir')
-
-        btnEntrar.clicked.connect(self.accept)
-        btnSalir.clicked.connect(self.reject)
-
-        self.layout = QHBoxLayout()
-        self.layout.addWidget(QLabel("Bienvenido, señor Admin!"))
-        self.layout.addWidget(btnEntrar)
-        self.layout.addWidget(btnSalir)
-
-        self.setLayout(self.layout)
 
 
 # Vista LoginView.ui
@@ -141,12 +14,11 @@ class MainView(QMainWindow):
 
     def __init__(view):
         super().__init__()
-        uic.loadUi("LoginView.ui", view)
+        uic.loadUi("View/LoginView.ui", view)
         view.buttonLogin.setEnabled(False)
 
         # Links botones -> funciones
         view.buttonLogin.clicked.connect(view.login)
-        view.buttonSignin.clicked.connect(view.showSignInView)
         view.textFieldUser.textChanged.connect(view.dispatcher)
         view.textFieldPassword.textChanged.connect(view.dispatcher)
         view.textFieldPassword.returnPressed.connect(view.login)
@@ -208,55 +80,55 @@ class MainView(QMainWindow):
 # Vista UserView.ui
 class UserView(QMainWindow):
 
+
     def __init__(view, parent=QMainWindow):
         super().__init__(parent)
-        uic.loadUi("UserView.ui", view)
-
-        usuario = parent.textFieldUser.text()
-        view.tfNombre.setText(usuario)
+        uic.loadUi("View/PrincipalUsuario.ui", view)
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
+        view.isins_selected = []
+        view.buttonLogout.clicked.connect(view.logout)
+        view.buttonAddISIN.clicked.connect(view.showAddMercados)
+        view.listIsins.itemDoubleClicked.connect(view.addIsinsChecked)
+
+        usuario = parent.textFieldUser.text()
+        view.labelUsuario.setText(usuario)
         email = db.execute("SELECT email FROM users WHERE nombre = ?", [usuario]).fetchone()
         ISINS = db.execute(
             "SELECT m.ISIN  FROM users u INNER JOIN mercados_usuario m ON (u.id == m.id_usuario) WHERE u.nombre = ? ",
             [usuario]).fetchall()
-        view.tfEmail.setText(email[0])
-        view.actionLog_Out.triggered.connect(view.logout)
-        view.actionA_adir_Mercados.triggered.connect(view.showAddMercados)
+        view.labelEmail.setText(email[0])
 
+        isin_list = []
         for ISIN in ISINS:
-            action = QtWidgets.QAction(view)
-            view.menuSeleccionar_Mercado.addAction(action)
-            action.setText(QtCore.QCoreApplication.translate("UserView", ISIN[0]))
-            action.triggered.connect(lambda clicked, ticker=action.text(): view.updateGraph(ticker))
+            isin_list.append(ISIN[0])
+        view.listIsins.addItems(isin_list)
 
-
-
-        name = getFundINFO(ISIN[0][0]).at[0,'name']
-        country = getFundINFO(ISIN[0][0]).at[0,'country']
-        currency = getFundINFO(ISIN[0][0]).at[0,'currency']
-
+        name = getFundINFO(ISIN[0][0]).at[0, 'name']
+        country = getFundINFO(ISIN[0][0]).at[0, 'country']
+        currency = getFundINFO(ISIN[0][0]).at[0, 'currency']
         data = investpy.funds.get_fund_historical_data(
-            fund=name ,
+            fund=name,
             country=country,
             from_date='01/04/2000',
             to_date='13/05/2022',
             as_json=False
-            )
-
+        )
         values = []
         for i in range(0, len(data.index), 1):
             tuple = (data.index[i], data['Open'][i])
             values.append(tuple)
-
         H = Highstock()
-
-
         H.add_data_set(values, "line", name)
-
         options = {
+            # 'colors': ['#a0a0a0'],
+
             'chart': {
-                'zoomType' : 'x'
+                'zoomType': 'x',
+                'backgroundColor': '#a0a0a0',
+                'animation': {
+                    'duration': 2000
+                },
             },
             'title': {
                 'text': name
@@ -265,17 +137,16 @@ class UserView(QMainWindow):
             "rangeSelector": {"selected": 6},
 
             "yAxis": {
-                 'opposite' : True,
-                 'title': {
-                     'text': currency ,
-                     'align': 'middle'
-                 } ,
-                 'labels': {
-                     'align': 'left'
-                 } ,
+                'opposite': True,
+                'title': {
+                    'text': currency,
+                    'align': 'middle'
+                },
+                'labels': {
+                    'align': 'left'
+                },
 
-
-                 "plotLines": [{"value": 0, "width": 2, "color": "silver"}],
+                "plotLines": [{"value": 0, "width": 2, "color": "silver"}],
             },
 
             # "plotOptions": {"series": {"compare": "percent"}},
@@ -285,17 +156,14 @@ class UserView(QMainWindow):
                 "valueDecimals": 2,
             },
         }
-
         H.set_dict_options(options)
-
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
         view.browser.setHtml(H.htmlcontent)
         view.layout.addWidget(view.browser)
 
-
-
-
-        ''' VÍA FIGURE
+        # Figure Method
+        '''
+        VÍA FIGURE
         fig = go.Figure()
 
         fig.add_trace(go.Candlestick(x=data.index,
@@ -328,10 +196,9 @@ class UserView(QMainWindow):
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
         view.layout.addWidget(view.browser)
         view.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
-
-
-
         '''
+
+        # Grafico HTML Method
         ''' Vía llamada HTML 
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
         url = 'https://funds.ddns.net/h.php?isin=' + ISINS[0][0]
@@ -340,6 +207,21 @@ class UserView(QMainWindow):
         view.browser.load(q_url)
         view.layout.addWidget(view.browser)
         '''
+
+
+    def addIsinsChecked(self):
+
+        if self.listIsins.item(self.listIsins.currentRow()).text() in self.isins_selected:
+            self.isins_selected.remove(self.listIsins.item(self.listIsins.currentRow()).text())
+
+        else :
+            self.isins_selected.append(self.listIsins.item(self.listIsins.currentRow()).text())
+
+        # updateGraph
+        print('ISINS : ')
+        print(self.isins_selected)
+
+
 
     def showAddMercados(self):
         merc = AddISINView(self)
@@ -399,7 +281,6 @@ class UserView(QMainWindow):
 
         H.set_dict_options(options)
 
-
         self.browser.setHtml(H.htmlcontent)
         self.layout.addWidget(self.browser)
 
@@ -409,7 +290,7 @@ class SignIn(QMainWindow):
 
     def __init__(view, parent=None):
         super().__init__(parent)
-        uic.loadUi("SignInView.ui", view)
+        uic.loadUi("View/SignInView.ui", view)
         view.buttonRegistrar.clicked.connect(view.registrar)
         view.buttonSalir.clicked.connect(view.salir)
 
@@ -458,7 +339,7 @@ class AddISINView(QMainWindow):
 
     def __init__(view, parent=QMainWindow):
         super().__init__(parent)
-        uic.loadUi("AddISINView.ui", view)
+        uic.loadUi("View/AddISINView.ui", view)
         view.buttonAnadir.clicked.connect(lambda clicked, ticker=view.tfTicker.text(): view.addTicker(parent))
 
     def addTicker(self, parent):
@@ -476,16 +357,6 @@ class AddISINView(QMainWindow):
         dlg.exec()
         self.hide()
         db.close()
-
-
-
-def getFundINFO(isin):
-    return investpy.funds.search_funds( by='isin', value=isin)
-
-def ISINtoFund(isin):
-    df = investpy.funds.search_funds( by='isin', value=isin)
-    name = df.at[0,'name']
-    return name
 
 
 # Main ()
