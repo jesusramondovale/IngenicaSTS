@@ -2,6 +2,7 @@
 import re, sys, sqlite3, hashlib
 import pandas as pd
 
+import fundUtils
 from fundUtils import *
 from dialogs import *
 from PyQt5 import QtCore, uic, QtWidgets, QtWebEngineWidgets
@@ -90,6 +91,7 @@ class UserView(QMainWindow):
         view.buttonLogout.clicked.connect(view.logout)
         view.buttonAddISIN.clicked.connect(view.showAddMercados)
         view.listIsins.itemDoubleClicked.connect(view.addIsinsChecked)
+        view.browser = QtWebEngineWidgets.QWebEngineView(view)
 
         usuario = parent.textFieldUser.text()
         view.labelUsuario.setText(usuario)
@@ -104,62 +106,8 @@ class UserView(QMainWindow):
             isin_list.append(ISIN[0])
         view.listIsins.addItems(isin_list)
 
-        name = getFundINFO(ISIN[0][0]).at[0, 'name']
-        country = getFundINFO(ISIN[0][0]).at[0, 'country']
-        currency = getFundINFO(ISIN[0][0]).at[0, 'currency']
-        data = investpy.funds.get_fund_historical_data(
-            fund=name,
-            country=country,
-            from_date='01/04/2000',
-            to_date='13/05/2022',
-            as_json=False
-        )
-        values = []
-        for i in range(0, len(data.index), 1):
-            tuple = (data.index[i], data['Open'][i])
-            values.append(tuple)
-        H = Highstock()
-        H.add_data_set(values, "line", name)
-        options = {
-            # 'colors': ['#a0a0a0'],
+        fundUtils.graphHistoricalISIN(view, view.isins_selected)
 
-            'chart': {
-                'zoomType': 'x',
-                'backgroundColor': '#a0a0a0',
-                'animation': {
-                    'duration': 2000
-                },
-            },
-            'title': {
-                'text': name
-            },
-
-            "rangeSelector": {"selected": 6},
-
-            "yAxis": {
-                'opposite': True,
-                'title': {
-                    'text': currency,
-                    'align': 'middle'
-                },
-                'labels': {
-                    'align': 'left'
-                },
-
-                "plotLines": [{"value": 0, "width": 2, "color": "silver"}],
-            },
-
-            # "plotOptions": {"series": {"compare": "percent"}},
-
-            "tooltip": {
-                "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
-                "valueDecimals": 2,
-            },
-        }
-        H.set_dict_options(options)
-        view.browser = QtWebEngineWidgets.QWebEngineView(view)
-        view.browser.setHtml(H.htmlcontent)
-        view.layout.addWidget(view.browser)
 
         # Figure Method
         '''
@@ -208,7 +156,6 @@ class UserView(QMainWindow):
         view.layout.addWidget(view.browser)
         '''
 
-
     def addIsinsChecked(self):
 
         if self.listIsins.item(self.listIsins.currentRow()).text() in self.isins_selected:
@@ -217,11 +164,9 @@ class UserView(QMainWindow):
         else :
             self.isins_selected.append(self.listIsins.item(self.listIsins.currentRow()).text())
 
-        # updateGraph
+        self.updateGraph( self.isins_selected )
         print('ISINS : ')
         print(self.isins_selected)
-
-
 
     def showAddMercados(self):
         merc = AddISINView(self)
@@ -231,58 +176,8 @@ class UserView(QMainWindow):
         self.hide()
         myapp.show()
 
-    def updateGraph(self, isin):
-        print("Selector de Isin pulsado: " + isin)
-
-        name = getFundINFO(isin).at[0, 'name']
-        country = getFundINFO(isin).at[0, 'country']
-        currency = getFundINFO(isin).at[0, 'currency']
-
-        data = investpy.funds.get_fund_historical_data(
-            fund=name,
-            country=country,
-            from_date='01/04/2000',
-            to_date='13/05/2022',
-            as_json=False
-        )
-
-        values = []
-        for i in range(0, len(data.index), 1):
-            tuple = (data.index[i], data['Open'][i])
-            values.append(tuple)
-
-        H = Highstock()
-
-        H.add_data_set(values, "line", name)
-
-        options = {
-
-            'title': {
-                'text': name
-            },
-
-            "rangeSelector": {"selected": 6},
-
-            "yAxis": {
-                "labels": {
-                    "formatter": "function () {\
-                                   return (this.value);\
-                               }"
-                },
-                "plotLines": [{"value": 0, "width": 2, "color": "silver"}],
-            },
-
-            # "plotOptions": {"series": {"compare": "percent"}},
-            "tooltip": {
-                "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
-                "valueDecimals": 2,
-            },
-        }
-
-        H.set_dict_options(options)
-
-        self.browser.setHtml(H.htmlcontent)
-        self.layout.addWidget(self.browser)
+    def updateGraph(self, isins_selected):
+        fundUtils.graphHistoricalISIN(self,isins_selected)
 
 
 # Vista SignInView.ui
