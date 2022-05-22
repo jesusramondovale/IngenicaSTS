@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 import re, sys, sqlite3, hashlib
 import pandas as pd
-
 import fundUtils
-from fundUtils import *
+
 from dialogs import *
 from PyQt5 import QtCore, uic, QtWidgets, QtWebEngineWidgets
 from PyQt5.QtWidgets import *
-from highstock import Highstock
 
 
 # Vista LoginView.ui
