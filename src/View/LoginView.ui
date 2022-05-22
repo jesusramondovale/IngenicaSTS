@@ -14,11 +14,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>Acceso</string>
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../logo.ico</normaloff>../logo.ico</iconset>
+    <normaloff>../../../logo.ico</normaloff>../../../logo.ico</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">*{

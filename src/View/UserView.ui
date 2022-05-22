@@ -77,6 +77,10 @@
   <property name="windowTitle">
    <string>Cartera de Usuario</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../../logo.ico</normaloff>../../../logo.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="labelUser">
     <property name="geometry">

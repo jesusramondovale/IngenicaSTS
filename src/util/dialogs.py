@@ -1,6 +1,26 @@
 from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayout
 from PyQt5 import QtCore
 
+
+class ISINAlready(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Vaya..")
+        self.setFixedWidth(330)
+
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel(
+            "El fondo " + parent.tfISIN.text() + " ya se encuentra" + '\n' + "añadido a su cartera"))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
 class isinNotFoundDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -15,7 +35,7 @@ class isinNotFoundDialog(QDialog):
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
-            "El fondo introducido no está registrado" + '\n' + "en investing.com"))
+            "El fondo " + parent.tfISIN.text() + " no se encuentra" + '\n' + "en investing.com"))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
@@ -33,7 +53,7 @@ class TickerAddedSuccesfully(QDialog):
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
-            "El fondo con ISIN: " + parent.tfTicker.text() + " se ha añadido\ncorrectamente a su cartera personal."))
+            "El fondo con ISIN: " + parent.tfISIN.text() + " se ha añadido\ncorrectamente a su cartera personal."))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
@@ -82,13 +102,13 @@ class badQueryDialog(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Vaya...")
-        self.setFixedWidth(300)
+        self.setFixedWidth(340)
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
         btnOK.clicked.connect(self.accept)
         self.layout = QHBoxLayout()
-        self.layout.addWidget(QLabel("Rellena los campos primero!"))
+        self.layout.addWidget(QLabel("Rellene todos los campos primero!"))
         self.layout.addWidget(btnOK, stretch=10)
         self.setLayout(self.layout)
 

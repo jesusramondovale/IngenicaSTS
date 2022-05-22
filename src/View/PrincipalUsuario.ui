@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>562</height>
+    <width>1034</width>
+    <height>599</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../logo.ico</normaloff>../../logo.ico</iconset>
+    <normaloff>../../../logo.ico</normaloff>../../../logo.ico</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">*{
@@ -30,7 +30,7 @@ background: rgb(160, 160, 160);
       <x>10</x>
       <y>20</y>
       <width>191</width>
-      <height>531</height>
+      <height>581</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -55,7 +55,7 @@ background: rgb(160, 160, 160);
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../feather/dollar-sign.svg</normaloff>../../feather/dollar-sign.svg</iconset>
+         <normaloff>../../../feather/dollar-sign.svg</normaloff>../../../feather/dollar-sign.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -80,7 +80,7 @@ background: rgb(160, 160, 160);
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../feather/pie-chart.svg</normaloff>../../feather/pie-chart.svg</iconset>
+         <normaloff>../../../feather/pie-chart.svg</normaloff>../../../feather/pie-chart.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -105,7 +105,7 @@ background: rgb(160, 160, 160);
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../feather/plus-circle.svg</normaloff>../../feather/plus-circle.svg</iconset>
+         <normaloff>../../../feather/plus-circle.svg</normaloff>../../../feather/plus-circle.svg</iconset>
        </property>
       </widget>
      </item>
@@ -137,7 +137,7 @@ background: rgb(160, 160, 160);
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../feather/log-out.svg</normaloff>../../feather/log-out.svg</iconset>
+         <normaloff>../../../feather/log-out.svg</normaloff>../../../feather/log-out.svg</iconset>
        </property>
       </widget>
      </item>
@@ -148,7 +148,7 @@ background: rgb(160, 160, 160);
      <rect>
       <x>220</x>
       <y>20</y>
-      <width>741</width>
+      <width>821</width>
       <height>651</height>
      </rect>
     </property>
@@ -163,7 +163,7 @@ background: rgb(160, 160, 160);
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>741</width>
+       <width>811</width>
        <height>191</height>
       </rect>
      </property>
@@ -176,7 +176,7 @@ background: rgb(160, 160, 160);
      <widget class="QLabel" name="labelISIN">
       <property name="geometry">
        <rect>
-        <x>510</x>
+        <x>430</x>
         <y>0</y>
         <width>140</width>
         <height>23</height>
@@ -255,21 +255,24 @@ background: rgb(160, 160, 160);
      <widget class="QListWidget" name="listIsins">
       <property name="geometry">
        <rect>
-        <x>510</x>
-        <y>30</y>
-        <width>211</width>
-        <height>91</height>
+        <x>430</x>
+        <y>20</y>
+        <width>361</width>
+        <height>151</height>
        </rect>
+      </property>
+      <property name="selectionRectVisible">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
     <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>150</y>
-       <width>751</width>
-       <height>391</height>
+       <x>-10</x>
+       <y>190</y>
+       <width>821</width>
+       <height>401</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="layout">

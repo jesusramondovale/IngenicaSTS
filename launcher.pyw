@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+
 import re, sys, sqlite3, hashlib
 import pandas as pd
-import fundUtils
-
-from dialogs import *
-from PyQt5 import QtCore, uic, QtWidgets, QtWebEngineWidgets
+from src.util import fundUtils
+from datetime import datetime
+from src.util.dialogs import *
+from PyQt5 import uic, QtWebEngineWidgets
 from PyQt5.QtWidgets import *
 
 
@@ -13,7 +14,7 @@ class MainView(QMainWindow):
 
     def __init__(view):
         super().__init__()
-        uic.loadUi("View/LoginView.ui", view)
+        uic.loadUi("src/View/LoginView.ui", view)
         view.buttonLogin.setEnabled(False)
 
         # Links botones -> funciones
@@ -79,15 +80,14 @@ class MainView(QMainWindow):
 # Vista UserView.ui
 class UserView(QMainWindow):
 
-
     def __init__(view, parent=QMainWindow):
         super().__init__(parent)
-        uic.loadUi("View/PrincipalUsuario.ui", view)
+        uic.loadUi("src/View/PrincipalUsuario.ui", view)
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
         view.isins_selected = []
         view.buttonLogout.clicked.connect(view.logout)
-        view.buttonAddISIN.clicked.connect(view.showAddMercados)
+        view.buttonAddISIN.clicked.connect(view.showAddIsin)
         view.listIsins.itemDoubleClicked.connect(view.addIsinsChecked)
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
 
@@ -102,71 +102,28 @@ class UserView(QMainWindow):
         isin_list = []
         for ISIN in ISINS:
             isin_list.append(ISIN[0])
-        view.listIsins.addItems(isin_list)
+
+        isin_list_view = []
+        for ISIN in ISINS:
+            isin_list_view.append(fundUtils.ISINtoFund(ISIN[0]))
+
+        view.listIsins.addItems(isin_list_view)
 
         fundUtils.graphHistoricalISIN(view, view.isins_selected)
 
-
-        # Figure Method
-        '''
-        VÍA FIGURE
-        fig = go.Figure()
-
-        fig.add_trace(go.Candlestick(x=data.index,
-                                     open=data['Open'],
-                                     high=data['High'],
-                                     low=data['Low'],
-                                     close=data['Close'],
-                                     name='Valor de mercado'))
-
-        fig.update_layout(
-            title=name,
-            yaxis_title=currency
-
-        )
-
-        fig.update_xaxes(
-            rangeslider_visible=True,
-            rangeselector=dict(
-                buttons=list([
-                    dict(count=15, label='15 M', step='minute', stepmode='backward'),
-                    dict(count=45, label='45 M', step='minute', stepmode='backward'),
-                    dict(count=1, label='1 H', step='hour', stepmode='todate'),
-                    dict(count=2, label='2 H', step='hour', stepmode='backward'),
-                    dict(step='all')
-
-                ])
-            )
-        )
-
-        view.browser = QtWebEngineWidgets.QWebEngineView(view)
-        view.layout.addWidget(view.browser)
-        view.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
-        '''
-
-        # Grafico HTML Method
-        ''' Vía llamada HTML 
-        view.browser = QtWebEngineWidgets.QWebEngineView(view)
-        url = 'https://funds.ddns.net/h.php?isin=' + ISINS[0][0]
-        q_url = QUrl(url)
-
-        view.browser.load(q_url)
-        view.layout.addWidget(view.browser)
-        '''
-
     def addIsinsChecked(self):
 
-        if self.listIsins.item(self.listIsins.currentRow()).text() in self.isins_selected:
-            self.isins_selected.remove(self.listIsins.item(self.listIsins.currentRow()).text())
+        if fundUtils.nameToISIN(self.listIsins.currentItem().text()) in self.isins_selected:
+            self.isins_selected.remove(fundUtils.nameToISIN(self.listIsins.currentItem().text()))
 
-        else :
-            self.isins_selected.append(self.listIsins.item(self.listIsins.currentRow()).text())
+        else:
+            self.isins_selected.append(fundUtils.nameToISIN(self.listIsins.currentItem().text()))
 
-        self.updateGraph( self.isins_selected )
+        self.updateGraph(self.isins_selected)
         print('ISINS : ')
         print(self.isins_selected)
 
-    def showAddMercados(self):
+    def showAddIsin(self):
         merc = AddISINView(self)
         merc.show()
 
@@ -175,7 +132,7 @@ class UserView(QMainWindow):
         myapp.show()
 
     def updateGraph(self, isins_selected):
-        fundUtils.graphHistoricalISIN(self,isins_selected)
+        fundUtils.graphHistoricalISIN(self, isins_selected)
 
 
 # Vista SignInView.ui
@@ -183,7 +140,7 @@ class SignIn(QMainWindow):
 
     def __init__(view, parent=None):
         super().__init__(parent)
-        uic.loadUi("View/SignInView.ui", view)
+        uic.loadUi("src/View/SignInView.ui", view)
         view.buttonRegistrar.clicked.connect(view.registrar)
         view.buttonSalir.clicked.connect(view.salir)
 
@@ -232,24 +189,77 @@ class AddISINView(QMainWindow):
 
     def __init__(view, parent=QMainWindow):
         super().__init__(parent)
-        uic.loadUi("View/AddISINView.ui", view)
-        view.buttonAnadir.clicked.connect(lambda clicked, ticker=view.tfTicker.text(): view.addTicker(parent))
+        uic.loadUi("src/View/AddISINView.ui", view)
+        view.buttonAnadir.clicked.connect(lambda clicked, ticker=view.tfISIN.text(): view.addTicker(parent))
+
+    def camposLlenos(self):
+        if (self.tfNombre.text() == '' or
+                self.tfISIN.text() == '' or
+                self.tfISIN.text() == '' or
+                self.tfISIN.text() == '' or
+                self.tfISIN.text() == '' or
+                self.tfISIN.text() == '' or
+                self.tfISIN.text() == '' or
+                self.tfISIN.text() == '' or
+                self.tfISIN.text() == '' or
+                self.tfISIN.text() == '' or
+                self.tfISIN.text() == ''):
+
+            return False
+
+        else:
+            return True
 
     def addTicker(self, parent):
-        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-        db = db_connection.cursor()
-        ISIN = self.tfTicker.text()
-        id = db.execute("SELECT id FROM users WHERE nombre = ?", [parent.tfNombre.text()]).fetchone()
-        db.execute("INSERT INTO mercados_usuario VALUES ( null , ? , ? )", (id[0], ISIN))
 
-        action = QtWidgets.QAction(self)
-        parent.menuSeleccionar_Mercado.addAction(action)
-        action.setText(QtCore.QCoreApplication.translate("UserView", self.tfTicker.text()))
-        action.triggered.connect(lambda clicked, ticker=action.text(): parent.updateGraph(ticker))
-        dlg = TickerAddedSuccesfully(self)
-        dlg.exec()
-        self.hide()
-        db.close()
+        # Validación de Campos
+        if self.camposLlenos():
+
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+            ISIN = self.tfISIN.text().strip()
+            id = db.execute("SELECT id FROM users WHERE nombre = ?", [parent.labelUsuario.text()]).fetchone()
+            m = db.execute("SELECT id_usuario , ISIN  FROM mercados_usuario WHERE id_usuario = ? AND ISIN = ?"
+                           , [id[0], ISIN]).fetchone()
+
+            try:
+                # Comprueba que el usuario no ha añadido ya ese ticker
+                if m is not None:
+                    dlg = ISINAlready(self)
+                    dlg.exec()
+                    db.close()
+
+                else:
+                    fundUtils.getFundINFO(ISIN)
+                    db.execute("INSERT INTO mercados_usuario VALUES ( null , ? , ? )", (id[0], ISIN))
+                    db.execute("INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)",
+                               (datetime.today().strftime('%d/%m/%Y'),
+                                self.tfNombre.text(),
+                                None,
+                                self.tfTipoAct.text(),
+                                self.tfRV.text(),
+                                self.tfZona.text(),
+                                self.tfEstilo.text(),
+                                self.tfSector.text(),
+                                self.tfTamano.text(),
+                                self.tfDivisa.text(),
+                                self.tfCubierta.text(),
+                                None,
+                                self.tfDuracion.text(),
+                                ))
+                    parent.listIsins.addItem(fundUtils.getFundINFO(ISIN).at[0, 'name'])
+                    dlg = TickerAddedSuccesfully(self)
+                    dlg.exec()
+                    self.hide()
+                    db.close()
+
+            except:
+                dlg = isinNotFoundDialog(self)
+                dlg.exec()
+                db.close()
+        else:
+            dlg = badQueryDialog(self)
+            dlg.exec()
 
 
 # Main ()
