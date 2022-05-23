@@ -265,6 +265,37 @@ background: rgb(160, 160, 160);
        <bool>true</bool>
       </property>
      </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>120</y>
+        <width>68</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Modo</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cbModo">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>120</y>
+        <width>171</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="currentText">
+       <string notr="true"/>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
@@ -284,6 +315,9 @@ background: rgb(160, 160, 160);
           <weight>75</weight>
           <bold>true</bold>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
         <property name="text">
          <string/>

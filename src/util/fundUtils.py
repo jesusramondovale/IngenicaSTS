@@ -58,7 +58,7 @@ def saveHistoricalFund(self, isin):
             cursor.close()
 
 
-def graphHistoricalISIN(self, isins_selected):
+def graphHistoricalISIN(self, isins_selected, absolute):
     if len(isins_selected) != 0:
 
         names = []
@@ -85,7 +85,7 @@ def graphHistoricalISIN(self, isins_selected):
             H.add_data_set(values, "line", names[j])
             cursor.close()
 
-        if len(isins_selected) == 1:
+        if absolute:
             options = {
                 # 'colors': ['#a0a0a0'],
 
@@ -169,8 +169,9 @@ def graphHistoricalISIN(self, isins_selected):
 
         self.browser.setHtml(H.htmlcontent)
         self.layout.addWidget(self.browser)
-        self.browser.show()
         self.labelNoIsin.hide()
+        self.browser.show()
+
         cursor.close()
 
     else:

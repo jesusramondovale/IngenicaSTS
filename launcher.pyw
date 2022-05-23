@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import re, sys, sqlite3, hashlib
+import hashlib
+import re
+import sqlite3
+import sys
+from datetime import datetime
 
 import pandas as pd
-from src.util import fundUtils
-from datetime import datetime
-from src.util.dialogs import *
 from PyQt5 import uic, QtWebEngineWidgets
 from PyQt5.QtWidgets import *
+
+from src.util import fundUtils
+from src.util.dialogs import *
 
 
 # Vista LoginView.ui
@@ -92,6 +96,8 @@ class UserView(QMainWindow):
         view.buttonAddISIN.clicked.connect(view.showAddIsin)
         view.listIsins.itemDoubleClicked.connect(view.addIsinsChecked)
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
+        view.cbModo.addItems(['Absoluto', 'Comparación'])
+        view.cbModo.currentIndexChanged.connect(lambda clicked, isins=view.isins_selected: view.updateGraph(isins))
 
         usuario = parent.textFieldUser.text()
         view.labelUsuario.setText(usuario)
@@ -112,10 +118,9 @@ class UserView(QMainWindow):
         view.listIsins.addItems(isin_list_view)
 
         for e in isin_list:
-            fundUtils.saveHistoricalFund(view,e)
+            fundUtils.saveHistoricalFund(view, e)
 
-
-        fundUtils.graphHistoricalISIN(view, view.isins_selected)
+        fundUtils.graphHistoricalISIN(view, view.isins_selected, False)
 
     def addIsinsChecked(self):
 
@@ -138,7 +143,10 @@ class UserView(QMainWindow):
         myapp.show()
 
     def updateGraph(self, isins_selected):
-        fundUtils.graphHistoricalISIN(self, isins_selected)
+        if self.cbModo.currentIndex() == 0:
+            fundUtils.graphHistoricalISIN(self, isins_selected, True)
+        else:
+            fundUtils.graphHistoricalISIN(self, isins_selected, False)
 
 
 # Vista SignInView.ui
