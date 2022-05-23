@@ -1,7 +1,11 @@
+import sqlite3
+
 import investpy
 
 from highstock import Highstock
 from datetime import datetime
+
+from src.util.dialogs import isinNotFoundDialog
 
 
 def getFundINFO(isin):
@@ -20,124 +24,154 @@ def ISINtoFund(isin):
     return name
 
 
+def saveHistoricalFund(self, isin):
+    db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+    cursor = db_connection.cursor()
+
+    try:
+        # Comprobar existencia de tabla 'isin'
+        cursor.execute("SELECT * FROM " + isin + " ")
+        print('El fondo ' + isin + ' ya está grabado en BD. No se hace nada')
+        cursor.close()
+
+    except sqlite3.OperationalError:
+        print('No existe, procedo a descargar y grabar')
+
+        try:
+            print('Descargando en investing.com ...')
+            data = investpy.funds.get_fund_historical_data(
+                fund=ISINtoFund(isin),
+                country=getFundINFO(isin).at[0, 'country'],
+                from_date='01/01/1970',
+                to_date=datetime.today().strftime('%d/%m/%Y'),
+                as_json=False
+            )
+            print('Grabando ...')
+            data.to_sql(isin, con=db_connection)
+            print('Completado con éxito!')
+            cursor.close()
+
+        except RuntimeError:
+            print('El fondo no ha sido encontrado en investing.com!')
+            dlg = isinNotFoundDialog(self)
+            dlg.exec()
+            cursor.close()
+
+
 def graphHistoricalISIN(self, isins_selected):
     if len(isins_selected) != 0:
-        hoy = datetime.today().strftime('%d/%m/%Y')
-        names = []
-        countrys = []
 
+        names = []
         currency = getFundINFO(isins_selected[0]).at[0, 'currency']
 
-        for e in isins_selected:
+        for a in range(0, len(isins_selected), 1):
+            names.append(getFundINFO(isins_selected[a]).at[0, 'name'])
 
-            names.append(getFundINFO(e).at[0, 'name'])
-            countrys.append(getFundINFO(e).at[0, 'country'])
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
 
-            H = Highstock()
+        H = Highstock()
 
-            for i in range(0, len(names), 1):
+        for j in range(0, len(isins_selected), 1):
+            cursor = db_connection.cursor()
+            data = cursor.execute("SELECT * FROM " + isins_selected[j] + " ").fetchall()
 
-                data = investpy.funds.get_fund_historical_data(
-                    fund=names[i],
-                    country=countrys[i],
-                    from_date='01/01/1970',
-                    to_date=hoy,
-                    as_json=False
-                )
-                values = []
-                for x in range(0, len(data.index), 1):
-                    dataTuple = (data.index[x], data['Open'][x])
-                    values.append(dataTuple)
+            values = []
+            for row in range(0, len(data), 1):
+                date = data[row][0]
+                stamp = datetime.strptime(date[:10], "%Y-%m-%d")
+                dataTuple = (datetime.fromtimestamp(datetime.timestamp(stamp)), data[row][1])
+                values.append(dataTuple)
 
-                H.add_data_set(values, "line", names[i])
+            H.add_data_set(values, "line", names[j])
+            cursor.close()
 
-            if len(isins_selected) == 1:
-                options = {
-                    # 'colors': ['#a0a0a0'],
+        if len(isins_selected) == 1:
+            options = {
+                # 'colors': ['#a0a0a0'],
 
-                    'chart': {
-                        'zoomType': 'x',
-                        'backgroundColor': '#a0a0a0',
-                        'animation': {
-                            'duration': 2000
-                        },
+                'chart': {
+                    'zoomType': 'x',
+                    'backgroundColor': '#a0a0a0',
+                    'animation': {
+                        'duration': 2000
                     },
+                },
+                'title': {
+                    'text': names
+                },
+
+                "rangeSelector": {"selected": 6},
+
+                "yAxis": {
+                    'opposite': True,
                     'title': {
-                        'text': names
+                        'text': currency,
+                        'align': 'middle',
+                        'style': {
+                            'fontSize': '18px'
+                        }
+                    },
+                    'labels': {
+                        'align': 'left'
                     },
 
-                    "rangeSelector": {"selected": 6},
+                    "plotLines": [{"value": 0, "width": 2, "color": "white"}],
+                },
 
-                    "yAxis": {
-                        'opposite': True,
-                        'title': {
-                            'text': currency,
-                            'align': 'middle',
-                            'style': {
-                                'fontSize': '18px'
-                            }
-                        },
-                        'labels': {
-                            'align': 'left'
-                        },
+                "tooltip": {
+                    "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
+                    "valueDecimals": 2,
+                },
+            }
+            H.set_dict_options(options)
+        else:
+            options = {
+                # 'colors': ['#a0a0a0'],
 
-                        "plotLines": [{"value": 0, "width": 2, "color": "white"}],
+                'chart': {
+                    'zoomType': 'x',
+                    'backgroundColor': '#a0a0a0',
+                    'animation': {
+                        'duration': 2000
                     },
+                },
+                'title': {
+                    'text': names
+                },
 
-                    "tooltip": {
-                        "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
-                        "valueDecimals": 2,
-                    },
-                }
-                H.set_dict_options(options)
-            else:
-                options = {
-                    # 'colors': ['#a0a0a0'],
+                "rangeSelector": {"selected": 6},
 
-                    'chart': {
-                        'zoomType': 'x',
-                        'backgroundColor': '#a0a0a0',
-                        'animation': {
-                            'duration': 2000
-                        },
-                    },
+                "yAxis": {
+                    'opposite': True,
                     'title': {
-                        'text': names
+                        'text': '%',
+                        'align': 'middle',
+                        'style': {
+                            'fontSize': '18px'
+                        }
+
+                    },
+                    'labels': {
+                        'align': 'left'
                     },
 
-                    "rangeSelector": {"selected": 6},
+                    "plotLines": [{"value": 0, "width": 3, "color": "white"}],
+                },
 
-                    "yAxis": {
-                        'opposite': True,
-                        'title': {
-                            'text': '%',
-                            'align': 'middle',
-                            'style': {
-                                'fontSize': '18px'
-                            }
+                "plotOptions": {"series": {"compare": "percent"}},
 
-                        },
-                        'labels': {
-                            'align': 'left'
-                        },
+                "tooltip": {
+                    "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
+                    "valueDecimals": 2,
+                },
+            }
+            H.set_dict_options(options)
 
-                        "plotLines": [{"value": 0, "width": 3, "color": "white"}],
-                    },
-
-                    "plotOptions": {"series": {"compare": "percent"}},
-
-                    "tooltip": {
-                        "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
-                        "valueDecimals": 2,
-                    },
-                }
-                H.set_dict_options(options)
-
-            self.browser.setHtml(H.htmlcontent)
-            self.layout.addWidget(self.browser)
-
-            self.browser.show()
-            self.labelNoIsin.hide()
+        self.browser.setHtml(H.htmlcontent)
+        self.layout.addWidget(self.browser)
+        self.browser.show()
+        self.labelNoIsin.hide()
+        cursor.close()
 
     else:
         self.browser.hide()

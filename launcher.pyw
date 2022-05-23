@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re, sys, sqlite3, hashlib
+
 import pandas as pd
 from src.util import fundUtils
 from datetime import datetime
@@ -85,6 +86,7 @@ class UserView(QMainWindow):
         uic.loadUi("src/View/PrincipalUsuario.ui", view)
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
+
         view.isins_selected = []
         view.buttonLogout.clicked.connect(view.logout)
         view.buttonAddISIN.clicked.connect(view.showAddIsin)
@@ -108,6 +110,10 @@ class UserView(QMainWindow):
             isin_list_view.append(fundUtils.ISINtoFund(ISIN[0]))
 
         view.listIsins.addItems(isin_list_view)
+
+        for e in isin_list:
+            fundUtils.saveHistoricalFund(view,e)
+
 
         fundUtils.graphHistoricalISIN(view, view.isins_selected)
 
