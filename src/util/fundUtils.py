@@ -68,11 +68,11 @@ def graphHistoricalISIN(self, isins_selected, absolute):
             names.append(getFundINFO(isins_selected[a]).at[0, 'name'])
 
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-
+        cursor = db_connection.cursor()
         H = Highstock()
 
         for j in range(0, len(isins_selected), 1):
-            cursor = db_connection.cursor()
+
             data = cursor.execute("SELECT * FROM " + isins_selected[j] + " ").fetchall()
 
             values = []
@@ -83,7 +83,6 @@ def graphHistoricalISIN(self, isins_selected, absolute):
                 values.append(dataTuple)
 
             H.add_data_set(values, "line", names[j])
-            cursor.close()
 
         if absolute:
             options = {
@@ -124,6 +123,7 @@ def graphHistoricalISIN(self, isins_selected, absolute):
                 },
             }
             H.set_dict_options(options)
+            cursor.close()
         else:
             options = {
                 # 'colors': ['#a0a0a0'],

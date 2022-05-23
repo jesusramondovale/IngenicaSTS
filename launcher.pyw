@@ -82,7 +82,7 @@ class MainView(QMainWindow):
             self.buttonLogin.setEnabled(True)
 
 
-# Vista UserView.ui
+# Vista PrincipalUsuario.ui
 class UserView(QMainWindow):
 
     def __init__(view, parent=QMainWindow):
@@ -96,7 +96,7 @@ class UserView(QMainWindow):
         view.buttonAddISIN.clicked.connect(view.showAddIsin)
         view.listIsins.itemDoubleClicked.connect(view.addIsinsChecked)
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
-        view.cbModo.addItems(['Absoluto', 'Comparación'])
+        view.cbModo.addItems(['Absoluto', 'Evolución'])
         view.cbModo.currentIndexChanged.connect(lambda clicked, isins=view.isins_selected: view.updateGraph(isins))
 
         usuario = parent.textFieldUser.text()
