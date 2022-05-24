@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1034</width>
-    <height>599</height>
+    <width>1105</width>
+    <height>718</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">*{
-background: rgb(160, 160, 160);
+background: rgb(177, 177, 177) 
 
 }</string>
   </property>
@@ -27,10 +27,10 @@ background: rgb(160, 160, 160);
    <widget class="QFrame" name="frameBarra">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>191</width>
-      <height>581</height>
+      <x>0</x>
+      <y>0</y>
+      <width>211</width>
+      <height>721</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -61,7 +61,7 @@ background: rgb(160, 160, 160);
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -86,12 +86,18 @@ background: rgb(160, 160, 160);
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="buttonAddISIN">
+      <widget class="QPushButton" name="buttonAddCarteras">
+       <property name="maximumSize">
+        <size>
+         <width>183</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <family>Yu Gothic UI Light</family>
@@ -101,7 +107,7 @@ background: rgb(160, 160, 160);
         </font>
        </property>
        <property name="text">
-        <string>Añadir ISIN</string>
+        <string>Nueva Cartera</string>
        </property>
        <property name="icon">
         <iconset>
@@ -147,9 +153,9 @@ background: rgb(160, 160, 160);
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>20</y>
-      <width>821</width>
-      <height>651</height>
+      <y>10</y>
+      <width>881</width>
+      <height>821</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -163,8 +169,8 @@ background: rgb(160, 160, 160);
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>811</width>
-       <height>191</height>
+       <width>881</width>
+       <height>321</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -173,52 +179,12 @@ background: rgb(160, 160, 160);
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <widget class="QLabel" name="labelISIN">
-      <property name="geometry">
-       <rect>
-        <x>430</x>
-        <y>0</y>
-        <width>140</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Yu Gothic Medium</family>
-        <pointsize>9</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>ISINs en Cartera:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="labelInfo">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>207</width>
-        <height>26</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Yu Gothic Medium</family>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Bienvenido de nuevo! </string>
-      </property>
-     </widget>
      <widget class="QLabel" name="labelEmail">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>603</width>
+        <x>40</x>
+        <y>40</y>
+        <width>291</width>
         <height>29</height>
        </rect>
       </property>
@@ -229,7 +195,7 @@ background: rgb(160, 160, 160);
        </font>
       </property>
       <property name="text">
-       <string>---</string>
+       <string>--- USUARIO@EMAIL.COM ---</string>
       </property>
      </widget>
      <widget class="QLabel" name="labelUsuario">
@@ -237,7 +203,7 @@ background: rgb(160, 160, 160);
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>421</width>
+        <width>251</width>
         <height>31</height>
        </rect>
       </property>
@@ -249,27 +215,36 @@ background: rgb(160, 160, 160);
        </font>
       </property>
       <property name="text">
-       <string>---</string>
+       <string>-- NOMBRE USUARIO --</string>
       </property>
      </widget>
      <widget class="QListWidget" name="listIsins">
       <property name="geometry">
        <rect>
-        <x>430</x>
-        <y>20</y>
-        <width>361</width>
-        <height>151</height>
+        <x>10</x>
+        <y>120</y>
+        <width>491</width>
+        <height>181</height>
        </rect>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::DoubleClicked</set>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectItems</enum>
       </property>
       <property name="selectionRectVisible">
        <bool>true</bool>
+      </property>
+      <property name="sortingEnabled">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>120</y>
+        <x>790</x>
+        <y>250</y>
         <width>68</width>
         <height>19</height>
        </rect>
@@ -280,14 +255,14 @@ background: rgb(160, 160, 160);
        </font>
       </property>
       <property name="text">
-       <string>Modo</string>
+       <string>Gráfico</string>
       </property>
      </widget>
      <widget class="QComboBox" name="cbModo">
       <property name="geometry">
        <rect>
-        <x>80</x>
-        <y>120</y>
+        <x>710</x>
+        <y>280</y>
         <width>151</width>
         <height>25</height>
        </rect>
@@ -296,14 +271,99 @@ background: rgb(160, 160, 160);
        <string notr="true"/>
       </property>
      </widget>
+     <widget class="QPushButton" name="buttonAddISIN">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>80</y>
+        <width>161</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Yu Gothic UI Light</family>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Añadir Fondo</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../../../feather/plus-square.svg</normaloff>../../../feather/plus-square.svg</iconset>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>20</y>
+        <width>221</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Cartera Actual (Virtual): </string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cbCarteras">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>20</y>
+        <width>151</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="currentText">
+       <string notr="true"/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelCartera">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>90</y>
+        <width>231</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Yu Gothic Medium</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Fondos en tu Cartera</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>-10</x>
-       <y>190</y>
-       <width>821</width>
-       <height>401</height>
+       <x>0</x>
+       <y>320</y>
+       <width>881</width>
+       <height>421</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="layout">
@@ -320,7 +380,7 @@ background: rgb(160, 160, 160);
          <string notr="true"/>
         </property>
         <property name="text">
-         <string/>
+         <string>-- SELECCIONE UN ISIN PRIMERO --</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -336,7 +396,7 @@ background: rgb(160, 160, 160);
       <x>200</x>
       <y>0</y>
       <width>20</width>
-      <height>671</height>
+      <height>841</height>
      </rect>
     </property>
     <property name="font">

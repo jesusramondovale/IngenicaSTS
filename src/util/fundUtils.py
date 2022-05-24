@@ -1,10 +1,8 @@
 import sqlite3
-
 import investpy
 
 from highstock import Highstock
 from datetime import datetime
-
 from src.util.dialogs import isinNotFoundDialog
 
 
@@ -90,7 +88,7 @@ def graphHistoricalISIN(self, isins_selected, absolute):
 
                 'chart': {
                     'zoomType': 'x',
-                    'backgroundColor': '#a0a0a0',
+                    'backgroundColor': '#b1b1b1',
                     'animation': {
                         'duration': 2000
                     },
@@ -130,7 +128,7 @@ def graphHistoricalISIN(self, isins_selected, absolute):
 
                 'chart': {
                     'zoomType': 'x',
-                    'backgroundColor': '#a0a0a0',
+                    'backgroundColor': '#b1b1b1',
                     'animation': {
                         'duration': 2000
                     },

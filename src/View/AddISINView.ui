@@ -644,8 +644,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>78</x>
-     <y>792</y>
+     <x>93</x>
+     <y>862</y>
     </hint>
     <hint type="destinationlabel">
      <x>414</x>
@@ -660,8 +660,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>104</x>
-     <y>796</y>
+     <x>119</x>
+     <y>862</y>
     </hint>
     <hint type="destinationlabel">
      <x>398</x>
@@ -676,8 +676,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>38</x>
-     <y>789</y>
+     <x>53</x>
+     <y>862</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -692,12 +692,12 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>39</x>
-     <y>795</y>
+     <x>54</x>
+     <y>862</y>
     </hint>
     <hint type="destinationlabel">
-     <x>384</x>
-     <y>234</y>
+     <x>635</x>
+     <y>261</y>
     </hint>
    </hints>
   </connection>
@@ -708,8 +708,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>18</x>
-     <y>790</y>
+     <x>33</x>
+     <y>862</y>
     </hint>
     <hint type="destinationlabel">
      <x>426</x>
@@ -724,12 +724,12 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>121</x>
-     <y>795</y>
+     <x>126</x>
+     <y>862</y>
     </hint>
     <hint type="destinationlabel">
-     <x>419</x>
-     <y>377</y>
+     <x>635</x>
+     <y>409</y>
     </hint>
    </hints>
   </connection>
@@ -740,12 +740,12 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>58</x>
-     <y>799</y>
+     <x>73</x>
+     <y>862</y>
     </hint>
     <hint type="destinationlabel">
-     <x>404</x>
-     <y>447</y>
+     <x>635</x>
+     <y>483</y>
     </hint>
    </hints>
   </connection>
@@ -756,12 +756,12 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>788</y>
+     <x>91</x>
+     <y>862</y>
     </hint>
     <hint type="destinationlabel">
-     <x>382</x>
-     <y>521</y>
+     <x>635</x>
+     <y>557</y>
     </hint>
    </hints>
   </connection>
@@ -772,12 +772,12 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>90</x>
-     <y>792</y>
+     <x>105</x>
+     <y>862</y>
     </hint>
     <hint type="destinationlabel">
-     <x>402</x>
-     <y>590</y>
+     <x>635</x>
+     <y>631</y>
     </hint>
    </hints>
   </connection>
@@ -788,12 +788,12 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>74</x>
-     <y>792</y>
+     <x>89</x>
+     <y>862</y>
     </hint>
     <hint type="destinationlabel">
-     <x>416</x>
-     <y>653</y>
+     <x>635</x>
+     <y>705</y>
     </hint>
    </hints>
   </connection>

@@ -65,7 +65,6 @@ class MainView(QMainWindow):
             else:
                 print("Pulsado el botón salir")
 
-
         else:
             dlg = badLoginDialog(self)
             dlg.exec()
@@ -90,21 +89,40 @@ class UserView(QMainWindow):
         uic.loadUi("src/View/PrincipalUsuario.ui", view)
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
+        usuario = parent.textFieldUser.text()
+
+        view.id_usuario = db.execute("SELECT id FROM users WHERE nombre = ?", [usuario]).fetchone()
+        view.currentCartera = db.execute(
+            "SELECT nombre_cartera FROM carteras WHERE id_usuario = ? ORDER BY (nombre_cartera)",
+            ([view.id_usuario[0]])).fetchone()
 
         view.isins_selected = []
         view.buttonLogout.clicked.connect(view.logout)
         view.buttonAddISIN.clicked.connect(view.showAddIsin)
-        view.listIsins.itemDoubleClicked.connect(view.addIsinsChecked)
+        view.buttonAddCarteras.clicked.connect(view.showAddCarteras)
+
+        view.listIsins.itemClicked.connect(view.addIsinsChecked)
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
         view.cbModo.addItems(['Absoluto', 'Evolución'])
         view.cbModo.currentIndexChanged.connect(lambda clicked, isins=view.isins_selected: view.updateGraph(isins))
 
-        usuario = parent.textFieldUser.text()
         view.labelUsuario.setText(usuario)
         email = db.execute("SELECT email FROM users WHERE nombre = ?", [usuario]).fetchone()
+
+        view.carteras_usuario = db.execute(
+            "SELECT num_cartera , nombre_cartera FROM carteras WHERE id_usuario = ? ORDER BY (nombre_cartera)",
+            ([view.id_usuario[0]])).fetchall()
+        view.nombres_carteras = []
+        for e in view.carteras_usuario:
+            view.nombres_carteras.append(e[1])
+
+        view.cbCarteras.addItems(view.nombres_carteras)
+
         ISINS = db.execute(
-            "SELECT m.ISIN  FROM users u INNER JOIN mercados_usuario m ON (u.id == m.id_usuario) WHERE u.nombre = ? ",
-            [usuario]).fetchall()
+            "SELECT cu.ISIN FROM carteras c INNER JOIN carteras_usuario cu "
+            "USING (num_cartera)"
+            "WHERE c.nombre_cartera = ? AND cu.id_usuario = ? ",
+            ([view.currentCartera[0], view.id_usuario[0]])).fetchall()
         view.labelEmail.setText(email[0])
 
         isin_list = []
@@ -115,24 +133,74 @@ class UserView(QMainWindow):
         for ISIN in ISINS:
             isin_list_view.append(fundUtils.ISINtoFund(ISIN[0]))
 
-        view.listIsins.addItems(isin_list_view)
+        for x in isin_list_view:
+            item = QListWidgetItem(str(x))
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | ~QtCore.Qt.ItemIsEnabled)
+            item.setCheckState(QtCore.Qt.Unchecked)
+            view.listIsins.addItem(item)
 
         for e in isin_list:
             fundUtils.saveHistoricalFund(view, e)
 
         fundUtils.graphHistoricalISIN(view, view.isins_selected, False)
+        view.cbCarteras.currentIndexChanged.connect(view.updateQList)
+
+    def updateQList(view):
+
+        view.listIsins.clear()
+        view.isins_selected = []
+        view.labelCartera.setText('Fondos en ' + view.cbCarteras.currentText())
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+        ISINS = db.execute(
+            "SELECT cu.ISIN FROM carteras c INNER JOIN carteras_usuario cu "
+            "USING (num_cartera)"
+            "WHERE c.nombre_cartera = ? AND cu.id_usuario = ?   ",
+            ([str(view.cbCarteras.currentText()), view.id_usuario[0]])).fetchall()
+
+        isin_list = []
+        for ISIN in ISINS:
+            isin_list.append(ISIN[0])
+
+        isin_list_view = []
+        for ISIN in ISINS:
+            isin_list_view.append(fundUtils.ISINtoFund(ISIN[0]))
+
+        for x in isin_list_view:
+            item = QListWidgetItem(str(x))
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
+            item.setCheckState(QtCore.Qt.Unchecked)
+            view.listIsins.addItem(item)
+
+        for e in isin_list:
+            fundUtils.saveHistoricalFund(view, e)
+
+        fundUtils.graphHistoricalISIN(view, view.isins_selected, True)
 
     def addIsinsChecked(self):
+        print("Captada la pulsación")
+        try:
+            if fundUtils.nameToISIN(self.listIsins.item(self.listIsins.currentRow()).text()) in self.isins_selected:
+                # if fundUtils.nameToISIN(self.listIsins.item(self.listIsins.currentItem()).text()) in self.isins_selected:
 
-        if fundUtils.nameToISIN(self.listIsins.currentItem().text()) in self.isins_selected:
-            self.isins_selected.remove(fundUtils.nameToISIN(self.listIsins.currentItem().text()))
+                self.isins_selected.remove(fundUtils.nameToISIN(self.listIsins.currentItem().text()))
+                self.listIsins.currentItem().setCheckState(False)
+            else:
+                self.isins_selected.append(fundUtils.nameToISIN(self.listIsins.currentItem().text()))
+                self.listIsins.currentItem().setCheckState(True)
 
-        else:
-            self.isins_selected.append(fundUtils.nameToISIN(self.listIsins.currentItem().text()))
+            self.updateGraph(self.isins_selected)
 
-        self.updateGraph(self.isins_selected)
+        except AttributeError:
+            dlg = errorInesperado(self)
+            dlg.exec()
+
         print('ISINS : ')
         print(self.isins_selected)
+
+    def showAddCarteras(self):
+        cart = AddCarterasView(self)
+        cart.show()
 
     def showAddIsin(self):
         merc = AddISINView(self)
@@ -147,6 +215,43 @@ class UserView(QMainWindow):
             fundUtils.graphHistoricalISIN(self, isins_selected, True)
         else:
             fundUtils.graphHistoricalISIN(self, isins_selected, False)
+
+
+# Vista AddCarterasView.ui
+class AddCarterasView(QMainWindow):
+
+    def __init__(view, parent=QMainWindow):
+        super().__init__(parent)
+        uic.loadUi("src/View/AddCarterasView.ui", view)
+
+        view.id_usuario = parent.id_usuario
+        view.buttonCrear.setEnabled(False)
+        view.buttonCrear.clicked.connect(view.crear)
+        view.tfNombre.textChanged.connect(view.activarBoton)
+
+    def crear(self):
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+
+        nombre_cartera = self.tfNombre.text()
+        temp = db.execute("SELECT num_cartera FROM carteras WHERE id_usuario = ? AND nombre_cartera = ? ",
+                          [self.id_usuario[0], nombre_cartera]).fetchone()
+        if temp is None:
+            db.execute(
+                "INSERT INTO carteras VALUES (?,?,?,?) ",
+                [self.id_usuario[0], None, nombre_cartera,
+                 datetime.today().strftime('%d/%m/%Y')]).fetchone()
+            dlg = CarteraAddedSuccesfully(self)
+            dlg.exec()
+        else:
+            dlg = carteraAlreadyExistsDialog(self)
+            dlg.exec()
+
+    def activarBoton(self):
+        if self.tfNombre.text():
+            self.buttonCrear.setEnabled(True)
+        else:
+            self.buttonCrear.setEnabled(False)
 
 
 # Vista SignInView.ui
@@ -233,8 +338,9 @@ class AddISINView(QMainWindow):
             db = db_connection.cursor()
             ISIN = self.tfISIN.text().strip()
             id = db.execute("SELECT id FROM users WHERE nombre = ?", [parent.labelUsuario.text()]).fetchone()
-            m = db.execute("SELECT id_usuario , ISIN  FROM mercados_usuario WHERE id_usuario = ? AND ISIN = ?"
-                           , [id[0], ISIN]).fetchone()
+            m = db.execute(
+                "SELECT id_usuario , ISIN  FROM carteras_usuario WHERE id_usuario = ? AND ISIN = ? AND nombre_cartera = ? "
+                , [id[0], ISIN]).fetchone()
 
             try:
                 # Comprueba que el usuario no ha añadido ya ese ticker
@@ -245,7 +351,7 @@ class AddISINView(QMainWindow):
 
                 else:
                     fundUtils.getFundINFO(ISIN)
-                    db.execute("INSERT INTO mercados_usuario VALUES ( null , ? , ? )", (id[0], ISIN))
+                    db.execute("INSERT INTO carteras_usuario VALUES ( null , ? , ? )", (id[0], ISIN))
                     db.execute("INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)",
                                (datetime.today().strftime('%d/%m/%Y'),
                                 self.tfNombre.text(),
