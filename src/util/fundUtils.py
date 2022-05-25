@@ -11,15 +11,13 @@ def getFundINFO(self, isin):
         return investpy.funds.search_funds(by='isin', value=isin)
     except:
         try:
-            return investpy.funds.search_funds(by='symbol' , value=isin)
+            return investpy.funds.search_funds(by='symbol', value=isin)
         except:
             dlg = isinNotFoundDialog(self)
             dlg.exec()
 
 
-
 def ISINtoFund(isin):
-
     try:
         df = investpy.funds.search_funds(by='isin', value=isin)
         name = df.at[0, 'name']
@@ -30,15 +28,13 @@ def ISINtoFund(isin):
         return name
 
 
-
-
 def saveHistoricalFund(self, isin):
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     cursor = db_connection.cursor()
 
     try:
         try:
-            #Comprobar existencia de tabla 'isin'
+            # Comprobar existencia de tabla 'isin'
             cursor.execute("SELECT * FROM " + isin)
             print('El fondo ' + isin + ' ya está grabado en BD. No se hace nada')
             cursor.close()
@@ -46,7 +42,7 @@ def saveHistoricalFund(self, isin):
         except sqlite3.OperationalError:
             # Comprobar existencia de tabla 'symbol'
             try:
-                cursor.execute("SELECT * FROM " + "["+isin+"]")
+                cursor.execute("SELECT * FROM " + "[" + isin + "]")
                 print('El fondo ' + isin + ' ya está grabado en BD. No se hace nada')
                 cursor.close()
             except:
@@ -59,7 +55,7 @@ def saveHistoricalFund(self, isin):
             print('Descargando en investing.com ...')
             data = investpy.funds.get_fund_historical_data(
                 fund=ISINtoFund(isin),
-                country=getFundINFO(self,isin).at[0, 'country'],
+                country=getFundINFO(self, isin).at[0, 'country'],
                 from_date='01/01/1970',
                 to_date=datetime.today().strftime('%d/%m/%Y'),
                 as_json=False
@@ -80,10 +76,10 @@ def graphHistoricalISIN(self, isins_selected, absolute):
     if len(isins_selected) != 0:
 
         names = []
-        currency = getFundINFO(self,isins_selected[0]).at[0, 'currency']
+        currency = getFundINFO(self, isins_selected[0]).at[0, 'currency']
 
         for a in range(0, len(isins_selected), 1):
-            names.append(getFundINFO(self,isins_selected[a]).at[0, 'name'])
+            names.append(getFundINFO(self, isins_selected[a]).at[0, 'name'])
 
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         cursor = db_connection.cursor()
@@ -94,7 +90,7 @@ def graphHistoricalISIN(self, isins_selected, absolute):
             try:
                 data = cursor.execute("SELECT * FROM " + isins_selected[j] + " ").fetchall()
             except sqlite3.OperationalError:
-                data = cursor.execute("SELECT * FROM " + "["+isins_selected[j] +"]" + " ").fetchall()
+                data = cursor.execute("SELECT * FROM " + "[" + isins_selected[j] + "]" + " ").fetchall()
 
             values = []
             for row in range(0, len(data), 1):

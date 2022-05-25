@@ -87,7 +87,7 @@ class CarteraAddedSuccesfully(QDialog):
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
-            "La Cartera con nombre : " + parent.tfNombre.text() + " se ha\nañadido correctamente a su cuenta personal."))
+            "La Cartera con nombre : " + parent.tfNombre.text() + " se\nha añadido correctamente a su cuenta personal."))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
@@ -105,7 +105,7 @@ class TickerAddedSuccesfully(QDialog):
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
-            "El fondo con ISIN: " + parent.tfISIN.text() + " se ha añadido\ncorrectamente a su cartera personal."))
+            "El fondo con ISIN: " + parent.tfISIN.text() + " se ha \nañadido correctamente a su cartera personal."))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
