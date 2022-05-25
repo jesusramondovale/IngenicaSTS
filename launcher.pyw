@@ -100,7 +100,11 @@ class UserView(QMainWindow):
         view.buttonLogout.clicked.connect(view.logout)
         view.buttonAddISIN.clicked.connect(view.showAddIsin)
         view.buttonAddCarteras.clicked.connect(view.showAddCarteras)
+        view.buttonBorrarCartera.clicked.connect(view.borrarCartera)
+        view.buttonBorrarFondo.clicked.connect(view.borrarFondo)
 
+        view.buttonBorrarCartera.setEnabled(False)
+        view.buttonAddISIN.setEnabled(False)
         view.listIsins.itemClicked.connect(view.addIsinsChecked)
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
         view.cbModo.addItems(['Absoluto', 'Evolución'])
@@ -116,35 +120,81 @@ class UserView(QMainWindow):
             view.nombres_carteras.append(e[1])
 
         view.cbCarteras.addItems(view.nombres_carteras)
+        if view.cbCarteras.count() > 0 :
+            view.buttonAddISIN.setEnabled(True)
 
-        ISINS = db.execute(
-            "SELECT cu.ISIN FROM carteras c INNER JOIN carteras_usuario cu "
-            "USING (num_cartera)"
-            "WHERE c.nombre_cartera = ? AND cu.id_usuario = ? ",
-            ([view.currentCartera[0], view.id_usuario[0]])).fetchall()
+        if view.currentCartera is not None:
+
+            ISINS = db.execute(
+                "SELECT cu.ISIN FROM carteras c INNER JOIN carteras_usuario cu "
+                "USING (nombre_cartera)"
+                "WHERE c.nombre_cartera = ? AND cu.id_usuario = ? ",
+                ([view.currentCartera[0], view.id_usuario[0]])).fetchall()
+            isin_list = []
+            for ISIN in ISINS:
+                isin_list.append(ISIN[0])
+
+            isin_list_view = []
+            for ISIN in ISINS:
+                isin_list_view.append(str(fundUtils.ISINtoFund(ISIN[0])) + "  (" + ISIN[0] + ")")
+
+            for x in isin_list_view:
+                item = QListWidgetItem(str(x))
+                item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | ~QtCore.Qt.ItemIsEnabled)
+                item.setCheckState(QtCore.Qt.Unchecked)
+                view.listIsins.addItem(item)
+
+            for e in isin_list:
+                fundUtils.saveHistoricalFund(view, e)
+
+            fundUtils.graphHistoricalISIN(view, view.isins_selected, False)
+
         view.labelEmail.setText(email[0])
 
-        isin_list = []
-        for ISIN in ISINS:
-            isin_list.append(ISIN[0])
 
-        isin_list_view = []
-        for ISIN in ISINS:
-            isin_list_view.append(fundUtils.ISINtoFund(ISIN[0]))
-
-        for x in isin_list_view:
-            item = QListWidgetItem(str(x))
-            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | ~QtCore.Qt.ItemIsEnabled)
-            item.setCheckState(QtCore.Qt.Unchecked)
-            view.listIsins.addItem(item)
-
-        for e in isin_list:
-            fundUtils.saveHistoricalFund(view, e)
-
-        fundUtils.graphHistoricalISIN(view, view.isins_selected, False)
+        if len(view.nombres_carteras) > 0 :
+            view.buttonBorrarCartera.setEnabled(True)
 
         view.cbCarteras.currentIndexChanged.connect(view.updateQList)
         view.cbModo.currentIndexChanged.connect(lambda clicked, isins_selected=view.isins_selected: view.updateGraph(view.isins_selected))
+
+    def borrarFondo(view):
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+        index = view.cbCarteras.currentIndex()
+        cartera = str(view.cbCarteras.itemText(index))
+
+        name = view.listIsins.item(view.listIsins.currentRow()).text()
+        nameSize = len(name)
+        ISIN = name[nameSize - 13: nameSize - 1]
+
+        db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
+                   ([view.id_usuario[0], cartera , ISIN]))
+
+        view.listIsins.takeItem(view.listIsins.currentRow())
+        view.updateGraph(isins_selected=[])
+
+
+
+    def borrarCartera(view):
+
+        index = view.cbCarteras.currentIndex()
+
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+        cartera = str(view.cbCarteras.itemText(index))
+
+        db.execute("DELETE FROM carteras WHERE id_usuario = ? AND nombre_cartera = ?" ,
+                   ([view.id_usuario[0] ,cartera]))
+        db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ?",
+                   ([view.id_usuario[0], cartera]))
+
+        view.cbCarteras.removeItem(view.cbCarteras.currentIndex())
+
+        if view.cbCarteras.count() > 0:
+            view.buttonBorrarCartera.setEnabled(True)
+        else:
+            view.buttonBorrarCartera.setEnabled(False)
 
 
     def updateQList(view):
@@ -156,7 +206,7 @@ class UserView(QMainWindow):
         db = db_connection.cursor()
         ISINS = db.execute(
             "SELECT cu.ISIN FROM carteras c INNER JOIN carteras_usuario cu "
-            "USING (num_cartera)"
+            "USING (nombre_cartera)"
             "WHERE c.nombre_cartera = ? AND cu.id_usuario = ?   ",
             ([str(view.cbCarteras.currentText()), view.id_usuario[0]])).fetchall()
 
@@ -166,7 +216,7 @@ class UserView(QMainWindow):
 
         isin_list_view = []
         for ISIN in ISINS:
-            isin_list_view.append(fundUtils.ISINtoFund(ISIN[0]))
+            isin_list_view.append(str(fundUtils.ISINtoFund(ISIN[0])) + "  (" + ISIN[0] + ")")
 
         for x in isin_list_view:
             item = QListWidgetItem(str(x))
@@ -181,14 +231,19 @@ class UserView(QMainWindow):
 
     def addIsinsChecked(self):
         print("Captada la pulsación")
+
+
         try:
-            if fundUtils.nameToISIN(self.listIsins.item(self.listIsins.currentRow()).text()) in self.isins_selected:
+            name = self.listIsins.item(self.listIsins.currentRow()).text()
+            nameSize = len(name)
+            ISIN = name[ nameSize - 13  : nameSize - 1  ]
+            if ISIN in self.isins_selected:
                 # if fundUtils.nameToISIN(self.listIsins.item(self.listIsins.currentItem()).text()) in self.isins_selected:
 
-                self.isins_selected.remove(fundUtils.nameToISIN(self.listIsins.currentItem().text()))
+                self.isins_selected.remove(ISIN)
                 self.listIsins.currentItem().setCheckState(False)
             else:
-                self.isins_selected.append(fundUtils.nameToISIN(self.listIsins.currentItem().text()))
+                self.isins_selected.append(ISIN)
                 self.listIsins.currentItem().setCheckState(True)
 
             self.updateGraph(self.isins_selected)
@@ -252,10 +307,14 @@ class AddCarterasView(QMainWindow):
 
             for e in self.carteras_usuario:
                 self.nombres_carteras.append(e[1])
-
+            self.parent().buttonBorrarCartera.setEnabled(True)
             dlg = CarteraAddedSuccesfully(self)
             dlg.exec()
+            self.close()
+            self.parent().cbCarteras.clear()
             self.parent().cbCarteras.addItems(self.nombres_carteras)
+            if self.parent().cbCarteras.count() > 0:
+                self.parent().buttonAddISIN.setEnabled(True)
 
         else:
             dlg = carteraAlreadyExistsDialog(self)
@@ -353,8 +412,10 @@ class AddISINView(QMainWindow):
             ISIN = self.tfISIN.text().strip()
             id = db.execute("SELECT id FROM users WHERE nombre = ?", [parent.labelUsuario.text()]).fetchone()
             m = db.execute(
-                "SELECT id_usuario , ISIN  FROM carteras_usuario WHERE id_usuario = ? AND ISIN = ? AND nombre_cartera = ? "
-                , [id[0], ISIN]).fetchone()
+                "SELECT * FROM carteras_usuario cu INNER JOIN carteras c USING(nombre_cartera)"
+                "WHERE cu.id_usuario == ? AND cu.ISIN == ? AND c.nombre_cartera == ? "
+                , [id[0], ISIN , parent.cbCarteras.currentText()]).fetchone()
+
 
             try:
                 # Comprueba que el usuario no ha añadido ya ese ticker
@@ -364,8 +425,10 @@ class AddISINView(QMainWindow):
                     db.close()
 
                 else:
-                    fundUtils.getFundINFO(ISIN)
-                    db.execute("INSERT INTO carteras_usuario VALUES ( null , ? , ? )", (id[0], ISIN))
+                    fundUtils.getFundINFO(self,ISIN)
+                    db.execute("INSERT INTO carteras_usuario VALUES ( ? , ? , ? )", ( id[0], parent.cbCarteras.currentText(), ISIN))
+
+                    '''
                     db.execute("INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)",
                                (datetime.today().strftime('%d/%m/%Y'),
                                 self.tfNombre.text(),
@@ -381,13 +444,16 @@ class AddISINView(QMainWindow):
                                 None,
                                 self.tfDuracion.text(),
                                 ))
-                    parent.listIsins.addItem(fundUtils.getFundINFO(ISIN).at[0, 'name'])
+                    '''
+
+                    parent.listIsins.addItem(str(fundUtils.getFundINFO(self,ISIN).at[0, 'name']) + "  (" + ISIN + ")")
+                    fundUtils.saveHistoricalFund(self,ISIN)
                     dlg = TickerAddedSuccesfully(self)
                     dlg.exec()
                     self.hide()
                     db.close()
 
-            except:
+            except RuntimeError:
                 dlg = isinNotFoundDialog(self)
                 dlg.exec()
                 db.close()

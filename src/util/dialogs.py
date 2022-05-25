@@ -87,7 +87,7 @@ class CarteraAddedSuccesfully(QDialog):
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
-            "La Cartera con nombre : " + parent.tfNombre.text() + " se ha añadido\ncorrectamente a su cuenta personal."))
+            "La Cartera con nombre : " + parent.tfNombre.text() + " se ha\nañadido correctamente a su cuenta personal."))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 

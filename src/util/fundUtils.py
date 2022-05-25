@@ -6,14 +6,16 @@ from datetime import datetime
 from src.util.dialogs import isinNotFoundDialog
 
 
-def getFundINFO(isin):
-    return investpy.funds.search_funds(by='isin', value=isin)
+def getFundINFO(self, isin):
+    try:
+        return investpy.funds.search_funds(by='isin', value=isin)
+    except:
+        try:
+            return investpy.funds.search_funds(by='symbol' , value=isin)
+        except:
+            dlg = isinNotFoundDialog(self)
+            dlg.exec()
 
-
-def nameToISIN(name):
-    df = investpy.funds.search_funds(by='name', value=name)
-    isin = df.at[0, 'isin']
-    return isin
 
 
 def ISINtoFund(isin):
@@ -39,7 +41,7 @@ def saveHistoricalFund(self, isin):
             print('Descargando en investing.com ...')
             data = investpy.funds.get_fund_historical_data(
                 fund=ISINtoFund(isin),
-                country=getFundINFO(isin).at[0, 'country'],
+                country=getFundINFO(self,isin).at[0, 'country'],
                 from_date='01/01/1970',
                 to_date=datetime.today().strftime('%d/%m/%Y'),
                 as_json=False
@@ -60,10 +62,10 @@ def graphHistoricalISIN(self, isins_selected, absolute):
     if len(isins_selected) != 0:
 
         names = []
-        currency = getFundINFO(isins_selected[0]).at[0, 'currency']
+        currency = getFundINFO(self,isins_selected[0]).at[0, 'currency']
 
         for a in range(0, len(isins_selected), 1):
-            names.append(getFundINFO(isins_selected[a]).at[0, 'name'])
+            names.append(getFundINFO(self,isins_selected[a]).at[0, 'name'])
 
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         cursor = db_connection.cursor()
