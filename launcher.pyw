@@ -237,6 +237,21 @@ class UserView(QMainWindow):
             name = self.listIsins.item(self.listIsins.currentRow()).text()
             nameSize = len(name)
             ISIN = name[ nameSize - 13  : nameSize - 1  ]
+            fundUtils.ISINtoFund(ISIN)
+            if ISIN in self.isins_selected:
+                # if fundUtils.nameToISIN(self.listIsins.item(self.listIsins.currentItem()).text()) in self.isins_selected:
+
+                self.isins_selected.remove(ISIN)
+                self.listIsins.currentItem().setCheckState(False)
+            else:
+                self.isins_selected.append(ISIN)
+                self.listIsins.currentItem().setCheckState(True)
+
+            self.updateGraph(self.isins_selected)
+        except:
+            name = self.listIsins.item(self.listIsins.currentRow()).text()
+            nameSize = len(name)
+            ISIN = name[nameSize - 11: nameSize - 1]
             if ISIN in self.isins_selected:
                 # if fundUtils.nameToISIN(self.listIsins.item(self.listIsins.currentItem()).text()) in self.isins_selected:
 
@@ -248,9 +263,6 @@ class UserView(QMainWindow):
 
             self.updateGraph(self.isins_selected)
 
-        except AttributeError:
-            dlg = errorInesperado(self)
-            dlg.exec()
 
         print('ISINS : ')
         print(self.isins_selected)

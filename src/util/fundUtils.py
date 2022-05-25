@@ -19,9 +19,17 @@ def getFundINFO(self, isin):
 
 
 def ISINtoFund(isin):
-    df = investpy.funds.search_funds(by='isin', value=isin)
-    name = df.at[0, 'name']
-    return name
+
+    try:
+        df = investpy.funds.search_funds(by='isin', value=isin)
+        name = df.at[0, 'name']
+        return name
+    except RuntimeError:
+        df = investpy.funds.search_funds(by='symbol', value=isin)
+        name = df.at[0, 'name']
+        return name
+
+
 
 
 def saveHistoricalFund(self, isin):
@@ -29,12 +37,22 @@ def saveHistoricalFund(self, isin):
     cursor = db_connection.cursor()
 
     try:
-        # Comprobar existencia de tabla 'isin'
-        cursor.execute("SELECT * FROM " + isin + " ")
-        print('El fondo ' + isin + ' ya está grabado en BD. No se hace nada')
-        cursor.close()
+        try:
+            #Comprobar existencia de tabla 'isin'
+            cursor.execute("SELECT * FROM " + isin)
+            print('El fondo ' + isin + ' ya está grabado en BD. No se hace nada')
+            cursor.close()
 
-    except sqlite3.OperationalError:
+        except sqlite3.OperationalError:
+            # Comprobar existencia de tabla 'symbol'
+            try:
+                cursor.execute("SELECT * FROM " + "["+isin+"]")
+                print('El fondo ' + isin + ' ya está grabado en BD. No se hace nada')
+                cursor.close()
+            except:
+                raise ValueError
+
+    except ValueError:
         print('No existe, procedo a descargar y grabar')
 
         try:
@@ -73,7 +91,10 @@ def graphHistoricalISIN(self, isins_selected, absolute):
 
         for j in range(0, len(isins_selected), 1):
 
-            data = cursor.execute("SELECT * FROM " + isins_selected[j] + " ").fetchall()
+            try:
+                data = cursor.execute("SELECT * FROM " + isins_selected[j] + " ").fetchall()
+            except sqlite3.OperationalError:
+                data = cursor.execute("SELECT * FROM " + "["+isins_selected[j] +"]" + " ").fetchall()
 
             values = []
             for row in range(0, len(data), 1):
