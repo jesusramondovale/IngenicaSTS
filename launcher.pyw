@@ -104,7 +104,6 @@ class UserView(QMainWindow):
         view.listIsins.itemClicked.connect(view.addIsinsChecked)
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
         view.cbModo.addItems(['Absoluto', 'Evolución'])
-        view.cbModo.currentIndexChanged.connect(lambda clicked, isins=view.isins_selected: view.updateGraph(isins))
 
         view.labelUsuario.setText(usuario)
         email = db.execute("SELECT email FROM users WHERE nombre = ?", [usuario]).fetchone()
@@ -143,7 +142,10 @@ class UserView(QMainWindow):
             fundUtils.saveHistoricalFund(view, e)
 
         fundUtils.graphHistoricalISIN(view, view.isins_selected, False)
+
         view.cbCarteras.currentIndexChanged.connect(view.updateQList)
+        view.cbModo.currentIndexChanged.connect(lambda clicked, isins_selected=view.isins_selected: view.updateGraph(view.isins_selected))
+
 
     def updateQList(view):
 
@@ -241,8 +243,20 @@ class AddCarterasView(QMainWindow):
                 "INSERT INTO carteras VALUES (?,?,?,?) ",
                 [self.id_usuario[0], None, nombre_cartera,
                  datetime.today().strftime('%d/%m/%Y')]).fetchone()
+
+            self.carteras_usuario = db.execute(
+                "SELECT num_cartera , nombre_cartera FROM carteras WHERE id_usuario = ? ORDER BY (nombre_cartera)",
+                ([self.id_usuario[0]])).fetchall()
+
+            self.nombres_carteras = []
+
+            for e in self.carteras_usuario:
+                self.nombres_carteras.append(e[1])
+
             dlg = CarteraAddedSuccesfully(self)
             dlg.exec()
+            self.parent().cbCarteras.addItems(self.nombres_carteras)
+
         else:
             dlg = carteraAlreadyExistsDialog(self)
             dlg.exec()
