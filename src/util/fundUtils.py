@@ -1,11 +1,28 @@
+######################################################################
+##   LIBRERÍA DE ÚTILES PARA CONSULTA DE DATOS SOBRE INVESTING.COM  ##
+##          EMPAQUETANDO LLAMADAS A LA API investpy                 ##
+######################################################################
 import sqlite3
 import investpy
 
+# Librería de Gráficos Útiles especializados en
+# la visualización de índices bursátiles
 from highstock import Highstock
+
 from datetime import datetime
 from src.util.dialogs import isinNotFoundDialog
 
 
+'''
+    - Obtiene la Información existente en investing.com 
+    del Fondo introducido como parámetro de manera indiferente 
+    entre ISINs o Symbols. 
+    
+    @params: ISIN del Fondo | Symbol del Fondo
+    @returns: DataFrame con la Información proporcionada
+    por investing.com del Fondo (nombre, país, isin, moneda..)
+    
+'''
 def getFundINFO(self, isin):
     try:
         return investpy.funds.search_funds(by='isin', value=isin)
@@ -17,6 +34,13 @@ def getFundINFO(self, isin):
             dlg.exec()
 
 
+'''
+    - Convierte el ISIN/Symbol de un fondo
+    en su nombre completo.
+    
+    @params: ISIN | Symbol
+    @returns: Nombre (str) del Fondo     
+'''
 def ISINtoFund(isin):
     try:
         df = investpy.funds.search_funds(by='isin', value=isin)
@@ -28,6 +52,16 @@ def ISINtoFund(isin):
         return name
 
 
+'''
+    - Descarga de investing.com y graba en BD
+    todos los valores históricos del fondo introducido
+    como parámetro (en caso de no existir previamente)
+    - Crea una nueva tabla (si no existe) en BD con 
+    nombre = ISIN/Symbol y carga todos sus datos.
+    
+    @params: ISIN | Symbol 
+    @returns: None
+'''
 def saveHistoricalFund(self, isin):
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     cursor = db_connection.cursor()
@@ -72,6 +106,15 @@ def saveHistoricalFund(self, isin):
             cursor.close()
 
 
+'''
+    - Grafica la lista de ISINS/Symbols seleccionados 
+    por el usuario en el layout de la vista UserView. 
+    
+    @params: self (UserView)
+           : list -> Lista de ISINS/Symbols a graficar (isins_selected)
+           : bool -> Modo de graficación (absolute=True o evolución=False)
+    @returns: None
+'''
 def graphHistoricalISIN(self, isins_selected, absolute):
     if len(isins_selected) != 0:
 
