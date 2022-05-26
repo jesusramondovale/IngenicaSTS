@@ -12,7 +12,6 @@ from highstock import Highstock
 from datetime import datetime
 from src.util.dialogs import isinNotFoundDialog
 
-
 '''
     - Obtiene la Información existente en investing.com 
     del Fondo introducido como parámetro de manera indiferente 
@@ -30,8 +29,7 @@ def getFundINFO(self, isin):
         try:
             return investpy.funds.search_funds(by='symbol', value=isin)
         except:
-            dlg = isinNotFoundDialog(self)
-            dlg.exec()
+            raise RuntimeError
 
 
 '''
@@ -65,13 +63,13 @@ def ISINtoFund(isin):
 def saveHistoricalFund(self, isin):
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     cursor = db_connection.cursor()
-
     try:
         try:
             # Comprobar existencia de tabla 'isin'
             cursor.execute("SELECT * FROM " + isin)
             print('El fondo ' + isin + ' ya está grabado en BD. No se hace nada')
             cursor.close()
+            return
 
         except sqlite3.OperationalError:
             # Comprobar existencia de tabla 'symbol'
@@ -79,8 +77,11 @@ def saveHistoricalFund(self, isin):
                 cursor.execute("SELECT * FROM " + "[" + isin + "]")
                 print('El fondo ' + isin + ' ya está grabado en BD. No se hace nada')
                 cursor.close()
+                return
             except:
+                cursor.close()
                 raise ValueError
+                return
 
     except ValueError:
         print('No existe, procedo a descargar y grabar')
@@ -98,12 +99,15 @@ def saveHistoricalFund(self, isin):
             data.to_sql(isin, con=db_connection)
             print('Completado con éxito!')
             cursor.close()
+            return
+
 
         except RuntimeError:
             print('El fondo no ha sido encontrado en investing.com!')
             dlg = isinNotFoundDialog(self)
             dlg.exec()
             cursor.close()
+            return
 
 
 '''
@@ -122,7 +126,7 @@ def graphHistoricalISIN(self, isins_selected, absolute):
         currency = getFundINFO(self, isins_selected[0]).at[0, 'currency']
 
         for a in range(0, len(isins_selected), 1):
-            names.append(getFundINFO(self, isins_selected[a]).at[0, 'name'])
+            names.append(isins_selected[a])
 
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         cursor = db_connection.cursor()
@@ -147,7 +151,9 @@ def graphHistoricalISIN(self, isins_selected, absolute):
         if absolute:
             options = {
                 # 'colors': ['#a0a0a0'],
-
+                'legend':{
+                    'enabled' : True
+                },
                 'chart': {
                     'zoomType': 'x',
                     'backgroundColor': '#b1b1b1',
@@ -181,13 +187,16 @@ def graphHistoricalISIN(self, isins_selected, absolute):
                     "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
                     "valueDecimals": 2,
                 },
+
             }
             H.set_dict_options(options)
             cursor.close()
         else:
             options = {
                 # 'colors': ['#a0a0a0'],
-
+                'legend': {
+                    'enabled': True
+                },
                 'chart': {
                     'zoomType': 'x',
                     'backgroundColor': '#b1b1b1',
@@ -218,7 +227,11 @@ def graphHistoricalISIN(self, isins_selected, absolute):
                     "plotLines": [{"value": 0, "width": 3, "color": "white"}],
                 },
 
-                "plotOptions": {"series": {"compare": "percent"}},
+                "plotOptions": {
+                    "series": {
+                        "compare": "percent"
+                    }
+                },
 
                 "tooltip": {
                     "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
@@ -285,3 +298,279 @@ def graphHistoricalISIN(self, isins_selected, absolute):
         view.browser.load(q_url)
         view.layout.addWidget(view.browser)
         '''
+
+
+
+
+def UpdateGraph(self, isin, isins_selected, absolute):
+
+    if isin is None:
+        print('ISIN is None')
+        names = []
+        for elem in isins_selected:
+            names.append(elem)
+        if len(isins_selected) != 0:
+            currency = getFundINFO(self, isins_selected[0]).at[0, 'currency']
+
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            cursor = db_connection.cursor()
+            self.H = Highstock()
+
+            for j in range(0, len(isins_selected), 1):
+
+                try:
+                    data = cursor.execute("SELECT * FROM " + isins_selected[j] + " ").fetchall()
+                except sqlite3.OperationalError:
+                    data = cursor.execute("SELECT * FROM " + "[" + isins_selected[j] + "]" + " ").fetchall()
+
+                values = []
+                for row in range(0, len(data), 1):
+                    date = data[row][0]
+                    stamp = datetime.strptime(date[:10], "%Y-%m-%d")
+                    dataTuple = (datetime.fromtimestamp(datetime.timestamp(stamp)), data[row][1])
+                    values.append(dataTuple)
+
+                self.H.add_data_set(values, "line", names[j])
+
+            if absolute:
+                print('Mode: Absolute')
+                options = {
+                    # 'colors': ['#a0a0a0'],
+                    'legend': {
+                        'enabled': True
+                    },
+                    'chart': {
+                        'zoomType': 'x',
+                        'backgroundColor': '#b1b1b1',
+                        'animation': {
+                            'duration': 2000
+                        },
+                    },
+                    'title': {
+                        'text': names
+                    },
+
+                    "rangeSelector": {"selected": 6},
+
+                    "yAxis": {
+                        'opposite': True,
+                        'title': {
+                            'text': currency,
+                            'align': 'middle',
+                            'style': {
+                                'fontSize': '18px'
+                            }
+                        },
+                        'labels': {
+                            'align': 'left'
+                        },
+
+                        "plotLines": [{"value": 0, "width": 2, "color": "white"}],
+                    },
+
+                    "tooltip": {
+                        "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
+                        "valueDecimals": 2,
+                    },
+
+                }
+                self.H.set_dict_options(options)
+
+
+            else:
+                print('Mode: Evolucion')
+                options = {
+                    # 'colors': ['#a0a0a0'],
+                    'legend': {
+                        'enabled': True
+                    },
+
+                    'chart': {
+                        'zoomType': 'x',
+                        'backgroundColor': '#b1b1b1',
+                        'animation': {
+                            'duration': 2000
+                        },
+                    },
+                    'title': {
+                        'text': names
+                    },
+
+                    "rangeSelector": {"selected": 6},
+
+                    "yAxis": {
+                        'opposite': True,
+                        'title': {
+                            'text': '%',
+                            'rotation': 90,
+                            'align': 'middle',
+                            'style': {
+                                'fontSize': '18px'
+                            }
+
+                        },
+                        'labels': {
+                            'align': 'left'
+                        },
+
+                        "plotLines": [{"value": 0, "width": 3, "color": "white"}],
+                    },
+
+                    "plotOptions": {
+                        "series": {
+                            "compare": "percent"
+                        }
+                    },
+
+                    "tooltip": {
+                        "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
+                        "valueDecimals": 2,
+                    },
+                }
+                self.H.set_dict_options(options)
+
+            self.browser.setHtml(self.H.htmlcontent)
+            self.layout.addWidget(self.browser)
+            self.labelNoIsin.hide()
+            self.browser.show()
+
+        else:
+            self.browser.hide()
+            self.labelNoIsin.show()
+
+
+
+    else:
+        if len(isins_selected) != 0:
+            if len(isins_selected) == 1:
+                self.H = Highstock()
+
+            names = []
+            for elem in isins_selected:
+                names.append(elem)
+
+            currency = getFundINFO(self, isins_selected[0]).at[0, 'currency']
+
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            cursor = db_connection.cursor()
+
+            try:
+                data = cursor.execute("SELECT * FROM " + isin + " ").fetchall()
+            except sqlite3.OperationalError:
+                data = cursor.execute("SELECT * FROM " + "[" + isin + "]" + " ").fetchall()
+            values = []
+
+            for row in range(0, len(data), 1):
+                date = data[row][0]
+                stamp = datetime.strptime(date[:10], "%Y-%m-%d")
+                dataTuple = (datetime.fromtimestamp(datetime.timestamp(stamp)), data[row][1])
+                values.append(dataTuple)
+
+            self.H.add_data_set(values, "line", isin)
+
+            if absolute:
+                options = {
+                    # 'colors': ['#a0a0a0'],
+                    'legend': {
+                        'enabled': True
+                    },
+                    'chart': {
+                        'zoomType': 'x',
+                        'backgroundColor': '#b1b1b1',
+                        'animation': {
+                            'duration': 2000
+                        },
+                    },
+                    'title': {
+                        'text': names
+                    },
+
+                    "rangeSelector": {"selected": 6},
+
+                    "yAxis": {
+                        'opposite': True,
+                        'title': {
+                            'text': currency,
+                            'align': 'middle',
+                            'style': {
+                                'fontSize': '18px'
+                            }
+                        },
+                        'labels': {
+                            'align': 'left'
+                        },
+
+                        "plotLines": [{"value": 0, "width": 2, "color": "white"}],
+                    },
+
+                    "tooltip": {
+                        "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
+                        "valueDecimals": 2,
+                    },
+
+                }
+                self.H.set_dict_options(options)
+                cursor.close()
+            else:
+                options = {
+                    # 'colors': ['#a0a0a0'],
+                    'legend': {
+                        'enabled': True
+                    },
+                    'chart': {
+                        'zoomType': 'x',
+                        'backgroundColor': '#b1b1b1',
+                        'animation': {
+                            'duration': 2000
+                        },
+                    },
+                    'title': {
+                        'text': names
+                    },
+
+                    "rangeSelector": {"selected": 6},
+
+                    "yAxis": {
+                        'opposite': True,
+                        'title': {
+                            'text': '%',
+                            'rotation': 90,
+                            'align': 'middle',
+                            'style': {
+                                'fontSize': '18px'
+                            }
+
+                        },
+                        'labels': {
+                            'align': 'left'
+                        },
+
+                        "plotLines": [{"value": 0, "width": 3, "color": "white"}],
+                    },
+
+                    "plotOptions": {
+                        "series": {
+                            "compare": "percent"
+                        }
+                    },
+
+                    "tooltip": {
+                        "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
+                        "valueDecimals": 2,
+                    },
+                }
+                self.H.set_dict_options(options)
+                cursor.close()
+
+
+            self.browser.setHtml(self.H.htmlcontent)
+            self.layout.addWidget(self.browser)
+            self.labelNoIsin.hide()
+            self.browser.show()
+
+            cursor.close()
+
+        else:
+            self.browser.hide()
+            self.labelNoIsin.show()
+            self.labelNoIsin.setText('Seleccione primero un ISIN de la lista!')

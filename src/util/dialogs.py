@@ -12,6 +12,23 @@ from PyQt5 import QtCore
     @parent: AddISINView 
 '''
 
+class downloadingIsinDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Espere...")
+        self.setFixedWidth(330)
+
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel(
+            "El fondo aún está descargándose.\n Espere unos instantes."))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
 
 class ISINAlready(QDialog):
     def __init__(self, parent=None):

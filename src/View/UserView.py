@@ -9,6 +9,8 @@ from PyQt5 import uic, QtWebEngineWidgets
 from PyQt5.QtWidgets import *
 
 # Importamos la lógica de otras vistas
+from highstock import Highstock
+
 from src.View.AddCarterasView import AddCarterasView
 from src.View.AddISINView import AddISINView
 from src.util import fundUtils
@@ -57,6 +59,7 @@ class UserView(QMainWindow):
         view.buttonBorrarFondo.clicked.connect(view.borrarFondo)
         view.listIsins.itemClicked.connect(view.addIsinsChecked)
 
+        view.H = Highstock()
         # Desactivación de los botones de borrar Cartera y Añadir Nuevo Fondo
         view.buttonBorrarCartera.setEnabled(False)
         view.buttonAddISIN.setEnabled(False)
@@ -134,7 +137,7 @@ class UserView(QMainWindow):
         # Conexión de las señales de eventos en los selectores de Selección de Cartera y Modo de Graficación
         view.cbCarteras.currentIndexChanged.connect(view.updateQList)
         view.cbModo.currentIndexChanged.connect(
-            lambda clicked, isins_selected=view.isins_selected: view.updateGraph(view.isins_selected))
+            lambda clicked, isins_selected=view.isins_selected: view.updateGraph(None, view.isins_selected))
 
 
     '''
@@ -153,12 +156,13 @@ class UserView(QMainWindow):
         name = view.listIsins.item(view.listIsins.currentRow()).text()
         nameSize = len(name)
         ISIN = name[nameSize - 13: nameSize - 1]
-
+        if ISIN[1] == '(':
+            ISIN = ISIN[2:12]
         db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
                    ([view.id_usuario[0], cartera, ISIN]))
 
         view.listIsins.takeItem(view.listIsins.currentRow())
-        view.updateGraph(isins_selected=[])
+        view.updateGraph(isin=None , isins_selected=[])
 
     '''
         - Borra la cartera seleccionada del ComboBox de la vista
@@ -195,35 +199,42 @@ class UserView(QMainWindow):
     '''
     def updateQList(view):
 
-        view.listIsins.clear()
-        view.isins_selected = []
-        view.labelCartera.setText('Fondos en ' + view.cbCarteras.currentText())
-        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-        db = db_connection.cursor()
-        ISINS = db.execute(
-            "SELECT cu.ISIN FROM carteras c INNER JOIN carteras_usuario cu "
-            "USING (nombre_cartera)"
-            "WHERE c.nombre_cartera = ? AND cu.id_usuario = ?   ",
-            ([str(view.cbCarteras.currentText()), view.id_usuario[0]])).fetchall()
+        try:
+            view.listIsins.clear()
+            view.isins_selected = []
+            view.labelCartera.setText('Fondos en ' + view.cbCarteras.currentText())
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+            ISINS = db.execute(
+                "SELECT cu.ISIN FROM carteras c INNER JOIN carteras_usuario cu "
+                "USING (nombre_cartera)"
+                "WHERE c.nombre_cartera = ? AND cu.id_usuario = ?   ",
+                ([str(view.cbCarteras.currentText()), view.id_usuario[0]])).fetchall()
 
-        isin_list = []
-        for ISIN in ISINS:
-            isin_list.append(ISIN[0])
+            isin_list = []
+            for ISIN in ISINS:
+                isin_list.append(ISIN[0])
 
-        isin_list_view = []
-        for ISIN in ISINS:
-            isin_list_view.append(str(fundUtils.ISINtoFund(ISIN[0])) + "  (" + ISIN[0] + ")")
+            isin_list_view = []
+            for ISIN in ISINS:
+                isin_list_view.append(str(fundUtils.ISINtoFund(ISIN[0])) + "  (" + ISIN[0] + ")")
 
-        for x in isin_list_view:
-            item = QListWidgetItem(str(x))
-            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
-            item.setCheckState(QtCore.Qt.Unchecked)
-            view.listIsins.addItem(item)
+            for x in isin_list_view:
+                item = QListWidgetItem(str(x))
+                item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
+                item.setCheckState(QtCore.Qt.Unchecked)
+                view.listIsins.addItem(item)
 
-        for e in isin_list:
-            fundUtils.saveHistoricalFund(view, e)
 
-        fundUtils.graphHistoricalISIN(view, view.isins_selected, True)
+            for e in isin_list:
+                fundUtils.saveHistoricalFund(view, e)
+
+            fundUtils.graphHistoricalISIN(view, view.isins_selected, True)
+
+        except:
+            # Avisa al Usuario de que el fondo está descargándose
+            dlg = downloadingIsinDialog(view)
+            dlg.exec()
 
     '''
         - Añade el Fondo seleccionado a la lista de graficación
@@ -250,16 +261,18 @@ class UserView(QMainWindow):
             if ISIN in self.isins_selected:
                 self.isins_selected.remove(ISIN)
                 self.listIsins.currentItem().setCheckState(False)
+                self.updateGraph(None, self.isins_selected)
+
             else:
                 self.isins_selected.append(ISIN)
                 self.listIsins.currentItem().setCheckState(True)
+                # Actualiza el gráfico
+                self.updateGraph(ISIN, self.isins_selected)
 
-            # Actualiza el gráfico
-            self.updateGraph(self.isins_selected)
 
         # Se ha capturado la excepción de la API de investing.com, se procede
         # a intentar lo mismo pero tomando ISIN como si fuese un Symbol
-        except:
+        except :
 
             # Captura del ISIN del Fondo seleccionado en la vista
             name = self.listIsins.item(self.listIsins.currentRow()).text()
@@ -270,12 +283,13 @@ class UserView(QMainWindow):
             if ISIN in self.isins_selected:
                 self.isins_selected.remove(ISIN)
                 self.listIsins.currentItem().setCheckState(False)
+                self.updateGraph(None, self.isins_selected)
             else:
                 self.isins_selected.append(ISIN)
                 self.listIsins.currentItem().setCheckState(True)
+                # Actualiza el gráfico
+                self.updateGraph(ISIN, self.isins_selected)
 
-            # Actualiza el gráfico
-            self.updateGraph(self.isins_selected)
 
         print('FONDOS EN GRÁFICO: ')
         print(self.isins_selected)
@@ -321,8 +335,8 @@ class UserView(QMainWindow):
                 : lista de fondos seleccionados (isins_list)
          @returns: None
     '''
-    def updateGraph(self, isins_selected):
+    def updateGraph(self, isin , isins_selected):
         if self.cbModo.currentIndex() == 0:
-            fundUtils.graphHistoricalISIN(self, isins_selected, True)
+            fundUtils.UpdateGraph(self, isin , isins_selected, True)
         else:
-            fundUtils.graphHistoricalISIN(self, isins_selected, False)
+            fundUtils.UpdateGraph(self, isin , isins_selected, False)
