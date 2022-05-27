@@ -252,50 +252,26 @@ class UserView(QMainWindow):
     def addIsinsChecked(self):
         print("Captada la pulsación")
 
-        try:
 
-            # Captura del ISIN del Fondo seleccionado en la vista
-            name = self.listIsins.item(self.listIsins.currentRow()).text()
-            nameSize = len(name)
-            ISIN = name[nameSize - 13: nameSize - 1]
+        # Captura del ISIN del Fondo seleccionado en la vista
+        name = self.listIsins.item(self.listIsins.currentRow()).text()
+        nameSize = len(name)
+        ISIN = name[name.rfind("(") + 1   : name.rfind(")")]
+        # Comprueba si ISIN es el ISIN del fondo (si existe en investing.com)
+        # lanzando RuntimeError en caso negativo
+        fundUtils.ISINtoFund(ISIN)
 
-            # Comprueba si ISIN es el ISIN del fondo (si existe en investing.com)
-            # lanzando RuntimeError en caso negativo
-            fundUtils.ISINtoFund(ISIN)
+        # Añade o elimina el fondo seleccionado a la lista de graficación
+        if ISIN in self.isins_selected:
+            self.isins_selected.remove(ISIN)
+            self.listIsins.currentItem().setCheckState(False)
+            self.updateGraph(None, self.isins_selected)
 
-            # Añade o elimina el fondo seleccionado a la lista de graficación
-            if ISIN in self.isins_selected:
-                self.isins_selected.remove(ISIN)
-                self.listIsins.currentItem().setCheckState(False)
-                self.updateGraph(None, self.isins_selected)
-
-            else:
-                self.isins_selected.append(ISIN)
-                self.listIsins.currentItem().setCheckState(True)
-                # Actualiza el gráfico
-                self.updateGraph(ISIN, self.isins_selected)
-
-
-        # Se ha capturado la excepción de la API de investing.com, se procede
-        # a intentar lo mismo pero tomando ISIN como si fuese un Symbol
-        except :
-
-            # Captura del ISIN del Fondo seleccionado en la vista
-            name = self.listIsins.item(self.listIsins.currentRow()).text()
-            nameSize = len(name)
-            ISIN = name[nameSize - 11: nameSize - 1]
-
-            # Añade o elimina el fondo seleccionado a la lista de graficación
-            if ISIN in self.isins_selected:
-                self.isins_selected.remove(ISIN)
-                self.listIsins.currentItem().setCheckState(False)
-                self.updateGraph(None, self.isins_selected)
-            else:
-                self.isins_selected.append(ISIN)
-                self.listIsins.currentItem().setCheckState(True)
-                # Actualiza el gráfico
-                self.updateGraph(ISIN, self.isins_selected)
-
+        else:
+            self.isins_selected.append(ISIN)
+            self.listIsins.currentItem().setCheckState(True)
+            # Actualiza el gráfico
+            self.updateGraph(ISIN, self.isins_selected)
 
         print('FONDOS EN GRÁFICO: ')
         print(self.isins_selected)
