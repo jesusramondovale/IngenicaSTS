@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>875</height>
+    <width>649</width>
+    <height>889</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
       <x>0</x>
       <y>0</y>
       <width>651</width>
-      <height>878</height>
+      <height>888</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -64,6 +64,17 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="buttonRefresh">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../feather/refresh-ccw.svg</normaloff>../../../feather/refresh-ccw.svg</iconset>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLineEdit" name="tfISIN">
@@ -118,6 +129,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfNombre">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="placeholderText">
            <string>Ej. Bankia Investments SL</string>
           </property>
@@ -271,6 +285,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfZona">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="placeholderText">
            <string>Ej. Europa, América</string>
           </property>
@@ -475,6 +492,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfDivisa">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="placeholderText">
            <string>Ej. EUR, USD</string>
           </property>

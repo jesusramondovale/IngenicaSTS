@@ -25,11 +25,9 @@ from src.util.dialogs import isinNotFoundDialog
 def getFundINFO(self, isin):
     try:
         return investpy.funds.search_funds(by='isin', value=isin)
+
     except:
-        try:
-            return investpy.funds.search_funds(by='symbol', value=isin)
-        except:
-            raise RuntimeError
+         return investpy.funds.search_funds(by='symbol', value=isin)
 
 
 '''

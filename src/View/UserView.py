@@ -158,8 +158,14 @@ class UserView(QMainWindow):
         ISIN = name[nameSize - 13: nameSize - 1]
         if ISIN[1] == '(':
             ISIN = ISIN[2:12]
+
         db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
                    ([view.id_usuario[0], cartera, ISIN]))
+
+        temp = db.execute("SELECT * FROM carteras_usuario WHERE ISIN = ? ",
+                   ([ISIN])).fetchone()
+        if temp is None:
+            db.execute("DROP TABLE " + ISIN)
 
         view.listIsins.takeItem(view.listIsins.currentRow())
         view.updateGraph(isin=None , isins_selected=[])

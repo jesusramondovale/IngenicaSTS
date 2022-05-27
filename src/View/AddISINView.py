@@ -42,8 +42,9 @@ class AddISINView(QMainWindow):
         # Carga de la interfaz gráfica
         uic.loadUi("src/GUI/AddISINView.ui", view)
 
-        # Conexión del Botón AÑADIR a la lógica de control de la función addTicker
+        # Conexión del Botón AÑADIR y REFRESH a la lógica de control
         view.buttonAnadir.clicked.connect(lambda clicked, ticker=view.tfISIN.text(): view.addTicker(parent))
+        view.buttonRefresh.clicked.connect(view.refresh)
 
     '''
     - Comprueba que todos los campos del formulario han sido rellenados
@@ -69,6 +70,39 @@ class AddISINView(QMainWindow):
 
         else:
             return True
+
+    '''
+        - Controlador del evento clicked sobre el botón REFRESH de la vista AddISINView
+        - Refresca los campos "Nombre" , "Zona" y "Divisa" automáticamente
+        con los valores correspondientes al ISIN/Symbol introducido descargando
+        la información de Internet (investing.com)
+    '''
+    def refresh(self):
+
+
+        # Caputrar el ISIN/SYmbol
+        ISIN = self.tfISIN.text().strip()
+
+        if ISIN != '':
+            # Si existe, se desarga su información y se escribe en el formulario
+            try :
+                name = fundUtils.getFundINFO(self, ISIN).at[0, 'name']
+                currency = fundUtils.getFundINFO(self, ISIN).at[0, 'currency']
+                country = fundUtils.getFundINFO(self, ISIN).at[0, 'country'].capitalize()
+                tipo = fundUtils.getFundINFO(self, ISIN).at[0, 'asset_class'].capitalize()
+
+                self.tfNombre.setText(name)
+                self.tfDivisa.setText(currency)
+                self.tfZona.setText(country)
+                self.tfTipoAct.setText(tipo)
+
+            except RuntimeError:
+                dlg = isinNotFoundDialog(self)
+                dlg.exec()
+
+        else :
+            pass
+
 
     '''
     - Añade el ISIN/Symbol introducido en el formulario 
