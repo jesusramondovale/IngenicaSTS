@@ -2,8 +2,78 @@
 ##   DIÁLOGOS ÚTILES PARA LA MUESTRA DE INFORMACIÓN   ##
 ##          AL USUARIO DE LA APLICACIÓN               ##
 #########################################################
-from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayout
+from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayout, QVBoxLayout
 from PyQt5 import QtCore
+
+'''
+    - Avisa al Usuario de está a punto de borrar una de sus carteras
+    permitiéndole cancelar o confirmar su acción. 
+
+    @parent: UserView 
+'''
+
+
+class confirmDeleteCarteraDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("¿Seguro?")
+        self.setFixedWidth(300)
+
+        # CONTENIDO
+        btnYes = QPushButton('Confirmar')
+        btnNo = QPushButton('Cancelar')
+
+        btnYes.clicked.connect(self.accept)
+        btnNo.clicked.connect(self.reject)
+
+        self.layoutVert = QVBoxLayout()
+        self.layoutVert.addWidget(QLabel("¿Está seguro de que desea\nborrar la cartera seleccionada?"))
+
+        self.layoutHor = QHBoxLayout()
+        self.layoutHor.addWidget(btnYes)
+        self.layoutHor.addWidget(btnNo)
+
+        self.layoutVert.addLayout(self.layoutHor)
+
+        self.setLayout(self.layoutVert)
+
+
+'''
+    - Avisa al Usuario de está a punto de borrar un fondo de su cartera
+    permitiéndole cancelar o confirmar su acción. 
+
+    @parent: UserView 
+'''
+
+
+class confirmDeleteFundDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("¿Seguro?")
+        self.setFixedWidth(300)
+
+        # CONTENIDO
+        btnYes = QPushButton('Confirmar')
+        btnNo = QPushButton('Cancelar')
+
+        btnYes.clicked.connect(self.accept)
+        btnNo.clicked.connect(self.reject)
+
+        self.layoutVert = QVBoxLayout()
+        self.layoutVert.addWidget(QLabel("¿Está seguro de que desea\nborrar el fondo seleccionado?"))
+
+        self.layoutHor = QHBoxLayout()
+        self.layoutHor.addWidget(btnYes)
+        self.layoutHor.addWidget(btnNo)
+
+        self.layoutVert.addLayout(self.layoutHor)
+
+        self.setLayout(self.layoutVert)
+
 
 '''
     - Avisa al Usuario de que el fondo ya se encuentra 
@@ -11,6 +81,7 @@ from PyQt5 import QtCore
     
     @parent: AddISINView 
 '''
+
 
 class downloadingIsinDialog(QDialog):
     def __init__(self, parent=None):
@@ -29,6 +100,7 @@ class downloadingIsinDialog(QDialog):
             "El fondo aún está descargándose.\n Espere unos instantes."))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
+
 
 class ISINAlready(QDialog):
     def __init__(self, parent=None):
@@ -55,6 +127,8 @@ class ISINAlready(QDialog):
     
     @parent: AddISINView
 '''
+
+
 class isinNotFoundDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -80,6 +154,8 @@ class isinNotFoundDialog(QDialog):
     
     @parent: AddCarterasView
 '''
+
+
 class carteraAlreadyExistsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -105,6 +181,8 @@ class carteraAlreadyExistsDialog(QDialog):
     
     @parent: Any
 '''
+
+
 class errorInesperado(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -129,6 +207,8 @@ class errorInesperado(QDialog):
     
     @parent: AddCarterasView
 '''
+
+
 class CarteraAddedSuccesfully(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -154,6 +234,8 @@ class CarteraAddedSuccesfully(QDialog):
 
     @parent: AddISINView
 '''
+
+
 class TickerAddedSuccesfully(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -178,6 +260,8 @@ class TickerAddedSuccesfully(QDialog):
     
     @parent: RegisterUsuarioView
 '''
+
+
 class registerCompleteDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -202,6 +286,8 @@ class registerCompleteDialog(QDialog):
 
     @parent: RegisterUsuarioView
 '''
+
+
 class badEmailDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -228,6 +314,8 @@ class badEmailDialog(QDialog):
 
     @parent: Any
 '''
+
+
 class badQueryDialog(QDialog):
 
     def __init__(self, parent=None):
@@ -252,6 +340,8 @@ class badQueryDialog(QDialog):
 
     @parent: MainView
 '''
+
+
 class badLoginDialog(QDialog):
 
     def __init__(self, parent=None):
@@ -280,6 +370,8 @@ class badLoginDialog(QDialog):
     
     @parent: MainView
 '''
+
+
 class goodLoginDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)

@@ -123,6 +123,8 @@ class AddISINView(QMainWindow):
 
             # Captura del ISIN/Symbol introducido en el formulario
             ISIN = self.tfISIN.text().strip()
+            s = str()
+            s.casefold()
 
             # Captura del ID de Usuario Actual a través de BD
             id = db.execute("SELECT id FROM users WHERE nombre = ?", [parent.labelUsuario.text()]).fetchone()

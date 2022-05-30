@@ -148,27 +148,34 @@ class UserView(QMainWindow):
         @returns: None
     '''
     def borrarFondo(view):
-        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-        db = db_connection.cursor()
-        index = view.cbCarteras.currentIndex()
-        cartera = str(view.cbCarteras.itemText(index))
+        dlg = confirmDeleteFundDialog(view)
+        if dlg.exec() :
 
-        name = view.listIsins.item(view.listIsins.currentRow()).text()
-        nameSize = len(name)
-        ISIN = name[nameSize - 13: nameSize - 1]
-        if ISIN[1] == '(':
-            ISIN = ISIN[2:12]
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+            index = view.cbCarteras.currentIndex()
+            cartera = str(view.cbCarteras.itemText(index))
 
-        db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
-                   ([view.id_usuario[0], cartera, ISIN]))
+            name = view.listIsins.item(view.listIsins.currentRow()).text()
+            nameSize = len(name)
+            ISIN = name[nameSize - 13: nameSize - 1]
+            if ISIN[1] == '(':
+                ISIN = ISIN[2:12]
 
-        temp = db.execute("SELECT * FROM carteras_usuario WHERE ISIN = ? ",
-                   ([ISIN])).fetchone()
-        if temp is None:
-            db.execute("DROP TABLE " + ISIN)
+            db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
+                       ([view.id_usuario[0], cartera, ISIN]))
 
-        view.listIsins.takeItem(view.listIsins.currentRow())
-        view.updateGraph(isin=None , isins_selected=[])
+            temp = db.execute("SELECT * FROM carteras_usuario WHERE ISIN = ? ",
+                       ([ISIN])).fetchone()
+            if temp is None:
+                db.execute("DROP TABLE " + ISIN)
+
+            view.listIsins.takeItem(view.listIsins.currentRow())
+            view.updateGraph(isin=None , isins_selected=[])
+
+        else:
+            print('Cancelada la operación de borrar Fondo')
+            pass
 
     '''
         - Borra la cartera seleccionada del ComboBox de la vista
@@ -179,23 +186,31 @@ class UserView(QMainWindow):
     '''
     def borrarCartera(view):
 
-        index = view.cbCarteras.currentIndex()
+        dlg = confirmDeleteCarteraDialog(view)
+        if dlg.exec():
 
-        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-        db = db_connection.cursor()
-        cartera = str(view.cbCarteras.itemText(index))
+            index = view.cbCarteras.currentIndex()
 
-        db.execute("DELETE FROM carteras WHERE id_usuario = ? AND nombre_cartera = ?",
-                   ([view.id_usuario[0], cartera]))
-        db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ?",
-                   ([view.id_usuario[0], cartera]))
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+            cartera = str(view.cbCarteras.itemText(index))
 
-        view.cbCarteras.removeItem(view.cbCarteras.currentIndex())
+            db.execute("DELETE FROM carteras WHERE id_usuario = ? AND nombre_cartera = ?",
+                       ([view.id_usuario[0], cartera]))
+            db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ?",
+                       ([view.id_usuario[0], cartera]))
 
-        if view.cbCarteras.count() > 0:
-            view.buttonBorrarCartera.setEnabled(True)
+            view.cbCarteras.removeItem(view.cbCarteras.currentIndex())
+
+            if view.cbCarteras.count() > 0:
+                view.buttonBorrarCartera.setEnabled(True)
+            else:
+                view.buttonBorrarCartera.setEnabled(False)
+
         else:
-            view.buttonBorrarCartera.setEnabled(False)
+            print('Cancelada la operación de borrado de cartera')
+            pass
+
 
     '''
         - Actualiza la lista de selector con los fondos de la cartera actual
