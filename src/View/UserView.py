@@ -274,7 +274,6 @@ class UserView(QMainWindow):
 
         # Captura del ISIN del Fondo seleccionado en la vista
         name = self.listIsins.item(self.listIsins.currentRow()).text()
-        nameSize = len(name)
         ISIN = name[name.rfind("(") + 1   : name.rfind(")")]
         # Comprueba si ISIN es el ISIN del fondo (si existe en investing.com)
         # lanzando RuntimeError en caso negativo
@@ -324,8 +323,13 @@ class UserView(QMainWindow):
          @returns: None
     '''
     def logout(self):
-        self.hide()
-        self.parent().show()
+        dlg = confirmLogoutDialog(self)
+        if dlg.exec():
+            self.hide()
+            self.parent().show()
+        else:
+            print('Cancelada operación de LogOut')
+            pass
 
 
     '''

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1105</width>
-    <height>718</height>
+    <width>1421</width>
+    <height>724</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,14 +18,49 @@
     <normaloff>../../../logo.ico</normaloff>../../../logo.ico</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">* {
+	 background-color: rgb(151, 151, 151)
+}
+
+QLabel {
+	color: rgb(255, 255, 255);
+
+}
+
+QLineEdit {
+	border:  2px solid rgb(98, 98, 98);
+	border-radius: 15px;
+	color: rgb(255, 255, 255);
+	background-color: rgb(151, 151, 151)
+}
+QLineEdit:hover{
+	border: 2px solid rgb(48,50,62);
+}
+
+QLineEdit:focus {
+
+	border : 2px solid rgb(48,50,62)
+
+}
+
+
+QPushButton {
+
+	border-radius: 10px;
+	background-color: rgb(84, 84, 84);
+	color:rgb(255, 255, 255)
+
+}
+
+QPushButton:hover {
+	background-color: rgb(0, 0, 0)
+}
+
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
-    <string notr="true">*{
-background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0
-rgba(160,160,160, 255), stop:1 rgba(140,140, 140, 255)) 
-}</string>
+    <string notr="true"/>
    </property>
    <widget class="QFrame" name="frameBarra">
     <property name="geometry">
@@ -35,6 +70,9 @@ rgba(160,160,160, 255), stop:1 rgba(140,140, 140, 255))
       <width>211</width>
       <height>721</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
     </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
@@ -52,6 +90,9 @@ rgba(160,160,160, 255), stop:1 rgba(140,140, 140, 255))
          <weight>75</weight>
          <bold>true</bold>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>Cartera Real</string>
@@ -157,8 +198,8 @@ rgba(160,160,160, 255), stop:1 rgba(140,140, 140, 255))
      <rect>
       <x>220</x>
       <y>10</y>
-      <width>881</width>
-      <height>821</height>
+      <width>1201</width>
+      <height>731</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -172,15 +213,12 @@ rgba(160,160,160, 255), stop:1 rgba(140,140, 140, 255))
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>881</width>
+       <width>1201</width>
        <height>321</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">*{
-background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0
-rgba(160,160,160, 255), stop:1 rgba(140,140, 140, 255)) 
-}</string>
+      <string notr="true"/>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -233,10 +271,7 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">*{
-background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0
-rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0)) 
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>-- NOMBRE USUARIO --</string>
@@ -250,6 +285,11 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
         <width>661</width>
         <height>171</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">selection-color: rgb(89, 89, 89);
+border-color: rgb(0, 216, 216);
+color: rgb(255, 255, 255);</string>
       </property>
       <property name="editTriggers">
        <set>QAbstractItemView::DoubleClicked</set>
@@ -282,10 +322,7 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">*{
-background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0
-rgba(160,160,160, 255), stop:1 rgba(140,140, 140, 255)) 
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Modo (Gráfico)</string>
@@ -317,10 +354,10 @@ background-color: rgb(206, 206, 206)
      <widget class="QPushButton" name="buttonAddISIN">
       <property name="geometry">
        <rect>
-        <x>310</x>
-        <y>90</y>
+        <x>290</x>
+        <y>80</y>
         <width>161</width>
-        <height>31</height>
+        <height>41</height>
        </rect>
       </property>
       <property name="font">
@@ -362,10 +399,7 @@ background: rgb(206, 206, 206)
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">*{
-background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0
-rgba(160,160,160, 255), stop:1 rgba(140,140, 140, 255)) 
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Cartera Actual (Virtual): </string>
@@ -401,9 +435,9 @@ background-color: rgb(206, 206, 206)
      <widget class="QLabel" name="labelCartera">
       <property name="geometry">
        <rect>
-        <x>30</x>
+        <x>10</x>
         <y>100</y>
-        <width>271</width>
+        <width>261</width>
         <height>23</height>
        </rect>
       </property>
@@ -416,10 +450,7 @@ background-color: rgb(206, 206, 206)
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">*{
-background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0
-rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0)) 
-}</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Fondos en tu Cartera</string>
@@ -428,7 +459,7 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
      <widget class="QPushButton" name="buttonBorrarCartera">
       <property name="geometry">
        <rect>
-        <x>750</x>
+        <x>760</x>
         <y>50</y>
         <width>81</width>
         <height>31</height>
@@ -455,7 +486,7 @@ background: rgb(206, 206, 206)
      <widget class="QPushButton" name="buttonAddCarteras">
       <property name="geometry">
        <rect>
-        <x>620</x>
+        <x>610</x>
         <y>80</y>
         <width>131</width>
         <height>36</height>
@@ -491,10 +522,10 @@ background: rgb(206, 206, 206)
      <widget class="QPushButton" name="buttonBorrarFondo">
       <property name="geometry">
        <rect>
-        <x>480</x>
-        <y>90</y>
-        <width>41</width>
-        <height>31</height>
+        <x>460</x>
+        <y>80</y>
+        <width>51</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="font">
@@ -524,6 +555,9 @@ background: rgb(206, 206, 206)
         <height>141</height>
        </rect>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
@@ -533,7 +567,7 @@ background: rgb(206, 206, 206)
        <rect>
         <x>-13</x>
         <y>300</y>
-        <width>901</width>
+        <width>1211</width>
         <height>20</height>
        </rect>
       </property>
@@ -547,8 +581,8 @@ background: rgb(206, 206, 206)
       <rect>
        <x>0</x>
        <y>320</y>
-       <width>881</width>
-       <height>421</height>
+       <width>1191</width>
+       <height>411</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="layout">
@@ -582,13 +616,16 @@ background: rgb(206, 206, 206)
       <x>200</x>
       <y>0</y>
       <width>20</width>
-      <height>841</height>
+      <height>741</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <pointsize>12</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="orientation">
      <enum>Qt::Vertical</enum>

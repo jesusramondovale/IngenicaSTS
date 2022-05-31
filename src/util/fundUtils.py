@@ -10,7 +10,7 @@ import investpy
 from highstock import Highstock
 
 from datetime import datetime
-from src.util.dialogs import isinNotFoundDialog
+from src.util.dialogs import isinNotFoundDialog, errorInesperado
 
 '''
     - Obtiene la Información existente en investing.com 
@@ -121,10 +121,13 @@ def graphHistoricalISIN(self, isins_selected, absolute):
     if len(isins_selected) != 0:
 
         names = []
+        fundNames = []
+
         currency = getFundINFO(self, isins_selected[0]).at[0, 'currency']
 
         for a in range(0, len(isins_selected), 1):
             names.append(isins_selected[a])
+            fundNames.append(ISINtoFund(isins_selected[a]))
 
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         cursor = db_connection.cursor()
@@ -144,7 +147,7 @@ def graphHistoricalISIN(self, isins_selected, absolute):
                 dataTuple = (datetime.fromtimestamp(datetime.timestamp(stamp)), data[row][1])
                 values.append(dataTuple)
 
-            H.add_data_set(values, "line", names[j])
+            H.add_data_set(values, "line", fundNames[j])
 
         if absolute:
             options = {
@@ -154,7 +157,7 @@ def graphHistoricalISIN(self, isins_selected, absolute):
                 },
                 'chart': {
                     'zoomType': 'x',
-                    'backgroundColor': '#b1b1b1',
+                    'backgroundColor': '#979797',
                     'animation': {
                         'duration': 2000
                     },
@@ -197,7 +200,7 @@ def graphHistoricalISIN(self, isins_selected, absolute):
                 },
                 'chart': {
                     'zoomType': 'x',
-                    'backgroundColor': '#b1b1b1',
+                    'backgroundColor': '#979797',
                     'animation': {
                         'duration': 2000
                     },
@@ -305,8 +308,11 @@ def UpdateGraph(self, isin, isins_selected, absolute):
     if isin is None:
         print('ISIN is None')
         names = []
+        fundNames = []
         for elem in isins_selected:
             names.append(elem)
+            fundNames.append((ISINtoFund(elem)))
+
         if len(isins_selected) != 0:
             currency = getFundINFO(self, isins_selected[0]).at[0, 'currency']
 
@@ -319,7 +325,11 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                 try:
                     data = cursor.execute("SELECT * FROM " + isins_selected[j] + " ").fetchall()
                 except sqlite3.OperationalError:
-                    data = cursor.execute("SELECT * FROM " + "[" + isins_selected[j] + "]" + " ").fetchall()
+                    try:
+                        data = cursor.execute("SELECT * FROM " + "[" + isins_selected[j] + "]" + " ").fetchall()
+                    except:
+                        dlg = errorInesperado(self)
+                        dlg.exec()
 
                 values = []
                 for row in range(0, len(data), 1):
@@ -328,7 +338,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                     dataTuple = (datetime.fromtimestamp(datetime.timestamp(stamp)), data[row][1])
                     values.append(dataTuple)
 
-                self.H.add_data_set(values, "line", names[j])
+                self.H.add_data_set(values, "line", fundNames[j])
 
             if absolute:
                 print('Mode: Absolute')
@@ -339,7 +349,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                     },
                     'chart': {
                         'zoomType': 'x',
-                        'backgroundColor': '#b1b1b1',
+                        'backgroundColor': '#979797',
                         'animation': {
                             'duration': 2000
                         },
@@ -385,7 +395,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
 
                     'chart': {
                         'zoomType': 'x',
-                        'backgroundColor': '#b1b1b1',
+                        'backgroundColor': '#979797',
                         'animation': {
                             'duration': 2000
                         },
@@ -464,7 +474,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                 dataTuple = (datetime.fromtimestamp(datetime.timestamp(stamp)), data[row][1])
                 values.append(dataTuple)
 
-            self.H.add_data_set(values, "line", isin)
+            self.H.add_data_set(values, "line", ISINtoFund(isin))
 
             if absolute:
                 options = {
@@ -474,7 +484,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                     },
                     'chart': {
                         'zoomType': 'x',
-                        'backgroundColor': '#b1b1b1',
+                        'backgroundColor': '#979797',
                         'animation': {
                             'duration': 2000
                         },
@@ -517,7 +527,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                     },
                     'chart': {
                         'zoomType': 'x',
-                        'backgroundColor': '#b1b1b1',
+                        'backgroundColor': '#979797',
                         'animation': {
                             'duration': 2000
                         },

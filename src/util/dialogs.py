@@ -6,6 +6,45 @@ from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayo
 from PyQt5 import QtCore
 
 '''
+    - Avisa al Usuario de que está a punto de Cerrar su seción
+    (hacer logout), permitiéndole confirmar o cancelar su 
+    operación
+    
+    @parent: UserView
+    
+'''
+
+class confirmLogoutDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("¿Seguro?")
+        self.setFixedWidth(300)
+
+        # CONTENIDO
+        btnYes = QPushButton('Confirmar')
+        btnNo = QPushButton('Cancelar')
+
+        btnYes.clicked.connect(self.accept)
+        btnNo.clicked.connect(self.reject)
+
+        self.layoutVert = QVBoxLayout()
+        self.layoutVert.addWidget(QLabel("¿Está seguro de que desea\ncerrar su sesión?"))
+
+        self.layoutHor = QHBoxLayout()
+        self.layoutHor.addWidget(btnYes)
+        self.layoutHor.addWidget(btnNo)
+
+        self.layoutVert.addLayout(self.layoutHor)
+
+        self.setLayout(self.layoutVert)
+
+
+
+
+
+'''
     - Avisa al Usuario de que no ha seleccionado ningún elemento 
     (cartera/fondo) en la vista y que debe hacerlo para ejecutar 
     la operación de borrado 
