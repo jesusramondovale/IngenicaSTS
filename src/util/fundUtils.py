@@ -324,21 +324,30 @@ def UpdateGraph(self, isin, isins_selected, absolute):
 
                 try:
                     data = cursor.execute("SELECT * FROM " + isins_selected[j] + " ").fetchall()
+                    values = []
+                    for row in range(0, len(data), 1):
+                        date = data[row][0]
+                        stamp = datetime.strptime(date[:10], "%Y-%m-%d")
+                        dataTuple = (datetime.fromtimestamp(datetime.timestamp(stamp)), data[row][1])
+                        values.append(dataTuple)
+
+                    self.H.add_data_set(values, "line", fundNames[j])
                 except sqlite3.OperationalError:
                     try:
                         data = cursor.execute("SELECT * FROM " + "[" + isins_selected[j] + "]" + " ").fetchall()
+
+                        values = []
+                        for row in range(0, len(data), 1):
+                            date = data[row][0]
+                            stamp = datetime.strptime(date[:10], "%Y-%m-%d")
+                            dataTuple = (datetime.fromtimestamp(datetime.timestamp(stamp)), data[row][1])
+                            values.append(dataTuple)
+
+                        self.H.add_data_set(values, "line", fundNames[j])
+
                     except:
                         dlg = errorInesperado(self)
                         dlg.exec()
-
-                values = []
-                for row in range(0, len(data), 1):
-                    date = data[row][0]
-                    stamp = datetime.strptime(date[:10], "%Y-%m-%d")
-                    dataTuple = (datetime.fromtimestamp(datetime.timestamp(stamp)), data[row][1])
-                    values.append(dataTuple)
-
-                self.H.add_data_set(values, "line", fundNames[j])
 
             if absolute:
                 print('Mode: Absolute')

@@ -354,7 +354,7 @@ background-color: rgb(206, 206, 206)
      <widget class="QPushButton" name="buttonAddISIN">
       <property name="geometry">
        <rect>
-        <x>290</x>
+        <x>300</x>
         <y>80</y>
         <width>161</width>
         <height>41</height>
@@ -437,7 +437,7 @@ background-color: rgb(206, 206, 206)
        <rect>
         <x>10</x>
         <y>100</y>
-        <width>261</width>
+        <width>221</width>
         <height>23</height>
        </rect>
       </property>
@@ -522,7 +522,7 @@ background: rgb(206, 206, 206)
      <widget class="QPushButton" name="buttonBorrarFondo">
       <property name="geometry">
        <rect>
-        <x>460</x>
+        <x>470</x>
         <y>80</y>
         <width>51</width>
         <height>41</height>
@@ -573,6 +573,23 @@ background: rgb(206, 206, 206)
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="buttonCheckAll">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>90</y>
+        <width>51</width>
+        <height>34</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>../../../feather/check-square.svg</normaloff>../../../feather/check-square.svg</iconset>
       </property>
      </widget>
     </widget>

@@ -183,6 +183,7 @@ class AddISINView(QMainWindow):
 
                     # Añade el NOMBRE del Fondo introducido en la Lista de Cartera de Usuario
                     parent.listIsins.addItem(str(fundUtils.getFundINFO(self, ISIN).at[0, 'name']) + "  (" + ISIN + ")")
+                    parent.isin_list.append(ISIN)
 
                     # Avisa al usuario de la operación completada con éxito y
                     # esconde la ventana actual (vuelve a UserView)

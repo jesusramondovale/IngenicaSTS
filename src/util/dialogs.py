@@ -266,7 +266,7 @@ class errorInesperado(QDialog):
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
-            "Se ha producido un error inesperado. INténtelo de nuevo."))
+            "Se ha producido un error inesperado. \nInténtelo de nuevo."))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
@@ -285,14 +285,14 @@ class CarteraAddedSuccesfully(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Éxito!")
-        self.setFixedWidth(330)
+        self.setFixedWidth(350)
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
-            "La Cartera con nombre : " + parent.tfNombre.text() + " se\nha añadido correctamente a su cuenta personal."))
+            "La Cartera con nombre : " + parent.tfNombre.text() + " se ha\nañadido correctamente a su cuenta personal."))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
@@ -458,7 +458,6 @@ class goodLoginDialog(QDialog):
         btnSalir.clicked.connect(self.reject)
 
         self.layout = QHBoxLayout()
-        self.layout.addWidget(QLabel("Bienvenido, señor Admin!"))
         self.layout.addWidget(btnEntrar)
         self.layout.addWidget(btnSalir)
 

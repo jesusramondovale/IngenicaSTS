@@ -50,7 +50,7 @@ class UserView(QMainWindow):
 
         # Estructura de almacenamiento para los fondos seleccionados para graficar
         view.isins_selected = []
-
+        view.allChecked = False
         # Conexión de los eventos de botones clickados a la lógica de los controladores
         view.buttonLogout.clicked.connect(view.logout)
         view.buttonAddISIN.clicked.connect(view.showAddIsin)
@@ -58,6 +58,7 @@ class UserView(QMainWindow):
         view.buttonBorrarCartera.clicked.connect(view.borrarCartera)
         view.buttonBorrarFondo.clicked.connect(view.borrarFondo)
         view.listIsins.itemClicked.connect(view.addIsinsChecked)
+        view.buttonCheckAll.clicked.connect(view.checkAll)
 
         view.H = Highstock()
         # Desactivación de los botones de borrar Cartera y Añadir Nuevo Fondo
@@ -102,18 +103,18 @@ class UserView(QMainWindow):
         if view.currentCartera is not None:
 
             # Carga todos los ISIN/Symbol de los fondos para la cartera actual
-            ISINS = db.execute(
+            view.ISINS = db.execute(
                 "SELECT cu.ISIN FROM carteras c INNER JOIN carteras_usuario cu "
                 "USING (nombre_cartera)"
                 "WHERE c.nombre_cartera = ? AND cu.id_usuario = ? ",
                 ([view.currentCartera[0], view.id_usuario[0]])).fetchall()
-            isin_list = []
-            for ISIN in ISINS:
-                isin_list.append(ISIN[0])
+            view.isin_list = []
+            for ISIN in view.ISINS:
+                view.isin_list.append(ISIN[0])
 
             # Carga los nombres de los fondos en cartera añadiendo su ISIN/Symbol al final
             isin_list_view = []
-            for ISIN in ISINS:
+            for ISIN in view.ISINS:
                 isin_list_view.append(str(fundUtils.ISINtoFund(ISIN[0])) + "  (" + ISIN[0] + ")")
 
             # Carga el Widget de Selección de Fondos para graficar con los nombres de los Fondos en cartera
@@ -124,7 +125,7 @@ class UserView(QMainWindow):
                 view.listIsins.addItem(item)
 
             # Comprueba si existe el Fondo en BD y lo descarga en caso negativo
-            for e in isin_list:
+            for e in view.isin_list:
                 fundUtils.saveHistoricalFund(view, e)
 
             # Actualiza el gráfico con los Fondos seleccionados
@@ -138,6 +139,11 @@ class UserView(QMainWindow):
         view.cbCarteras.currentIndexChanged.connect(view.updateQList)
         view.cbModo.currentIndexChanged.connect(
             lambda clicked, isins_selected=view.isins_selected: view.updateGraph(None, view.isins_selected))
+
+
+
+
+
 
 
     '''
@@ -160,7 +166,6 @@ class UserView(QMainWindow):
                 index = view.cbCarteras.currentIndex()
                 cartera = str(view.cbCarteras.itemText(index))
 
-                nameSize = len(name)
                 ISIN = name[name.rfind("(") + 1   : name.rfind(")")]
                 db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
                            ([view.id_usuario[0], cartera, ISIN]))
@@ -171,6 +176,7 @@ class UserView(QMainWindow):
                     db.execute("DROP TABLE " + ISIN)
 
                 view.listIsins.takeItem(view.listIsins.currentRow())
+                view.isins_selected.remove(ISIN)
                 view.updateGraph(isin=None, isins_selected=[])
 
             else:
@@ -260,6 +266,36 @@ class UserView(QMainWindow):
             # Avisa al Usuario de que el fondo está descargándose
             dlg = downloadingIsinDialog(view)
             dlg.exec()
+
+    '''
+            - Añade todos los fondos a la lista de graficación
+            y los inserta en el gráfico.
+
+             @params: self (UserView)
+             @returns: None
+        '''
+
+    def checkAll(view):
+
+        if not view.allChecked:
+            for i in range(view.listIsins.count()):
+                view.listIsins.item(i).setCheckState(True)
+
+            view.updateGraph(None , view.isin_list )
+            for e in view.ISINS:
+                view.isins_selected.append(e[0])
+            view.allChecked = True
+            print('All Checked: ' + str(view.isins_selected))
+        else:
+            for i in range(view.listIsins.count()):
+                view.listIsins.item(i).setCheckState(False)
+
+
+            view.updateGraph(None, isins_selected=[])
+            view.isins_selected = []
+            view.allChecked = False
+            print('All Unchecked: ' +  str(view.isins_selected))
+
 
     '''
         - Añade el Fondo seleccionado a la lista de graficación
