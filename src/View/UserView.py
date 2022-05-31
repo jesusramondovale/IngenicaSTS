@@ -148,34 +148,38 @@ class UserView(QMainWindow):
         @returns: None
     '''
     def borrarFondo(view):
-        dlg = confirmDeleteFundDialog(view)
-        if dlg.exec() :
 
-            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-            db = db_connection.cursor()
-            index = view.cbCarteras.currentIndex()
-            cartera = str(view.cbCarteras.itemText(index))
-
+        try:
             name = view.listIsins.item(view.listIsins.currentRow()).text()
-            nameSize = len(name)
-            ISIN = name[nameSize - 13: nameSize - 1]
-            if ISIN[1] == '(':
-                ISIN = ISIN[2:12]
 
-            db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
-                       ([view.id_usuario[0], cartera, ISIN]))
+            dlg = confirmDeleteFundDialog(view)
+            if dlg.exec():
 
-            temp = db.execute("SELECT * FROM carteras_usuario WHERE ISIN = ? ",
-                       ([ISIN])).fetchone()
-            if temp is None:
-                db.execute("DROP TABLE " + ISIN)
+                db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+                db = db_connection.cursor()
+                index = view.cbCarteras.currentIndex()
+                cartera = str(view.cbCarteras.itemText(index))
 
-            view.listIsins.takeItem(view.listIsins.currentRow())
-            view.updateGraph(isin=None , isins_selected=[])
+                nameSize = len(name)
+                ISIN = name[name.rfind("(") + 1   : name.rfind(")")]
+                db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
+                           ([view.id_usuario[0], cartera, ISIN]))
 
-        else:
-            print('Cancelada la operación de borrar Fondo')
-            pass
+                temp = db.execute("SELECT * FROM carteras_usuario WHERE ISIN = ? ",
+                                  ([ISIN])).fetchone()
+                if temp is None:
+                    db.execute("DROP TABLE " + ISIN)
+
+                view.listIsins.takeItem(view.listIsins.currentRow())
+                view.updateGraph(isin=None, isins_selected=[])
+
+            else:
+                print('Cancelada la operación de borrar Fondo')
+                pass
+
+        except:
+            dlg = selectAnyDialog(view)
+            dlg.exec()
 
     '''
         - Borra la cartera seleccionada del ComboBox de la vista

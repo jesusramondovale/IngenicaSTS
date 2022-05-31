@@ -6,7 +6,38 @@ from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayo
 from PyQt5 import QtCore
 
 '''
-    - Avisa al Usuario de está a punto de borrar una de sus carteras
+    - Avisa al Usuario de que no ha seleccionado ningún elemento 
+    (cartera/fondo) en la vista y que debe hacerlo para ejecutar 
+    la operación de borrado 
+
+    @parent: UserView 
+'''
+class selectAnyDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Vaya...")
+        self.setFixedWidth(330)
+
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel(
+            "Seleccione primero un elemento\n para eliminar."))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
+
+
+
+
+
+'''
+    - Avisa al Usuario de que está a punto de borrar una de sus carteras
     permitiéndole cancelar o confirmar su acción. 
 
     @parent: UserView 
@@ -41,10 +72,10 @@ class confirmDeleteCarteraDialog(QDialog):
 
 
 '''
-    - Avisa al Usuario de está a punto de borrar un fondo de su cartera
+    - Avisa al Usuario de que está a punto de borrar un fondo de su cartera
     permitiéndole cancelar o confirmar su acción. 
 
-    @parent: UserView 
+    @parent: UserView
 '''
 
 

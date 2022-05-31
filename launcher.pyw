@@ -6,7 +6,7 @@ from src.View.MainView import MainView
 
 '''
  - Clase principal de lanzamiento, el hilo de ejecución comienza aquí.
- - Lanza la ventana principal de la aplicación
+ - Lanza la ventana principal de la aplicación (Acceso : Log In)
  - No recibe ningún parámetro 
 '''
 if __name__ == "__main__":
