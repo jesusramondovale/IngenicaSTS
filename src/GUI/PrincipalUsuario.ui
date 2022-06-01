@@ -135,7 +135,7 @@ QPushButton:hover {
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="buttonCartVirt_2">
+      <widget class="QPushButton" name="buttonConfig">
        <property name="font">
         <font>
          <family>Yu Gothic UI Light</family>
@@ -150,6 +150,31 @@ QPushButton:hover {
        <property name="icon">
         <iconset>
          <normaloff>../../../feather/settings.svg</normaloff>../../../feather/settings.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonRefresh">
+       <property name="font">
+        <font>
+         <family>Yu Gothic UI Light</family>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string> Actualizar Hist.</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../../../feather/refresh-cw.svg</normaloff>../../../feather/refresh-cw.svg</iconset>
        </property>
        <property name="checkable">
         <bool>false</bool>

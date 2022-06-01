@@ -1,6 +1,6 @@
 ########################################################
-##   DIÁLOGOS ÚTILES PARA LA MUESTRA DE INFORMACIÓN   ##
-##          AL USUARIO DE LA APLICACIÓN               ##
+#   DIÁLOGOS ÚTILES PARA LA MUESTRA DE INFORMACIÓN   ##
+#         AL USUARIO DE LA APLICACIÓN                ##
 #########################################################
 from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayout, QVBoxLayout
 from PyQt5 import QtCore
@@ -13,6 +13,7 @@ from PyQt5 import QtCore
     @parent: UserView
     
 '''
+
 
 class confirmLogoutDialog(QDialog):
     def __init__(self, parent=None):
@@ -41,9 +42,6 @@ class confirmLogoutDialog(QDialog):
         self.setLayout(self.layoutVert)
 
 
-
-
-
 '''
     - Avisa al Usuario de que no ha seleccionado ningún elemento 
     (cartera/fondo) en la vista y que debe hacerlo para ejecutar 
@@ -51,6 +49,8 @@ class confirmLogoutDialog(QDialog):
 
     @parent: UserView 
 '''
+
+
 class selectAnyDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -68,11 +68,6 @@ class selectAnyDialog(QDialog):
             "Seleccione primero un elemento\n para eliminar."))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
-
-
-
-
-
 
 
 '''
@@ -345,6 +340,31 @@ class registerCompleteDialog(QDialog):
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel("El Registro se ha realizado\nadecuadamente"))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
+''' 
+    - Avisa al Usuario de que la actualización de históricos
+    ha sido realizada satisfactoriamente
+
+    @parent: UsuerView
+'''
+
+
+class refreshCompleteDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Éxito!")
+        self.setFixedWidth(360)
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel("Los datos se han actualizado adecuadamente"))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 

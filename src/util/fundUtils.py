@@ -1,6 +1,6 @@
 ######################################################################
-##   LIBRERÍA DE ÚTILES PARA CONSULTA DE DATOS SOBRE INVESTING.COM  ##
-##          EMPAQUETANDO LLAMADAS A LA API investpy                 ##
+#   LIBRERÍA DE ÚTILES PARA CONSULTA DE DATOS SOBRE INVESTING.COM  ##
+#          EMPAQUETANDO LLAMADAS A LA API investpy                 ##
 ######################################################################
 import sqlite3
 import investpy
@@ -9,8 +9,68 @@ import investpy
 # la visualización de índices bursátiles
 from highstock import Highstock
 
-from datetime import datetime
-from src.util.dialogs import isinNotFoundDialog, errorInesperado
+from datetime import datetime, timedelta
+from src.util.dialogs import isinNotFoundDialog, errorInesperado, refreshCompleteDialog
+
+'''
+- Descarga de investing.com  y actualiza en DB los históricos presentes en carteras 
+del  Usuario desde la última fecha presente del registro hasta hoy
+
+@params: None
+@:returns: None
+
+'''
+
+
+def refreshHistorics(view):
+    db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+    db = db_connection.cursor()
+    ISINs = db.execute("SELECT ISIN FROM carteras_usuario WHERE id_usuario = ? ",
+                       view.id_usuario).fetchall()
+    for ISIN in ISINs:
+        try:
+            lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
+            lastValue = lastRow[0]
+            lastDate = lastRow[1]
+            lastDateTime = datetime.strptime(lastDate, '%Y-%m-%d %H:%M:%S')
+            print(str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+
+        except sqlite3.OperationalError:
+            lastRow = db.execute("SELECT Open , Date FROM [" + ISIN[0] + "] ORDER BY Date DESC ").fetchone()
+            lastValue = lastRow[0]
+            lastDate = lastRow[1]
+            lastDateTime = datetime.strptime(lastDate, '%Y-%m-%d %H:%M:%S')
+            print(str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+
+        try:
+            lastDateTime += timedelta(days=1)
+            data = investpy.funds.get_fund_historical_data(
+                fund=ISINtoFund(ISIN[0]),
+                country=getFundINFO(view, ISIN[0]).at[0, 'country'],
+                from_date=lastDateTime.strftime('%d/%m/%Y'),
+                to_date=datetime.today().strftime('%d/%m/%Y'),
+                as_json=False
+            )
+            print('Actualizando ... ' + str(ISIN[0]))
+            data.to_sql(ISIN[0], con=db_connection, if_exists='append')
+
+        except ValueError:
+            pass
+
+        try:
+            lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
+            lastValue = lastRow[0]
+            lastDate = lastRow[1]
+            print('NUEVO: ' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+
+        except sqlite3.OperationalError:
+            lastRow = db.execute("SELECT Open , Date FROM [" + ISIN[0] + "] ORDER BY Date DESC ").fetchone()
+            lastValue = lastRow[0]
+            lastDate = lastRow[1]
+            print('NUEVO:' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+
+    refreshCompleteDialog(view).exec()
+
 
 '''
     - Obtiene la Información existente en investing.com 
@@ -22,12 +82,14 @@ from src.util.dialogs import isinNotFoundDialog, errorInesperado
     por investing.com del Fondo (nombre, país, isin, moneda..)
     
 '''
+
+
 def getFundINFO(self, isin):
     try:
         return investpy.funds.search_funds(by='isin', value=isin)
 
     except:
-         return investpy.funds.search_funds(by='symbol', value=isin)
+        return investpy.funds.search_funds(by='symbol', value=isin)
 
 
 '''
@@ -37,6 +99,8 @@ def getFundINFO(self, isin):
     @params: ISIN | Symbol
     @returns: Nombre (str) del Fondo     
 '''
+
+
 def ISINtoFund(isin):
     try:
         df = investpy.funds.search_funds(by='isin', value=isin)
@@ -58,6 +122,8 @@ def ISINtoFund(isin):
     @params: ISIN | Symbol 
     @returns: None
 '''
+
+
 def saveHistoricalFund(self, isin):
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     cursor = db_connection.cursor()
@@ -117,6 +183,8 @@ def saveHistoricalFund(self, isin):
            : bool -> Modo de graficación (absolute=True o evolución=False)
     @returns: None
 '''
+
+
 def graphHistoricalISIN(self, isins_selected, absolute):
     if len(isins_selected) != 0:
 
@@ -152,8 +220,8 @@ def graphHistoricalISIN(self, isins_selected, absolute):
         if absolute:
             options = {
                 # 'colors': ['#a0a0a0'],
-                'legend':{
-                    'enabled' : True
+                'legend': {
+                    'enabled': True
                 },
                 'chart': {
                     'zoomType': 'x',
@@ -301,10 +369,18 @@ def graphHistoricalISIN(self, isins_selected, absolute):
         '''
 
 
+'''
+    - Actualiza el gráfico de la Vista con los Isins a graficar
+    
+    @params: UserView (self), 
+             ISIN pulsado actual (ISIN)  
+             Lista de Isins seleccionados (isins_selected)
+             Modo de Graficación: Aboluste (True)
+    @returns: None
+'''
 
 
 def UpdateGraph(self, isin, isins_selected, absolute):
-
     if isin is None:
         print('ISIN is None')
         names = []
@@ -578,7 +654,6 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                 }
                 self.H.set_dict_options(options)
                 cursor.close()
-
 
             self.browser.setHtml(self.H.htmlcontent)
             self.layout.addWidget(self.browser)

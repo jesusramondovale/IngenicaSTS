@@ -1,5 +1,5 @@
 ###############################################################################
-##   GUI  Y  LÓGICA   DE    PROGRAMACIÓN    DE     LA     VISTA    UserView  ##
+#   GUI  Y  LÓGICA   DE    PROGRAMACIÓN    DE     LA     VISTA    UserView  ##
 ###############################################################################
 import sqlite3
 
@@ -16,7 +16,6 @@ from src.View.AddISINView import AddISINView
 from src.util import fundUtils
 from src.util.dialogs import *
 
-
 '''
     - Ventana de Operaciones General para el Usuario 
     - En ella se podrán añadir Carteras, Fondos a Cada Una de ellas,
@@ -25,6 +24,8 @@ from src.util.dialogs import *
      @parent: MainView
      @children: AddAny | MainView
 '''
+
+
 # Vista PrincipalUsuario.ui
 class UserView(QMainWindow):
 
@@ -92,7 +93,7 @@ class UserView(QMainWindow):
             view.labelCartera.setText('Fondos en ' + view.nombres_carteras[0])
         else:
             view.labelCartera.setText('No existen Carteras')
-        #Adición de las Carteras al ComboBox de Selección de Carteras
+        # Adición de las Carteras al ComboBox de Selección de Carteras
         view.cbCarteras.addItems(view.nombres_carteras)
 
         # Activación del botón añadir Fondo si hay alguna cartera
@@ -139,12 +140,8 @@ class UserView(QMainWindow):
         view.cbCarteras.currentIndexChanged.connect(view.updateQList)
         view.cbModo.currentIndexChanged.connect(
             lambda clicked, isins_selected=view.isins_selected: view.updateGraph(None, view.isins_selected))
-
-
-
-
-
-
+        view.buttonRefresh.clicked.connect(
+            lambda clicked, view=view: fundUtils.refreshHistorics(view))
 
     '''
         - Borra el fondo seleccionado del ComboBox de la vista
@@ -153,6 +150,7 @@ class UserView(QMainWindow):
         @params: view (UserView) 
         @returns: None
     '''
+
     def borrarFondo(view):
 
         try:
@@ -166,7 +164,7 @@ class UserView(QMainWindow):
                 index = view.cbCarteras.currentIndex()
                 cartera = str(view.cbCarteras.itemText(index))
 
-                ISIN = name[name.rfind("(") + 1   : name.rfind(")")]
+                ISIN = name[name.rfind("(") + 1: name.rfind(")")]
                 db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
                            ([view.id_usuario[0], cartera, ISIN]))
 
@@ -194,6 +192,7 @@ class UserView(QMainWindow):
         @params: view (UserView)
         @returns: None
     '''
+
     def borrarCartera(view):
 
         dlg = confirmDeleteCarteraDialog(view)
@@ -221,13 +220,13 @@ class UserView(QMainWindow):
             print('Cancelada la operación de borrado de cartera')
             pass
 
-
     '''
         - Actualiza la lista de selector con los fondos de la cartera actual
 
          @params: view (UserView)
          @returns: None
     '''
+
     def updateQList(view):
 
         try:
@@ -256,7 +255,6 @@ class UserView(QMainWindow):
                 item.setCheckState(QtCore.Qt.Unchecked)
                 view.listIsins.addItem(item)
 
-
             for e in isin_list:
                 fundUtils.saveHistoricalFund(view, e)
 
@@ -281,7 +279,7 @@ class UserView(QMainWindow):
             for i in range(view.listIsins.count()):
                 view.listIsins.item(i).setCheckState(True)
 
-            view.updateGraph(None , view.isin_list )
+            view.updateGraph(None, view.isin_list)
             for e in view.ISINS:
                 view.isins_selected.append(e[0])
             view.allChecked = True
@@ -290,12 +288,10 @@ class UserView(QMainWindow):
             for i in range(view.listIsins.count()):
                 view.listIsins.item(i).setCheckState(False)
 
-
             view.updateGraph(None, isins_selected=[])
             view.isins_selected = []
             view.allChecked = False
-            print('All Unchecked: ' +  str(view.isins_selected))
-
+            print('All Unchecked: ' + str(view.isins_selected))
 
     '''
         - Añade el Fondo seleccionado a la lista de graficación
@@ -304,13 +300,13 @@ class UserView(QMainWindow):
          @params: self (UserView)
          @returns: None
     '''
+
     def addIsinsChecked(self):
         print("Captada la pulsación")
 
-
         # Captura del ISIN del Fondo seleccionado en la vista
         name = self.listIsins.item(self.listIsins.currentRow()).text()
-        ISIN = name[name.rfind("(") + 1   : name.rfind(")")]
+        ISIN = name[name.rfind("(") + 1: name.rfind(")")]
         # Comprueba si ISIN es el ISIN del fondo (si existe en investing.com)
         # lanzando RuntimeError en caso negativo
         fundUtils.ISINtoFund(ISIN)
@@ -330,13 +326,13 @@ class UserView(QMainWindow):
         print('FONDOS EN GRÁFICO: ')
         print(self.isins_selected)
 
-
     '''
         - Muestra la Interfaz Gráfica para Añadir Carteras
 
          @params: self (UserView)
          @returns: None
     '''
+
     def showAddCarteras(self):
         cart = AddCarterasView(self)
         cart.show()
@@ -347,6 +343,7 @@ class UserView(QMainWindow):
          @params: self (UserView)
          @returns: None
     '''
+
     def showAddIsin(self):
         merc = AddISINView(self)
         merc.show()
@@ -358,6 +355,7 @@ class UserView(QMainWindow):
          @params: self (UserView)
          @returns: None
     '''
+
     def logout(self):
         dlg = confirmLogoutDialog(self)
         if dlg.exec():
@@ -367,7 +365,6 @@ class UserView(QMainWindow):
             print('Cancelada operación de LogOut')
             pass
 
-
     '''
         - Actualiza el gráfico del layout en UserView con la lista de 
         fondos seleccionados para graficar
@@ -376,8 +373,9 @@ class UserView(QMainWindow):
                 : lista de fondos seleccionados (isins_list)
          @returns: None
     '''
-    def updateGraph(self, isin , isins_selected):
+
+    def updateGraph(self, isin, isins_selected):
         if self.cbModo.currentIndex() == 0:
-            fundUtils.UpdateGraph(self, isin , isins_selected, True)
+            fundUtils.UpdateGraph(self, isin, isins_selected, True)
         else:
-            fundUtils.UpdateGraph(self, isin , isins_selected, False)
+            fundUtils.UpdateGraph(self, isin, isins_selected, False)
