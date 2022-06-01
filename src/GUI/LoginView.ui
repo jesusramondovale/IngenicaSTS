@@ -18,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../logo.ico</normaloff>../../../logo.ico</iconset>
+    <normaloff>../feather/mainLogo.ico</normaloff>../feather/mainLogo.ico</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">* {
@@ -109,6 +109,11 @@ QPushButton:hover {
       <height>51</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
     <property name="acceptDrops">
      <bool>false</bool>
     </property>
@@ -116,7 +121,7 @@ QPushButton:hover {
      <enum>QLineEdit::Password</enum>
     </property>
     <property name="placeholderText">
-     <string>         Contraseña </string>
+     <string>        Contraseña </string>
     </property>
    </widget>
    <widget class="QLineEdit" name="textFieldUser">
@@ -128,16 +133,21 @@ QPushButton:hover {
       <height>51</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
     <property name="placeholderText">
-     <string>    Nombre de Usuario</string>
+     <string>   Nombre de Usuario</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>20</y>
-      <width>321</width>
+      <y>50</y>
+      <width>301</width>
       <height>91</height>
      </rect>
     </property>
@@ -146,6 +156,23 @@ QPushButton:hover {
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>0</y>
+      <width>121</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">image: url(:/mainLogo.ico);
+background-color: rgba(255, 255, 255, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
@@ -158,7 +185,9 @@ QPushButton:hover {
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../feather/logos.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>tabSalir</sender>

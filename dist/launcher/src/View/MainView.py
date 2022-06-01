@@ -3,6 +3,7 @@
 ###########################################################################################
 import hashlib
 import sqlite3
+from src.feather import logos
 
 # Librerías Pandas DataFrame
 import pandas as pd

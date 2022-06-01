@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../feather/mainLogo.ico</normaloff>../feather/mainLogo.ico</iconset>
+    <normaloff>../logo.ico</normaloff>../logo.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="labelNombre">
