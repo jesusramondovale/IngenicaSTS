@@ -186,6 +186,7 @@ def saveHistoricalFund(self, isin):
 
 
 def graphHistoricalISIN(self, isins_selected, absolute):
+
     if len(isins_selected) != 0:
 
         names = []
@@ -315,58 +316,11 @@ def graphHistoricalISIN(self, isins_selected, absolute):
         self.browser.show()
 
         cursor.close()
-
     else:
         self.browser.hide()
         self.labelNoIsin.show()
         self.labelNoIsin.setText('Seleccione primero un ISIN de la lista!')
 
-        # Figure Method
-        '''
-        VÍA FIGURE
-        fig = go.Figure()
-
-        fig.add_trace(go.Candlestick(x=data.index,
-                                     open=data['Open'],
-                                     high=data['High'],
-                                     low=data['Low'],
-                                     close=data['Close'],
-                                     name='Valor de mercado'))
-
-        fig.update_layout(
-            title=name,
-            yaxis_title=currency
-
-        )
-
-        fig.update_xaxes(
-            rangeslider_visible=True,
-            rangeselector=dict(
-                buttons=list([
-                    dict(count=15, label='15 M', step='minute', stepmode='backward'),
-                    dict(count=45, label='45 M', step='minute', stepmode='backward'),
-                    dict(count=1, label='1 H', step='hour', stepmode='todate'),
-                    dict(count=2, label='2 H', step='hour', stepmode='backward'),
-                    dict(step='all')
-
-                ])
-            )
-        )
-
-        view.browser = QtWebEngineWidgets.QWebEngineView(view)
-        view.layout.addWidget(view.browser)
-        view.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
-        '''
-
-        # Grafico HTML Method
-        ''' Vía llamada HTML 
-        view.browser = QtWebEngineWidgets.QWebEngineView(view)
-        url = 'https://funds.ddns.net/h.php?isin=' + ISINS[0][0]
-        q_url = QUrl(url)
-
-        view.browser.load(q_url)
-        view.layout.addWidget(view.browser)
-        '''
 
 
 '''
@@ -425,8 +379,8 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                         dlg = errorInesperado(self)
                         dlg.exec()
 
-            if absolute:
-                print('Mode: Absolute')
+            if absolute and self.theme == 'Light':
+                print('Mode: Absolute (Light)')
                 options = {
                     # 'colors': ['#a0a0a0'],
                     'legend': {
@@ -469,9 +423,8 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                 }
                 self.H.set_dict_options(options)
 
-
-            else:
-                print('Mode: Evolucion')
+            if not absolute and self.theme == 'Light':
+                print('Mode: Evolution (Light)')
                 options = {
                     # 'colors': ['#a0a0a0'],
                     'legend': {
@@ -522,6 +475,110 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                 }
                 self.H.set_dict_options(options)
 
+            if absolute and self.theme == 'Dark':
+                print('Mode: Absolute (Dark)')
+                options = {
+                    # 'colors': ['#a0a0a0'],
+                    'legend': {
+                        'enabled': True
+                    },
+
+                    'chart': {
+                        'zoomType': 'x',
+                        'backgroundColor': '#222222',
+                        'animation': {
+                            'duration': 2000
+                        },
+                    },
+                    'title': {
+                        'text': names
+                    },
+
+                    "rangeSelector": {"selected": 6},
+
+                    "yAxis": {
+                        'opposite': True,
+                        'title': {
+                            'text': '%',
+                            'rotation': 90,
+                            'align': 'middle',
+                            'style': {
+                                'fontSize': '18px'
+                            }
+
+                        },
+                        'labels': {
+                            'align': 'left'
+                        },
+
+                        "plotLines": [{"value": 0, "width": 3, "color": "white"}],
+                    },
+
+                    "plotOptions": {
+                        "series": {
+                            "compare": "percent"
+                        }
+                    },
+
+                    "tooltip": {
+                        "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
+                        "valueDecimals": 2,
+                    },
+                }
+                self.H.set_dict_options(options)
+
+            if not absolute and self.theme == 'Dark':
+                print('Mode: Evolution (Dark)')
+                options = {
+                    # 'colors': ['#a0a0a0'],
+                    'legend': {
+                        'enabled': True
+                    },
+
+                    'chart': {
+                        'zoomType': 'x',
+                        'backgroundColor': '#222222',
+                        'animation': {
+                            'duration': 2000
+                        },
+                    },
+                    'title': {
+                        'text': names
+                    },
+
+                    "rangeSelector": {"selected": 6},
+
+                    "yAxis": {
+                        'opposite': True,
+                        'title': {
+                            'text': '%',
+                            'rotation': 90,
+                            'align': 'middle',
+                            'style': {
+                                'fontSize': '18px'
+                            }
+
+                        },
+                        'labels': {
+                            'align': 'left'
+                        },
+
+                        "plotLines": [{"value": 0, "width": 3, "color": "white"}],
+                    },
+
+                    "plotOptions": {
+                        "series": {
+                            "compare": "percent"
+                        }
+                    },
+
+                    "tooltip": {
+                        "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
+                        "valueDecimals": 2,
+                    },
+                }
+                self.H.set_dict_options(options)
+
             self.browser.setHtml(self.H.htmlcontent)
             self.layout.addWidget(self.browser)
             self.labelNoIsin.hide()
@@ -530,7 +587,6 @@ def UpdateGraph(self, isin, isins_selected, absolute):
         else:
             self.browser.hide()
             self.labelNoIsin.show()
-
 
 
     else:
@@ -666,3 +722,54 @@ def UpdateGraph(self, isin, isins_selected, absolute):
             self.browser.hide()
             self.labelNoIsin.show()
             self.labelNoIsin.setText('Seleccione primero un ISIN de la lista!')
+
+
+
+#####################     A P É N D I C E        ###############################
+
+# Grafico Figure Method
+        '''
+        VÍA FIGURE
+        fig = go.Figure()
+
+        fig.add_trace(go.Candlestick(x=data.index,
+                                     open=data['Open'],
+                                     high=data['High'],
+                                     low=data['Low'],
+                                     close=data['Close'],
+                                     name='Valor de mercado'))
+
+        fig.update_layout(
+            title=name,
+            yaxis_title=currency
+
+        )
+
+        fig.update_xaxes(
+            rangeslider_visible=True,
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=15, label='15 M', step='minute', stepmode='backward'),
+                    dict(count=45, label='45 M', step='minute', stepmode='backward'),
+                    dict(count=1, label='1 H', step='hour', stepmode='todate'),
+                    dict(count=2, label='2 H', step='hour', stepmode='backward'),
+                    dict(step='all')
+
+                ])
+            )
+        )
+
+        view.browser = QtWebEngineWidgets.QWebEngineView(view)
+        view.layout.addWidget(view.browser)
+        view.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
+        '''
+
+# Grafico HTML Method
+        ''' Vía llamada HTML 
+        view.browser = QtWebEngineWidgets.QWebEngineView(view)
+        url = 'https://funds.ddns.net/h.php?isin=' + ISINS[0][0]
+        q_url = QUrl(url)
+
+        view.browser.load(q_url)
+        view.layout.addWidget(view.browser)
+        '''

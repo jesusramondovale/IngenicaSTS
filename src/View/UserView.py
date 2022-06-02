@@ -13,6 +13,7 @@ from highstock import Highstock
 
 from src.View.AddCarterasView import AddCarterasView
 from src.View.AddISINView import AddISINView
+from src.View.ConfigView import ConfigView
 from src.util import fundUtils
 from src.util.dialogs import *
 
@@ -25,7 +26,6 @@ from src.util.dialogs import *
      @children: AddAny | MainView
 '''
 
-
 # Vista PrincipalUsuario.ui
 class UserView(QMainWindow):
 
@@ -37,6 +37,9 @@ class UserView(QMainWindow):
         # Conexión con la BD y creación de un cursor de consultas
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
+
+        #Tema seleccionado
+        view.theme = 'Light'
 
         # Captura del Usuario a través de la vista parent (MainView - LoginView)
         usuario = parent.textFieldUser.text()
@@ -60,7 +63,7 @@ class UserView(QMainWindow):
         view.buttonBorrarFondo.clicked.connect(view.borrarFondo)
         view.listIsins.itemClicked.connect(view.addIsinsChecked)
         view.buttonCheckAll.clicked.connect(view.checkAll)
-
+        view.buttonConfig.clicked.connect(view.showConfigView)
         view.H = Highstock()
         # Desactivación de los botones de borrar Cartera y Añadir Nuevo Fondo
         view.buttonBorrarCartera.setEnabled(False)
@@ -332,6 +335,17 @@ class UserView(QMainWindow):
          @params: self (UserView)
          @returns: None
     '''
+
+    def showConfigView(self):
+        conf = ConfigView(self)
+        conf.show()
+
+    '''
+            - Muestra la Interfaz Gráfica de Ajustes
+
+             @params: self (UserView)
+             @returns: None
+        '''
 
     def showAddCarteras(self):
         cart = AddCarterasView(self)
