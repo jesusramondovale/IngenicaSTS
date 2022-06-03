@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import QMainWindow
 class ConfigView(QMainWindow):
 
     def __init__(view , parent=QMainWindow):
+
         super().__init__(parent)
         # Carga de la interfaz gráfica
         uic.loadUi("src/GUI/ConfigWindow.ui", view)
@@ -25,7 +26,6 @@ class ConfigView(QMainWindow):
 
         # Conexión de los eventos de botones clickados a la lógica de los controladores
         view.buttonAplicar.clicked.connect(view.applyChanges)
-
 
     def applyChanges(view):
 
@@ -65,6 +65,7 @@ class ConfigView(QMainWindow):
                                                 border-radius: 10px;
             	                                background-color: rgb(240, 240, 240);
             	                                color:rgb(0, 0, 0)
+            	                                
 
                                             }
 
@@ -72,10 +73,14 @@ class ConfigView(QMainWindow):
                                                 background-color: rgb(0, 0, 0);
                                                 color: rgb(255, 255, 255)
                                             }
+                                            
+                                            QPushButton:checked {
+                                                background-color: rgb(0, 0, 0);
+                                                color: rgb(255, 255, 255)
+                                            }
 
                                     """)
             view.parent().theme = 'Dark'
-
         if tema == 'Light':
             view.parent().setStyleSheet("""
                                 * {
@@ -113,7 +118,11 @@ class ConfigView(QMainWindow):
                                 }
 
                                 QPushButton:hover {
-                                    background-color: rgb(0, 0, 0);
+                                    background-color: rgb(0, 85,124);
+                                    color: rgb(255, 255, 255)
+                                }
+                                QPushButton:checked {
+                                    background-color: rgb(0, 85,124);
                                     color: rgb(255, 255, 255)
                                 }
 

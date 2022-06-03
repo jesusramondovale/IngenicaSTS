@@ -53,7 +53,8 @@ QPushButton {
 }
 
 QPushButton:hover {
-	background-color: rgb(0, 0, 0)
+	 background-color: rgb(0, 85,124);
+     color: rgb(255, 255, 255)
 }
 
 </string>
@@ -233,7 +234,7 @@ QPushButton:hover {
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="frameVirt">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -651,6 +652,8 @@ background: rgb(206, 206, 206)
       </item>
      </layout>
     </widget>
+    <zorder>horizontalLayoutWidget</zorder>
+    <zorder>frameVirt</zorder>
    </widget>
    <widget class="Line" name="line">
     <property name="geometry">
@@ -672,6 +675,42 @@ background: rgb(206, 206, 206)
     <property name="orientation">
      <enum>Qt::Vertical</enum>
     </property>
+   </widget>
+   <widget class="QFrame" name="frameReal">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>0</y>
+      <width>941</width>
+      <height>721</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="labelReal">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>280</y>
+       <width>501</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>                  &lt;  Espacio Para Cartera Real  &gt;</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

@@ -11,6 +11,8 @@ from PyQt5.QtWidgets import *
 # Importamos la lógica de otras vistas
 from highstock import Highstock
 
+from PyQt5.uic.uiparser import QtWidgets
+
 from src.View.AddCarterasView import AddCarterasView
 from src.View.AddISINView import AddISINView
 from src.View.ConfigView import ConfigView
@@ -64,6 +66,12 @@ class UserView(QMainWindow):
         view.listIsins.itemClicked.connect(view.addIsinsChecked)
         view.buttonCheckAll.clicked.connect(view.checkAll)
         view.buttonConfig.clicked.connect(view.showConfigView)
+        view.buttonCartReal.clicked.connect(view.showVistaReal)
+        view.buttonCartVirt.clicked.connect(view.showVistaVirtual)
+
+        view.frameReal.hide()
+
+
         view.H = Highstock()
         # Desactivación de los botones de borrar Cartera y Añadir Nuevo Fondo
         view.buttonBorrarCartera.setEnabled(False)
@@ -340,6 +348,34 @@ class UserView(QMainWindow):
         conf = ConfigView(self)
         conf.show()
 
+
+    ''' 
+        - Muestra el apartado de la vista corrrespondiente a las carteras
+        reales del usuario
+        
+        @parent: UserView
+        @params: UserView
+        @returns: None
+    '''
+
+    def showVistaReal(self):
+        self.frameVirt.hide()
+        self.frameReal.show()
+
+
+    ''' 
+        - Muestra el apartado de la vista corrrespondiente a las carteras
+        virtuales del usuario
+
+        @parent: UserView
+        @params: UserView
+        @returns: None
+    '''
+
+    def showVistaVirtual(self):
+        self.frameReal.hide()
+        self.frameVirt.show()
+
     '''
             - Muestra la Interfaz Gráfica de Ajustes
 
@@ -389,6 +425,7 @@ class UserView(QMainWindow):
     '''
 
     def updateGraph(self, isin, isins_selected):
+
         if self.cbModo.currentIndex() == 0:
             fundUtils.UpdateGraph(self, isin, isins_selected, True)
         else:
