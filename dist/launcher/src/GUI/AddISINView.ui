@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../logo.ico</normaloff>../../../logo.ico</iconset>
+    <normaloff>../feather/mainLogo.ico</normaloff>../feather/mainLogo.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="verticalLayoutWidget">
@@ -72,7 +72,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../feather/refresh-ccw.svg</normaloff>../../../feather/refresh-ccw.svg</iconset>
+            <normaloff>../feather/refresh-ccw.svg</normaloff>../feather/refresh-ccw.svg</iconset>
           </property>
          </widget>
         </item>

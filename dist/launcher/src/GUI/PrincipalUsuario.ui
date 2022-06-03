@@ -53,8 +53,14 @@ QPushButton {
 }
 
 QPushButton:hover {
-	background-color: rgb(0, 0, 0)
+	 background-color: rgb(0, 85,124);
+     color: rgb(255, 255, 255)
 }
+
+QPushButton:checked {
+                                    background-color: rgb(0, 85,124);
+                                    color: rgb(255, 255, 255)
+                                }
 
 </string>
   </property>
@@ -135,7 +141,7 @@ QPushButton:hover {
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="buttonCartVirt_2">
+      <widget class="QPushButton" name="buttonConfig">
        <property name="font">
         <font>
          <family>Yu Gothic UI Light</family>
@@ -150,6 +156,31 @@ QPushButton:hover {
        <property name="icon">
         <iconset>
          <normaloff>../feather/settings.svg</normaloff>../feather/settings.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonRefresh">
+       <property name="font">
+        <font>
+         <family>Yu Gothic UI Light</family>
+         <pointsize>9</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string> Actualizar Hist.</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../feather/refresh-cw.svg</normaloff>../feather/refresh-cw.svg</iconset>
        </property>
        <property name="checkable">
         <bool>false</bool>
@@ -208,7 +239,7 @@ QPushButton:hover {
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="frameVirt">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -626,6 +657,8 @@ background: rgb(206, 206, 206)
       </item>
      </layout>
     </widget>
+    <zorder>horizontalLayoutWidget</zorder>
+    <zorder>frameVirt</zorder>
    </widget>
    <widget class="Line" name="line">
     <property name="geometry">
@@ -647,6 +680,42 @@ background: rgb(206, 206, 206)
     <property name="orientation">
      <enum>Qt::Vertical</enum>
     </property>
+   </widget>
+   <widget class="QFrame" name="frameReal">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>0</y>
+      <width>1211</width>
+      <height>721</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="labelReal">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>260</y>
+       <width>501</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>                  &lt;  Espacio Para Cartera Real  &gt;</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

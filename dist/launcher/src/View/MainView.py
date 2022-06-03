@@ -1,5 +1,5 @@
 ###########################################################################################
-##   GUI  Y  LÓGICA   DE    PROGRAMACIÓN    DE     LA     VISTA    MainView (LoginView)  ##
+#   GUI  Y  LÓGICA   DE    PROGRAMACIÓN    DE     LA     VISTA    MainView (LoginView)  ##
 ###########################################################################################
 import hashlib
 import sqlite3

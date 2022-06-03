@@ -68,7 +68,8 @@ class UserView(QMainWindow):
         view.buttonConfig.clicked.connect(view.showConfigView)
         view.buttonCartReal.clicked.connect(view.showVistaReal)
         view.buttonCartVirt.clicked.connect(view.showVistaVirtual)
-
+        view.buttonCartReal.setAutoExclusive(True)
+        view.buttonCartVirt.setAutoExclusive(True)
         view.frameReal.hide()
 
 

@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Crear Cartera</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../feather/mainLogo.ico</normaloff>../feather/mainLogo.ico</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true"/>
   </property>
