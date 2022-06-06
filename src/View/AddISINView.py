@@ -3,6 +3,7 @@
 ##############################################################################
 
 import sqlite3
+import pycountry_convert as pc
 
 # Importamos las librerías de carga y Widgets de Python QT v5
 # para graficar el contenido de los ficheros GUI
@@ -56,20 +57,21 @@ class AddISINView(QMainWindow):
     def camposLlenos(self):
         if (self.tfNombre.text() == '' or
                 self.tfISIN.text() == '' or
-                self.tfISIN.text() == '' or
-                self.tfISIN.text() == '' or
-                self.tfISIN.text() == '' or
-                self.tfISIN.text() == '' or
-                self.tfISIN.text() == '' or
-                self.tfISIN.text() == '' or
-                self.tfISIN.text() == '' or
-                self.tfISIN.text() == '' or
-                self.tfISIN.text() == ''):
-
+                self.tfTipoAct.text() == '' or
+                self.tfDivisa.text() == '' or
+                self.tfCubierta.text() == '' or
+                self.tfRV.text() == '' ):
             return False
 
         else:
-            return True
+            try:
+                float(self.tfRV.text())
+                return True
+
+            except ValueError:
+                badRVdialog(self).exec()
+                return False
+
 
     '''
         - Controlador del evento clicked sobre el botón REFRESH de la vista AddISINView
@@ -88,16 +90,43 @@ class AddISINView(QMainWindow):
             try :
                 name = fundUtils.getFundINFO(self, ISIN).at[0, 'name']
                 currency = fundUtils.getFundINFO(self, ISIN).at[0, 'currency']
-                country = fundUtils.getFundINFO(self, ISIN).at[0, 'country'].capitalize()
-                tipo = fundUtils.getFundINFO(self, ISIN).at[0, 'asset_class'].capitalize()
+                country = fundUtils.getFundINFO(self, ISIN).at[0, 'country'].title()
+                sector = fundUtils.getFundINFO(self, ISIN).at[0, 'asset_class'].capitalize()
+                issuer = fundUtils.getFundINFO(self, ISIN).at[0, 'issuer']
 
                 self.tfNombre.setText(name)
                 self.tfDivisa.setText(currency)
-                self.tfZona.setText(country)
-                self.tfTipoAct.setText(tipo)
+                self.tfPais.setText(country)
+                self.tfTipoAct.setText('Fondo')
+                self.tfGestora.setText(issuer)
+                self.tfSector.setText(sector)
+
+                try:
+                    zona = pc.country_alpha2_to_continent_code(pc.country_name_to_country_alpha2(country))
+                    self.tfZona.setText(pc.convert_continent_code_to_continent_name(zona))
+
+                except  KeyError:
+                    self.tfZona.setText('')
+                    pass
+
+
 
             except RuntimeError:
+
                 dlg = isinNotFoundDialog(self)
+
+                self.tfNombre.setText('')
+
+                self.tfGestora.setText('')
+
+                self.tfDivisa.setText('')
+
+                self.tfPais.setText('')
+
+                self.tfZona.setText('')
+
+                self.tfTipoAct.setText('')
+
                 dlg.exec()
 
         else :
@@ -154,24 +183,6 @@ class AddISINView(QMainWindow):
                     # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
                     db.execute("INSERT INTO carteras_usuario VALUES ( ? , ? , ? )",
                                (id[0], parent.cbCarteras.currentText(), ISIN))
-
-                    '''
-                        db.execute("INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)",
-                                   (datetime.today().strftime('%d/%m/%Y'),
-                                    self.tfNombre.text(),
-                                    None,
-                                    self.tfTipoAct.text(),
-                                    self.tfRV.text(),
-                                    self.tfZona.text(),
-                                    self.tfEstilo.text(),
-                                    self.tfSector.text(),
-                                    self.tfTamano.text(),
-                                    self.tfDivisa.text(),
-                                    self.tfCubierta.text(),
-                                    None,
-                                    self.tfDuracion.text(),
-                                    ))
-                        '''
 
 
                     db.close()

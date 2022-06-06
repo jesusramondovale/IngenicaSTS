@@ -16,6 +16,10 @@ from PyQt5.uic.uiparser import QtWidgets
 from src.View.AddCarterasView import AddCarterasView
 from src.View.AddISINView import AddISINView
 from src.View.ConfigView import ConfigView
+
+from src.View.AddCarterasRealesView import AddCarterasRealesView
+from src.View.AddISINViewReal import AddISINViewReal
+
 from src.util import fundUtils
 from src.util.dialogs import *
 
@@ -27,6 +31,7 @@ from src.util.dialogs import *
      @parent: MainView
      @children: AddAny | MainView
 '''
+
 
 # Vista PrincipalUsuario.ui
 class UserView(QMainWindow):
@@ -40,7 +45,7 @@ class UserView(QMainWindow):
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
 
-        #Tema seleccionado
+        # Tema seleccionado
         view.theme = 'Light'
 
         # Captura del Usuario a través de la vista parent (MainView - LoginView)
@@ -59,9 +64,15 @@ class UserView(QMainWindow):
         view.allChecked = False
         # Conexión de los eventos de botones clickados a la lógica de los controladores
         view.buttonLogout.clicked.connect(view.logout)
+
         view.buttonAddISIN.clicked.connect(view.showAddIsin)
         view.buttonAddCarteras.clicked.connect(view.showAddCarteras)
         view.buttonBorrarCartera.clicked.connect(view.borrarCartera)
+
+        view.buttonAddISINReal.clicked.connect(view.showAddIsinReal)
+        view.buttonAddCarteraReal.clicked.connect(view.showAddCarterasReales)
+        view.buttonBorrarCarteraReal.clicked.connect(view.borrarCarteraReal)
+
         view.buttonBorrarFondo.clicked.connect(view.borrarFondo)
         view.listIsins.itemClicked.connect(view.addIsinsChecked)
         view.buttonCheckAll.clicked.connect(view.checkAll)
@@ -70,13 +81,16 @@ class UserView(QMainWindow):
         view.buttonCartVirt.clicked.connect(view.showVistaVirtual)
         view.buttonCartReal.setAutoExclusive(True)
         view.buttonCartVirt.setAutoExclusive(True)
-        view.frameReal.hide()
-
+        view.frameVirt.hide()
 
         view.H = Highstock()
         # Desactivación de los botones de borrar Cartera y Añadir Nuevo Fondo
         view.buttonBorrarCartera.setEnabled(False)
         view.buttonAddISIN.setEnabled(False)
+
+
+        view.buttonBorrarCarteraReal.setEnabled(False)
+        view.buttonAddISINReal.setEnabled(False)
 
         # Instancia del Widget WebEngine para la creación de Gráficos
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
@@ -96,10 +110,20 @@ class UserView(QMainWindow):
             "SELECT num_cartera , nombre_cartera FROM carteras WHERE id_usuario = ? ORDER BY (nombre_cartera)",
             ([view.id_usuario[0]])).fetchall()
 
+        # Carga de todas las Carteras Reales de las que dispone el Usuario
+        view.carteras_usuario_real = db.execute(
+            "SELECT num_cartera , nombre_cartera FROM carteras_real WHERE id_usuario = ? ORDER BY (nombre_cartera)",
+            ([view.id_usuario[0]])).fetchall()
+
         # Nombres de cada cartera
         view.nombres_carteras = []
         for e in view.carteras_usuario:
             view.nombres_carteras.append(e[1])
+
+        # Nombres de cada cartera real
+        view.nombres_carteras_real = []
+        for e in view.carteras_usuario_real:
+            view.nombres_carteras_real.append(e[1])
 
         if len(view.nombres_carteras) > 0:
             view.labelCartera.setText('Fondos en ' + view.nombres_carteras[0])
@@ -107,10 +131,15 @@ class UserView(QMainWindow):
             view.labelCartera.setText('No existen Carteras')
         # Adición de las Carteras al ComboBox de Selección de Carteras
         view.cbCarteras.addItems(view.nombres_carteras)
+        view.cbCarterasReal.addItems(view.nombres_carteras_real)
 
         # Activación del botón añadir Fondo si hay alguna cartera
         if view.cbCarteras.count() > 0:
             view.buttonAddISIN.setEnabled(True)
+
+        # Activación del botón añadir Fondo Real si hay alguno
+        if view.cbCarterasReal.count() > 0:
+            view.buttonAddISINReal.setEnabled(True)
 
         # Si hay una cartera actual (si existen carteras) para el usuario actual
         if view.currentCartera is not None:
@@ -121,6 +150,13 @@ class UserView(QMainWindow):
                 "USING (nombre_cartera)"
                 "WHERE c.nombre_cartera = ? AND cu.id_usuario = ? ",
                 ([view.currentCartera[0], view.id_usuario[0]])).fetchall()
+
+            view.ISINS_real = db.execute(
+                "SELECT cu.ISIN FROM carteras_real c INNER JOIN carteras_usuario_real cu "
+                "USING (nombre_cartera)"
+                "WHERE c.nombre_cartera = ? AND cu.id_usuario = ? ",
+                ([view.currentCartera[0], view.id_usuario[0]])).fetchall()
+
             view.isin_list = []
             for ISIN in view.ISINS:
                 view.isin_list.append(ISIN[0])
@@ -144,9 +180,16 @@ class UserView(QMainWindow):
             # Actualiza el gráfico con los Fondos seleccionados
             fundUtils.graphHistoricalISIN(view, view.isins_selected, False)
 
+            # Actualiza la Tabla de Fondos
+            view.updateTable()
+
         # Activa el botón de borrar Carteras si hay alguna Cartera
         if len(view.nombres_carteras) > 0:
             view.buttonBorrarCartera.setEnabled(True)
+
+        # Activa el botón de borrar Carteras si hay alguna Cartera
+        if view.cbCarterasReal.count() > 0:
+            view.buttonBorrarCarteraReal.setEnabled(True)
 
         # Conexión de las señales de eventos en los selectores de Selección de Cartera y Modo de Graficación
         view.cbCarteras.currentIndexChanged.connect(view.updateQList)
@@ -154,6 +197,7 @@ class UserView(QMainWindow):
             lambda clicked, isins_selected=view.isins_selected: view.updateGraph(None, view.isins_selected))
         view.buttonRefresh.clicked.connect(
             lambda clicked, view=view: fundUtils.refreshHistorics(view))
+        view.cbCarterasReal.currentIndexChanged.connect(view.updateTable)
 
     '''
         - Borra el fondo seleccionado del ComboBox de la vista
@@ -349,7 +393,6 @@ class UserView(QMainWindow):
         conf = ConfigView(self)
         conf.show()
 
-
     ''' 
         - Muestra el apartado de la vista corrrespondiente a las carteras
         reales del usuario
@@ -362,7 +405,6 @@ class UserView(QMainWindow):
     def showVistaReal(self):
         self.frameVirt.hide()
         self.frameReal.show()
-
 
     ''' 
         - Muestra el apartado de la vista corrrespondiente a las carteras
@@ -389,6 +431,45 @@ class UserView(QMainWindow):
         cart.show()
 
     '''
+               - Muestra la Interfaz para añadir Carteras Reales
+
+                @params: self (UserView)
+                @returns: None
+           '''
+
+    def showAddCarterasReales(self):
+        cart = AddCarterasRealesView(self)
+        cart.show()
+
+
+    def borrarCarteraReal(self):
+        #print('Borrar Cartera Real()')
+        dlg = confirmDeleteCarteraDialog(self)
+        if dlg.exec():
+
+            index = self.cbCarterasReal.currentIndex()
+
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+            cartera = str(self.cbCarterasReal.itemText(index))
+
+            db.execute("DELETE FROM carteras_real WHERE id_usuario = ? AND nombre_cartera = ?",
+                       ([self.id_usuario[0], cartera]))
+            db.execute("DELETE FROM carteras_usuario_real WHERE id_usuario = ? AND nombre_cartera = ?",
+                       ([self.id_usuario[0], cartera]))
+
+            self.cbCarterasReal.removeItem(self.cbCarterasReal.currentIndex())
+
+            if self.cbCarterasReal.count() > 0:
+                self.buttonBorrarCarteraReal.setEnabled(True)
+            else:
+                self.buttonBorrarCarteraReal.setEnabled(False)
+
+        else:
+            print('Cancelada la operación de borrado de cartera real')
+            pass
+
+    '''
         - Muestra la Interfaz Gráfica para Añadir Fondos
 
          @params: self (UserView)
@@ -397,6 +478,17 @@ class UserView(QMainWindow):
 
     def showAddIsin(self):
         merc = AddISINView(self)
+        merc.show()
+
+    '''
+        - Muestra la Interfaz Gráfica para Añadir Fondos (reales)
+
+         @params: self (UserView)
+         @returns: None
+    '''
+
+    def showAddIsinReal(self):
+        merc = AddISINViewReal(self)
         merc.show()
 
     '''
@@ -431,3 +523,55 @@ class UserView(QMainWindow):
             fundUtils.UpdateGraph(self, isin, isins_selected, True)
         else:
             fundUtils.UpdateGraph(self, isin, isins_selected, False)
+
+    '''
+        - Actualiza la tabla de Fondos en Cartera Real
+        
+        @params: self(UserView)
+        @returns: None
+    '''
+
+    def updateTable(view):
+        #print('Update Table()')
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+
+        sql = "SELECT ca.* FROM caracterizacion ca INNER JOIN carteras_usuario_real cu USING(ISIN) WHERE cu.nombre_cartera == ?"
+        funds = db.execute(sql, ([view.cbCarterasReal.currentText()])).fetchall()
+
+        view.tableFondos.clear()
+        view.tableFondos.setHorizontalHeaderItem(0, QTableWidgetItem('Alta'))
+        view.tableFondos.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
+        view.tableFondos.setHorizontalHeaderItem(2, QTableWidgetItem('Nombre'))
+        view.tableFondos.setHorizontalHeaderItem(3, QTableWidgetItem('Gestora'))
+        view.tableFondos.setHorizontalHeaderItem(4, QTableWidgetItem('Tipo Act.'))
+        view.tableFondos.setHorizontalHeaderItem(5, QTableWidgetItem('R.V'))
+        view.tableFondos.setHorizontalHeaderItem(6, QTableWidgetItem('Zona'))
+        view.tableFondos.setHorizontalHeaderItem(7, QTableWidgetItem('Estilo'))
+        view.tableFondos.setHorizontalHeaderItem(8, QTableWidgetItem('Sector'))
+        view.tableFondos.setHorizontalHeaderItem(9, QTableWidgetItem('Tamaño'))
+        view.tableFondos.setHorizontalHeaderItem(10, QTableWidgetItem('Divisa'))
+        view.tableFondos.setHorizontalHeaderItem(11, QTableWidgetItem('Cubierta'))
+        view.tableFondos.setHorizontalHeaderItem(12, QTableWidgetItem('Duración'))
+
+        view.tableFondos.setColumnWidth(2, 350)
+        view.tableFondos.setRowCount(len(funds))
+
+        f = 0
+
+        for fila in db.execute(sql, ([view.cbCarterasReal.currentText()])):
+            view.tableFondos.setItem(f, 0, QTableWidgetItem(str(fila[0])))
+            view.tableFondos.setItem(f, 1, QTableWidgetItem(str(fila[1])))
+            view.tableFondos.setItem(f, 2, QTableWidgetItem(str(fila[2])))
+            view.tableFondos.setItem(f, 3, QTableWidgetItem(str(fila[3])))
+            view.tableFondos.setItem(f, 4, QTableWidgetItem(str(fila[4])))
+            view.tableFondos.setItem(f, 5, QTableWidgetItem(str(fila[5])))
+            view.tableFondos.setItem(f, 6, QTableWidgetItem(str(fila[6])))
+            view.tableFondos.setItem(f, 7, QTableWidgetItem(str(fila[7])))
+            view.tableFondos.setItem(f, 8, QTableWidgetItem(str(fila[8])))
+            view.tableFondos.setItem(f, 9, QTableWidgetItem(str(fila[9])))
+            view.tableFondos.setItem(f, 10, QTableWidgetItem(str(fila[10])))
+            view.tableFondos.setItem(f, 11, QTableWidgetItem(str(fila[11])))
+            f += 1
+
+        db.close()
