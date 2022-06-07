@@ -13,9 +13,9 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # Crea una instancia de objeto MainView (la vista del Log In)
-    myapp = MainView()
+    myapp = MainView(app)
 
-    # Visualiza en pantalla la interfaz de usuario de la instancia
+    # Visualiza en pantalla la interfaz de usuario LogIn
     myapp.show()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec_()) #  <----- Bucle donde reside el hilo principal del GUI

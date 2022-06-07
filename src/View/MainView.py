@@ -3,6 +3,9 @@
 ###########################################################################################
 import hashlib
 import sqlite3
+import threading
+import time
+
 from src.feather import logos
 
 # Librerías Pandas DataFrame
@@ -12,10 +15,11 @@ import pandas as pd
 # para graficar el contenido de los ficheros GUI
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
-
+from PyQt5.QtCore import  *
 # Importamos la lógica necesaria de otras vistas
 from src.View.SignInView import SignIn
 from src.View.UserView import UserView
+from src.View.cargandoView import cargandoView
 from src.util.dialogs import *
 
 '''
@@ -27,9 +31,9 @@ from src.util.dialogs import *
 # Vista LoginView.ui
 class MainView(QMainWindow):
 
-
-    def __init__(view):
+    def __init__(view , app=QApplication):
         super().__init__()
+        view.app = app
 
         # Carga de la interfaz gráfica
         uic.loadUi("src/GUI/LoginView.ui", view)
@@ -52,16 +56,19 @@ class MainView(QMainWindow):
         signin = SignIn(self)
         signin.show()
 
+
     '''
         - Controlador del evento clicked sobre el botón Entrar en el diálogo goodLogin
 
         @params: view (MainView) 
         @returns: None
     '''
-    def showUserView(self, QMainWindow):
-        self.hide()
-        userView = UserView(QMainWindow)
-        userView.show()
+
+    def showUserView(self):
+        view = UserView(self)
+        view.show()
+
+
 
     '''
         - Controlador del evento clicked sobre el botón LogIn
@@ -87,7 +94,11 @@ class MainView(QMainWindow):
         if loginResult.__len__() != 0:
             dlg = goodLoginDialog(self)
             if dlg.exec():
-                self.showUserView(self)
+                self.hide()
+                loading = cargandoView(self)
+                self.app.processEvents()
+                self.showUserView()
+                loading.hide()
                 # print("Pulsado botón Entrar")
 
             else:
@@ -113,3 +124,6 @@ class MainView(QMainWindow):
     def dispatcher(self):
         if self.textFieldPassword.text() and self.textFieldUser.text():
             self.buttonLogin.setEnabled(True)
+
+
+

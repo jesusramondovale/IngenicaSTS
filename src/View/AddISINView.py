@@ -180,10 +180,14 @@ class AddISINView(QMainWindow):
                     # en caso de que el fondo no exista
                     fundUtils.getFundINFO(self, ISIN)
 
+                    # Añade el NOMBRE del Fondo introducido en la Lista de Cartera de Usuario
+                    parent.listIsins.addItem(str(fundUtils.getFundINFO(self, ISIN).at[0, 'name']) + "  (" + ISIN + ")")
+                    parent.isin_list.append(ISIN)
+                    parent.ISINS.append((ISIN,0))
+
                     # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
                     db.execute("INSERT INTO carteras_usuario VALUES ( ? , ? , ? )",
                                (id[0], parent.cbCarteras.currentText(), ISIN))
-
 
                     db.close()
 
@@ -192,13 +196,11 @@ class AddISINView(QMainWindow):
                     t = threading.Thread(target=fundUtils.saveHistoricalFund, args=(self, ISIN))
                     t.start()
 
-                    # Añade el NOMBRE del Fondo introducido en la Lista de Cartera de Usuario
-                    parent.listIsins.addItem(str(fundUtils.getFundINFO(self, ISIN).at[0, 'name']) + "  (" + ISIN + ")")
-                    parent.isin_list.append(ISIN)
 
                     # Avisa al usuario de la operación completada con éxito y
                     # esconde la ventana actual (vuelve a UserView)
                     dlg = TickerAddedSuccesfully(self)
+                    parent.checkAll()
                     dlg.exec()
                     self.hide()
 

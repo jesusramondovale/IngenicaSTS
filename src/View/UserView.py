@@ -16,6 +16,7 @@ from PyQt5.uic.uiparser import QtWidgets
 from src.View.AddCarterasView import AddCarterasView
 from src.View.AddISINView import AddISINView
 from src.View.ConfigView import ConfigView
+from src.View.cargandoView import cargandoView
 
 from src.View.AddCarterasRealesView import AddCarterasRealesView
 from src.View.AddISINViewReal import AddISINViewReal
@@ -38,6 +39,7 @@ class UserView(QMainWindow):
 
     def __init__(view, parent=QMainWindow):
         super().__init__(parent)
+
         # Carga de la interfaz gráfica
         uic.loadUi("src/GUI/PrincipalUsuario.ui", view)
 
@@ -199,6 +201,8 @@ class UserView(QMainWindow):
             lambda clicked, view=view: fundUtils.refreshHistorics(view))
         view.cbCarterasReal.currentIndexChanged.connect(view.updateTable)
 
+        view.checkAll()
+
     '''
         - Borra el fondo seleccionado del ComboBox de la vista
         y elimina el registro de usuario para la cartera actual. 
@@ -336,6 +340,7 @@ class UserView(QMainWindow):
                 view.listIsins.item(i).setCheckState(True)
 
             view.updateGraph(None, view.isin_list)
+            view.isins_selected = []
             for e in view.ISINS:
                 view.isins_selected.append(e[0])
             view.allChecked = True
@@ -383,8 +388,8 @@ class UserView(QMainWindow):
         print(self.isins_selected)
 
     '''
-        - Muestra la Interfaz Gráfica para Añadir Carteras
-
+        - Muestra la Interfaz Gráfica de Configuración
+        
          @params: self (UserView)
          @returns: None
     '''
