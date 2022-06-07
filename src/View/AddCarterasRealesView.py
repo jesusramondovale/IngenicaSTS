@@ -70,11 +70,14 @@ class AddCarterasRealesView(QMainWindow):
         # Si el usuario NO DISPONE previamente de una cartera con ese mismo nombre
         # entonces temp estará vacío
         if temp is None:
+
             # Graba en BD la nueva Cartera para el ID de Usuario Actual
             db.execute(
                 "INSERT INTO carteras_real VALUES (?,?,?,?) ",
                 [self.id_usuario[0], None, nombre_cartera,
                  datetime.today().strftime('%d/%m/%Y')]).fetchone()
+
+            db.execute("CREATE TABLE [" + str(self.id_usuario[0]) + "_" + nombre_cartera + "] ( 'Fecha' TEXT NOT NULL, 'ISIN' TEXT NOT NULL, 'Participaciones' NUMERIC NOT NULL, 'Importe'	NUMERIC NOT NULL, 'Porcentaje' NUMERIC NOT NULL);" , [])
 
             # Actualiza el valor de las carteras de usuario
             self.carteras_usuario = db.execute(
@@ -94,11 +97,12 @@ class AddCarterasRealesView(QMainWindow):
             dlg.exec()
 
             # Cierra la ventana de creación de nuevas carteras
-            self.close()
+            self.hide()
 
             # Limpia el ComboBox en UserView
+            self.parent().cbCarterasReal.blockSignals(True)
             self.parent().cbCarterasReal.clear()
-
+            self.parent().cbCarterasReal.blockSignals(False)
             # Carga de nuevo el ComboBox en UserView con todas las carteras actualizadas
             self.parent().cbCarterasReal.addItems(self.nombres_carteras)
 

@@ -92,7 +92,7 @@ class AddCarterasView(QMainWindow):
             dlg.exec()
 
             # Cierra la ventana de creación de nuevas carteras
-            self.close()
+            self.hide()
 
             # Limpia el ComboBox en UserView
             self.parent().cbCarteras.clear()

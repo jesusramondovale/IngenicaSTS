@@ -10,15 +10,15 @@ from PyQt5.QtWidgets import *
 
 # Importamos la lógica de otras vistas
 from highstock import Highstock
-
+from highcharts import Highchart
 from PyQt5.uic.uiparser import QtWidgets
 
 from src.View.AddCarterasView import AddCarterasView
 from src.View.AddISINView import AddISINView
 from src.View.ConfigView import ConfigView
 from src.View.cargandoView import cargandoView
+from src.View.TraspasosView import TraspasosView
 from src.View.OperacionesView import OperacionesView
-
 from src.View.AddCarterasRealesView import AddCarterasRealesView
 from src.View.AddISINViewReal import AddISINViewReal
 
@@ -33,6 +33,7 @@ from src.util.dialogs import *
      @parent: MainView
      @children: AddAny | MainView
 '''
+
 
 # Vista PrincipalUsuario.ui
 class UserView(QMainWindow):
@@ -82,7 +83,8 @@ class UserView(QMainWindow):
         view.listIsins.itemPressed.connect(view.addIsinsChecked)
         view.buttonCheckAll.clicked.connect(view.checkAll)
         view.buttonConfig.clicked.connect(view.showConfigView)
-        view.buttonOperacion.clicked.connect(view.showOperaciones)
+        view.buttonOpBasica.clicked.connect(view.showCompraventas)
+        view.buttonOpTraspaso.clicked.connect(view.showTraspasos)
         view.buttonCartReal.clicked.connect(view.showVistaReal)
         view.buttonCartVirt.clicked.connect(view.showVistaVirtual)
         view.buttonCartReal.setAutoExclusive(True)
@@ -90,26 +92,29 @@ class UserView(QMainWindow):
         view.frameVirt.hide()
 
         view.H = Highstock()
+
         # Desactivación de los botones de borrar Cartera y Añadir Nuevo Fondo
         view.buttonBorrarCartera.setEnabled(False)
         view.buttonAddISIN.setEnabled(False)
-
 
         view.buttonBorrarCarteraReal.setEnabled(False)
         view.buttonAddISINReal.setEnabled(False)
 
         # Instancia del Widget WebEngine para la creación de Gráficos
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
+        view.browserPie = QtWebEngineWidgets.QWebEngineView(view)
 
         # Carga del Combobox de selección de modo de graficación
         view.cbModo.addItems(['Absoluto', 'Evolución'])
 
         # Carga de la etiqueta con el Nombre de usuario actual
         view.labelUsuario.setText(usuario)
+        view.labelUsuarioReal.setText(usuario)
 
         # Carga de la etiqueta con el e-mail de usuario actual
         email = db.execute("SELECT email FROM users WHERE nombre = ?", [usuario]).fetchone()
         view.labelEmail.setText(email[0])
+        view.labelEmailReal.setText(email[0])
 
         # Carga de todas las Carteras Virtuales de las que dispone el Usuario
         view.carteras_usuario = db.execute(
@@ -135,6 +140,7 @@ class UserView(QMainWindow):
             view.labelCartera.setText('Fondos en ' + view.nombres_carteras[0])
         else:
             view.labelCartera.setText('No existen Carteras')
+
         # Adición de las Carteras al ComboBox de Selección de Carteras
         view.cbCarteras.addItems(view.nombres_carteras)
         view.cbCarterasReal.addItems(view.nombres_carteras_real)
@@ -163,7 +169,6 @@ class UserView(QMainWindow):
                 "WHERE c.nombre_cartera = ? AND cu.id_usuario = ? ",
                 ([view.currentCartera[0], view.id_usuario[0]])).fetchall()
 
-
             for ISIN in view.ISINS:
                 view.isin_list.append(ISIN[0])
 
@@ -187,7 +192,7 @@ class UserView(QMainWindow):
             fundUtils.graphHistoricalISIN(view, view.isins_selected, False)
 
             # Actualiza las Tablas de Fondos
-            view.updateTable()
+            # view.updateTable()
             view.UpdateTableOperaciones()
 
         # Activa el botón de borrar Carteras si hay alguna Cartera
@@ -204,11 +209,55 @@ class UserView(QMainWindow):
             lambda clicked, isins_selected=view.isins_selected: view.updateGraph(None, view.isins_selected))
         view.buttonRefresh.clicked.connect(
             lambda clicked, view=view: fundUtils.refreshHistorics(view))
-        view.cbCarterasReal.currentIndexChanged.connect(view.updateTable)
         view.cbCarterasReal.currentIndexChanged.connect(view.UpdateTableOperaciones)
+        view.cbCarterasReal.currentIndexChanged.connect(view.updatePieChart)
 
         if len(view.ISINS) != 0:
             view.checkAll()
+
+        view.updateGraph(None, view.isins_selected)
+
+        # Instancia del Widget WebEngine para la creación de Gráficos
+        view.Pie = Highchart(width=350, height=320)
+        options = {
+            'chart': {
+                'plotBackgroundColor': '#979797',
+                'plotBorderWidth': None,
+                'plotShadow': False
+            },
+            'title': {
+                'text': view.cbCarterasReal.currentText()
+            },
+            'tooltip': {
+                'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+        }
+        view.Pie.set_dict_options(options)
+
+        if not view.cbCarterasReal.currentText() == '':
+            data = db.execute("select ISIN , Porcentaje "
+                              "from ( select t.*, row_number() over(partition by ISIN "
+                              "order by Fecha desc) rn "
+                              "from [" + str(view.id_usuario[0]) + "_" +
+                              view.cbCarterasReal.currentText() + "] t) t "
+                                                                  "where rn = 1 order by ISIN", ([])).fetchall()
+
+            view.Pie.add_data_set(data, 'pie', 'Peso en Cartera', allowPointSelect=True,
+                                  cursor='pointer',
+                                  showInLegend=True,
+                                  dataLabels={
+                                      'enabled': False,
+                                      'format': '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                      'style': {
+                                          'color': "(Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'"
+                                      }
+                                  }
+                                  )
+            view.updatePieChart()
+
+        view.browserPie.setHtml(view.Pie.htmlcontent)
+        view.layoutPieChart.addWidget(view.browserPie)
+        view.browserPie.show()
 
     '''
         - Borra el fondo seleccionado del ComboBox de la vista
@@ -454,9 +503,8 @@ class UserView(QMainWindow):
         cart = AddCarterasRealesView(self)
         cart.show()
 
-
     def borrarCarteraReal(self):
-        #print('Borrar Cartera Real()')
+        # print('Borrar Cartera Real()')
         dlg = confirmDeleteCarteraDialog(self)
         if dlg.exec():
 
@@ -470,6 +518,7 @@ class UserView(QMainWindow):
                        ([self.id_usuario[0], cartera]))
             db.execute("DELETE FROM carteras_usuario_real WHERE id_usuario = ? AND nombre_cartera = ?",
                        ([self.id_usuario[0], cartera]))
+            db.execute("DROP TABLE [" + str(self.id_usuario[0]) + "_" + cartera + "]", ([]))
 
             self.cbCarterasReal.removeItem(self.cbCarterasReal.currentIndex())
 
@@ -510,7 +559,12 @@ class UserView(QMainWindow):
             @params: self (UserView)
             @returns: None
     '''
-    def showOperaciones(self):
+
+    def showTraspasos(self):
+        ops = TraspasosView(self)
+        ops.show()
+
+    def showCompraventas(self):
         ops = OperacionesView(self)
         ops.show()
 
@@ -554,8 +608,103 @@ class UserView(QMainWindow):
         @returns: None
     '''
 
+    def UpdateTableOperaciones(view):
+        # print('Update Table Operaciones()')
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+
+        sql = 'SELECT fecha , orden , titular , incidencias , ISINorigen, ISINdestino, origenParticipaciones , origenImporte ' \
+              'FROM operaciones ' \
+              'WHERE id_usuario == ? AND nombre_cartera == ?'
+        funds = db.execute(sql, ([view.id_usuario[0], view.cbCarterasReal.currentText()])).fetchall()
+
+        view.tableOperaciones.clear()
+        view.tableOperaciones.setHorizontalHeaderItem(0, QTableWidgetItem('Fecha'))
+        view.tableOperaciones.setHorizontalHeaderItem(1, QTableWidgetItem('Estado'))
+        view.tableOperaciones.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
+        view.tableOperaciones.setHorizontalHeaderItem(3, QTableWidgetItem('Incidencias'))
+        view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Fondo (Origen)'))
+        view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Fondo (Destino)'))
+        view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Participaciones (Origen)'))
+        view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Participaciones (Destino)'))
+        view.tableOperaciones.setColumnWidth(2, 350)
+        view.tableOperaciones.setRowCount(len(funds))
+
+        f = 0
+
+        for fila in db.execute(sql, ([view.id_usuario[0], view.cbCarterasReal.currentText()])):
+            view.tableOperaciones.setItem(f, 0, QTableWidgetItem(str(fila[0])))
+            view.tableOperaciones.setItem(f, 1, QTableWidgetItem(str(fila[1])))
+            view.tableOperaciones.setItem(f, 2, QTableWidgetItem(str(fila[2])))
+            view.tableOperaciones.setItem(f, 3, QTableWidgetItem(str(fila[3])))
+            view.tableOperaciones.setItem(f, 4, QTableWidgetItem(str(fila[4])))
+            view.tableOperaciones.setItem(f, 5, QTableWidgetItem(str(fila[5])))
+            view.tableOperaciones.setItem(f, 6, QTableWidgetItem(str(fila[6])))
+            view.tableOperaciones.setItem(f, 7, QTableWidgetItem(str(fila[7])))
+
+            f += 1
+
+        db.close()
+
+    def updatePieChart(self):
+
+        self.Pie = Highchart(width=350, height=320)
+
+        options = {
+            'chart': {
+                'plotBackgroundColor': '#979797',
+                'plotBorderWidth': None,
+                'plotShadow': False
+            },
+            'title': {
+                'text': self.cbCarterasReal.currentText()
+            },
+            'tooltip': {
+                'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+        }
+
+        self.Pie.set_dict_options(options)
+
+        # Conexión con la BD y creación de un cursor de consultas
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+
+        try:
+            data = db.execute("select ISIN , Porcentaje "
+                              "from ( select t.*, row_number() over(partition by ISIN "
+                              "order by Fecha desc) rn "
+                              "from [" + str(self.id_usuario[0]) + "_" +
+                              self.cbCarterasReal.currentText() + "] t) t "
+                                                                  "where rn = 1 order by ISIN", ([])).fetchall()
+
+        except sqlite3.OperationalError:
+            data = db.execute("select ISIN , Porcentaje "
+                              "from ( select t.*, row_number() over(partition by ISIN "
+                              "order by Fecha desc) rn "
+                              "from [" + str(self.id_usuario[0]) + "_" +
+                              self.cbCarterasReal.itemText(0) + "] t) t "
+                                                                "where rn = 1 order by ISIN", ([])).fetchall()
+
+        self.Pie.add_data_set(data, 'pie', 'Peso en Cartera', allowPointSelect=True,
+                              cursor='pointer',
+                              showInLegend=True,
+                              dataLabels={
+                                  'enabled': False,
+                                  'format': '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                  'style': {
+                                      'color': "(Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'"
+                                  }
+                              }
+                              )
+
+        self.browserPie.setHtml(self.Pie.htmlcontent)
+        self.layoutPieChart.addWidget(self.browserPie)
+        self.browserPie.show()
+
+    '''
     def updateTable(view):
-        #print('Update Table()')
+        # print('Update Table()')
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
 
@@ -598,41 +747,4 @@ class UserView(QMainWindow):
             f += 1
 
         db.close()
-
-    def UpdateTableOperaciones(view):
-        # print('Update Table Operaciones()')
-        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-        db = db_connection.cursor()
-
-        sql = 'SELECT fecha , orden , titular , incidencias , ISINorigen, ISINdestino, origenParticipaciones , origenImporte ' \
-              'FROM operaciones ' \
-              'WHERE id_usuario == ? AND nombre_cartera == ?'
-        funds = db.execute(sql, ([view.id_usuario[0],view.cbCarterasReal.currentText()])).fetchall()
-
-        view.tableOperaciones.clear()
-        view.tableOperaciones.setHorizontalHeaderItem(0, QTableWidgetItem('Fecha'))
-        view.tableOperaciones.setHorizontalHeaderItem(1, QTableWidgetItem('Estado'))
-        view.tableOperaciones.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
-        view.tableOperaciones.setHorizontalHeaderItem(3, QTableWidgetItem('Incidencias'))
-        view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Fondo (Origen)'))
-        view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Fondo (Destino)'))
-        view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Participaciones (Origen)'))
-        view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Participaciones (Destino)'))
-        view.tableOperaciones.setColumnWidth(2, 350)
-        view.tableOperaciones.setRowCount(len(funds))
-
-        f = 0
-
-        for fila in db.execute(sql, ([view.id_usuario[0],view.cbCarterasReal.currentText()])):
-            view.tableOperaciones.setItem(f, 0, QTableWidgetItem(str(fila[0])))
-            view.tableOperaciones.setItem(f, 1, QTableWidgetItem(str(fila[1])))
-            view.tableOperaciones.setItem(f, 2, QTableWidgetItem(str(fila[2])))
-            view.tableOperaciones.setItem(f, 3, QTableWidgetItem(str(fila[3])))
-            view.tableOperaciones.setItem(f, 4, QTableWidgetItem(str(fila[4])))
-            view.tableOperaciones.setItem(f, 5, QTableWidgetItem(str(fila[5])))
-            view.tableOperaciones.setItem(f, 6, QTableWidgetItem(str(fila[6])))
-            view.tableOperaciones.setItem(f, 7, QTableWidgetItem(str(fila[7])))
-
-            f += 1
-
-        db.close()
+    '''

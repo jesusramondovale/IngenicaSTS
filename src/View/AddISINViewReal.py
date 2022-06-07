@@ -207,7 +207,7 @@ class AddISINViewReal(QMainWindow):
                     parent.isin_list.append(ISIN)
 
                     parent.ISINS_real.append(ISIN)
-                    parent.updateTable()
+                    #parent.updateTable()
 
                     # Avisa al usuario de la operación completada con éxito y
                     # esconde la ventana actual (vuelve a UserView)

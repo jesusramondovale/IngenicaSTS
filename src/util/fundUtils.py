@@ -9,7 +9,9 @@ import threading
 # Librería de Gráficos Útiles especializados en
 # la visualización de índices bursátiles
 from highstock import Highstock
+from highcharts import Highchart
 
+from PyQt5 import QtWebEngineWidgets
 from datetime import datetime, timedelta
 from src.util.dialogs import isinNotFoundDialog, errorInesperado, refreshCompleteDialog
 
@@ -330,6 +332,8 @@ def graphHistoricalISIN(self, isins_selected, absolute):
         self.browser.hide()
         self.labelNoIsin.show()
         self.labelNoIsin.setText('Seleccione primero un ISIN de la lista!')
+
+
 
 
 
