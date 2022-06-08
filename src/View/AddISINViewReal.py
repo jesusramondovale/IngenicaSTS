@@ -146,7 +146,8 @@ class AddISINViewReal(QMainWindow):
             # Captura del ID de Usuario Actual a través de BD
             id = db.execute("SELECT id FROM users WHERE nombre = ?", [parent.labelUsuario.text()]).fetchone()
 
-            # Carga del posible mismo ISIN/Symbol ya introducido previamente en cartera actual para el ID de usuario actual
+            # Carga del posible mismo ISIN/Symbol ya introducido previamente en cartera actual para el ID de usuario
+            # actual
             temp = db.execute(
                 "SELECT * FROM carteras_usuario_real cu INNER JOIN carteras_real c USING(nombre_cartera)"
                 "WHERE cu.id_usuario == ? AND cu.ISIN == ? AND c.nombre_cartera == ? ",
@@ -203,7 +204,6 @@ class AddISINViewReal(QMainWindow):
                     t.start()
 
                     # Añade el NOMBRE del Fondo introducido en la Lista de Cartera de Usuario
-                    parent.listIsins.addItem(str(fundUtils.getFundINFO(self, ISIN).at[0, 'name']) + "  (" + ISIN + ")")
                     parent.isin_list.append(ISIN)
 
                     parent.ISINS_real.append(ISIN)

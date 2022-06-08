@@ -17,6 +17,7 @@ from src.View.AddCarterasView import AddCarterasView
 from src.View.AddISINView import AddISINView
 from src.View.ConfigView import ConfigView
 from src.View.cargandoView import cargandoView
+from src.View.OperacionesView import OperacionesView
 
 from src.View.AddCarterasRealesView import AddCarterasRealesView
 from src.View.AddISINViewReal import AddISINViewReal
@@ -32,7 +33,6 @@ from src.util.dialogs import *
      @parent: MainView
      @children: AddAny | MainView
 '''
-
 
 # Vista PrincipalUsuario.ui
 class UserView(QMainWindow):
@@ -64,6 +64,9 @@ class UserView(QMainWindow):
         # Estructura de almacenamiento para los fondos seleccionados para graficar
         view.isins_selected = []
         view.allChecked = False
+        view.isin_list = []
+        view.ISINS = []
+
         # Conexión de los eventos de botones clickados a la lógica de los controladores
         view.buttonLogout.clicked.connect(view.logout)
 
@@ -76,9 +79,10 @@ class UserView(QMainWindow):
         view.buttonBorrarCarteraReal.clicked.connect(view.borrarCarteraReal)
 
         view.buttonBorrarFondo.clicked.connect(view.borrarFondo)
-        view.listIsins.itemClicked.connect(view.addIsinsChecked)
+        view.listIsins.itemPressed.connect(view.addIsinsChecked)
         view.buttonCheckAll.clicked.connect(view.checkAll)
         view.buttonConfig.clicked.connect(view.showConfigView)
+        view.buttonOperacion.clicked.connect(view.showOperaciones)
         view.buttonCartReal.clicked.connect(view.showVistaReal)
         view.buttonCartVirt.clicked.connect(view.showVistaVirtual)
         view.buttonCartReal.setAutoExclusive(True)
@@ -159,7 +163,7 @@ class UserView(QMainWindow):
                 "WHERE c.nombre_cartera = ? AND cu.id_usuario = ? ",
                 ([view.currentCartera[0], view.id_usuario[0]])).fetchall()
 
-            view.isin_list = []
+
             for ISIN in view.ISINS:
                 view.isin_list.append(ISIN[0])
 
@@ -201,7 +205,8 @@ class UserView(QMainWindow):
             lambda clicked, view=view: fundUtils.refreshHistorics(view))
         view.cbCarterasReal.currentIndexChanged.connect(view.updateTable)
 
-        view.checkAll()
+        if len(view.ISINS) != 0:
+            view.checkAll()
 
     '''
         - Borra el fondo seleccionado del ComboBox de la vista
@@ -234,7 +239,8 @@ class UserView(QMainWindow):
                     db.execute("DROP TABLE " + ISIN)
 
                 view.listIsins.takeItem(view.listIsins.currentRow())
-                view.isins_selected.remove(ISIN)
+                if ISIN in view.isins_selected:
+                    view.isins_selected.remove(ISIN)
                 view.updateGraph(isin=None, isins_selected=[])
 
             else:
@@ -495,6 +501,16 @@ class UserView(QMainWindow):
     def showAddIsinReal(self):
         merc = AddISINViewReal(self)
         merc.show()
+
+    '''
+           - Muestra la Interfaz Gráfica de Operaciones (reales)
+
+            @params: self (UserView)
+            @returns: None
+    '''
+    def showOperaciones(self):
+        ops = OperacionesView(self)
+        ops.show()
 
     '''
         - Sale de la ventana actual (UserView) y 

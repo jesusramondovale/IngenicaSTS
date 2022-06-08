@@ -4,6 +4,7 @@
 ######################################################################
 import sqlite3
 import investpy
+import threading
 
 # Librería de Gráficos Útiles especializados en
 # la visualización de índices bursátiles
@@ -11,6 +12,9 @@ from highstock import Highstock
 
 from datetime import datetime, timedelta
 from src.util.dialogs import isinNotFoundDialog, errorInesperado, refreshCompleteDialog
+
+
+
 
 '''
 - Descarga de investing.com  y actualiza en DB los históricos presentes en carteras 
@@ -23,6 +27,7 @@ del  Usuario desde la última fecha presente del registro hasta hoy
 
 
 def refreshHistorics(view):
+
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     db = db_connection.cursor()
     ISINs = db.execute("SELECT ISIN FROM carteras_usuario WHERE id_usuario = ? ",
@@ -69,8 +74,13 @@ def refreshHistorics(view):
             lastDate = lastRow[1]
             print('NUEVO:' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
 
-    refreshCompleteDialog(view).exec()
+    if view.cbModo.currentIndex() == 0:
+        UpdateGraph(view, None , view.isins_selected , True )
+    else:
+        UpdateGraph(view, None , view.isins_selected , False )
 
+    refreshCompleteDialog(view).exec()
+    return None
 
 '''
     - Obtiene la Información existente en investing.com 
@@ -499,7 +509,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                     "yAxis": {
                         'opposite': True,
                         'title': {
-                            'text': '%',
+                            'text': currency,
                             'rotation': 90,
                             'align': 'middle',
                             'style': {
@@ -514,11 +524,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                         "plotLines": [{"value": 0, "width": 3, "color": "white"}],
                     },
 
-                    "plotOptions": {
-                        "series": {
-                            "compare": "percent"
-                        }
-                    },
+
 
                     "tooltip": {
                         "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
