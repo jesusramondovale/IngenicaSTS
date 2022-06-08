@@ -126,7 +126,7 @@ QPushButton:checked {
         </font>
        </property>
        <property name="text">
-        <string>Cartera Virtual</string>
+        <string> Cartera Virtual</string>
        </property>
        <property name="icon">
         <iconset>
@@ -657,6 +657,8 @@ background: rgb(206, 206, 206)
       </item>
      </layout>
     </widget>
+    <zorder>horizontalLayoutWidget</zorder>
+    <zorder>frameVirt</zorder>
    </widget>
    <widget class="Line" name="line">
     <property name="geometry">
@@ -908,11 +910,38 @@ background: rgb(206, 206, 206)
       </property>
      </column>
     </widget>
+    <widget class="QPushButton" name="buttonOperacion">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>120</y>
+       <width>301</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Nueva Operación en Cartera</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../feather/refresh-cw.svg</normaloff>../feather/refresh-cw.svg</iconset>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
    </widget>
-   <zorder>frameReal</zorder>
-   <zorder>frameBarra</zorder>
-   <zorder>frameMain_Up</zorder>
-   <zorder>line</zorder>
   </widget>
  </widget>
  <resources/>
