@@ -371,11 +371,38 @@ class registerCompleteDialog(QDialog):
         self.setLayout(self.layout)
 
 
+
+
+
+''' 
+    - Avisa al Usuario de que la operación de fondos en cartera
+    ha sido realizada satisfactoriamente
+
+    @parent: UserView
+'''
+class operationCompleteDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Éxito!")
+        self.setFixedWidth(360)
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel("La operación se ha realizado adecuadamente"))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
+
 ''' 
     - Avisa al Usuario de que la actualización de históricos
     ha sido realizada satisfactoriamente
 
-    @parent: UsuerView
+    @parent: UserView
 '''
 
 

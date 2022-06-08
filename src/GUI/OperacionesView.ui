@@ -283,7 +283,7 @@
      <string>Hora (Corte)</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="fHoraCorte">
+   <widget class="QLineEdit" name="tfHoraCorte">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -390,7 +390,7 @@
   <connection>
    <sender>buttonBorrar</sender>
    <signal>clicked()</signal>
-   <receiver>fHoraCorte</receiver>
+   <receiver>tfHoraCorte</receiver>
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -186,8 +186,9 @@ class UserView(QMainWindow):
             # Actualiza el gráfico con los Fondos seleccionados
             fundUtils.graphHistoricalISIN(view, view.isins_selected, False)
 
-            # Actualiza la Tabla de Fondos
+            # Actualiza las Tablas de Fondos
             view.updateTable()
+            view.UpdateTableOperaciones()
 
         # Activa el botón de borrar Carteras si hay alguna Cartera
         if len(view.nombres_carteras) > 0:
@@ -204,6 +205,7 @@ class UserView(QMainWindow):
         view.buttonRefresh.clicked.connect(
             lambda clicked, view=view: fundUtils.refreshHistorics(view))
         view.cbCarterasReal.currentIndexChanged.connect(view.updateTable)
+        view.cbCarterasReal.currentIndexChanged.connect(view.UpdateTableOperaciones)
 
         if len(view.ISINS) != 0:
             view.checkAll()
@@ -593,6 +595,44 @@ class UserView(QMainWindow):
             view.tableFondos.setItem(f, 9, QTableWidgetItem(str(fila[9])))
             view.tableFondos.setItem(f, 10, QTableWidgetItem(str(fila[10])))
             view.tableFondos.setItem(f, 11, QTableWidgetItem(str(fila[11])))
+            f += 1
+
+        db.close()
+
+    def UpdateTableOperaciones(view):
+        # print('Update Table Operaciones()')
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+
+        sql = 'SELECT fecha , orden , titular , incidencias , ISINorigen, ISINdestino, origenParticipaciones , origenImporte ' \
+              'FROM operaciones ' \
+              'WHERE id_usuario == ? AND nombre_cartera == ?'
+        funds = db.execute(sql, ([view.id_usuario[0],view.cbCarterasReal.currentText()])).fetchall()
+
+        view.tableOperaciones.clear()
+        view.tableOperaciones.setHorizontalHeaderItem(0, QTableWidgetItem('Fecha'))
+        view.tableOperaciones.setHorizontalHeaderItem(1, QTableWidgetItem('Estado'))
+        view.tableOperaciones.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
+        view.tableOperaciones.setHorizontalHeaderItem(3, QTableWidgetItem('Incidencias'))
+        view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Fondo (Origen)'))
+        view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Fondo (Destino)'))
+        view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Participaciones (Origen)'))
+        view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Participaciones (Destino)'))
+        view.tableOperaciones.setColumnWidth(2, 350)
+        view.tableOperaciones.setRowCount(len(funds))
+
+        f = 0
+
+        for fila in db.execute(sql, ([view.id_usuario[0],view.cbCarterasReal.currentText()])):
+            view.tableOperaciones.setItem(f, 0, QTableWidgetItem(str(fila[0])))
+            view.tableOperaciones.setItem(f, 1, QTableWidgetItem(str(fila[1])))
+            view.tableOperaciones.setItem(f, 2, QTableWidgetItem(str(fila[2])))
+            view.tableOperaciones.setItem(f, 3, QTableWidgetItem(str(fila[3])))
+            view.tableOperaciones.setItem(f, 4, QTableWidgetItem(str(fila[4])))
+            view.tableOperaciones.setItem(f, 5, QTableWidgetItem(str(fila[5])))
+            view.tableOperaciones.setItem(f, 6, QTableWidgetItem(str(fila[6])))
+            view.tableOperaciones.setItem(f, 7, QTableWidgetItem(str(fila[7])))
+
             f += 1
 
         db.close()
