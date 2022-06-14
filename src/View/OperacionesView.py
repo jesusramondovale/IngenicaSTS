@@ -5,11 +5,13 @@ import datetime
 import sqlite3
 import datetime, time
 from datetime import datetime, timedelta
+from PyQt5 import uic, QtWebEngineWidgets
 
-from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
 from src.util.dialogs import operationCompleteDialog, badQueryDialog
+from src.util.fundUtils import *
+
 '''
     @parent: UserView
     @returns: None
@@ -26,7 +28,6 @@ class OperacionesView(QMainWindow):
 
         # Conexión del Botón ENVIAR y el CheckBox Destino a la lógica de control
         view.buttonEnviar.clicked.connect(view.enviar)
-        view.checkBoxDestino.stateChanged.connect(view.refreshDestino)
 
         # Conexión con la BD y creación de un cursor de consultas
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
@@ -41,7 +42,6 @@ class OperacionesView(QMainWindow):
 
         for e in view.isins_usuario:
             view.cbOrigen.addItem(e[0])
-            view.cbDestino.addItem(e[0])
 
         db.close()
 
@@ -50,17 +50,17 @@ class OperacionesView(QMainWindow):
         tomando los valores suministrados en la interfaz.
         Escribe la Operación a ejecutar en la tabla 
         'Operaciones' de la BD
-        
+
         @params: self (OperacionesView)
         @returns: None
     '''
 
     def enviar(self):
         print('Pulsación boton Enviar\n' +
-              'Con Origen: ' + self.cbOrigen.currentText() + '\n' +
-              'Con Destino: ' + self.cbDestino.currentText())
+              'Con Origen: ' + self.cbOrigen.currentText())
+
         if self.camposLlenos():
-            # Captura de la hora de operación
+            # Captura de la fecha y hora de operación
             t = time.localtime()
 
             # Conexión con la BD y creación de un cursor de consultas
@@ -72,13 +72,8 @@ class OperacionesView(QMainWindow):
                                     [self.cbOrigen.currentText()]).fetchone()
             ISINdestino = None
             valorDestino = None
-            if self.checkBoxDestino.isChecked():
-                tmp = db.execute(('SELECT ISIN FROM caracterizacion WHERE Nombre = ?'),
-                                    [self.cbDestino.currentText()]).fetchone()
-                ISINdestino = tmp[0]
-                if self.tfValorDestino.text():
-                    valorDestino = self.tfValorDestino.text()
 
+            # Escribe en la 'cartilla' de operaciones
             SQL = 'INSERT INTO operaciones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
             db.execute(SQL, [
 
@@ -99,46 +94,135 @@ class OperacionesView(QMainWindow):
                 ISINdestino
 
             ])
+
+
+            # Calcula el valor total de Cartera actual a fecha última (hoy)
+
+            importeTotal = 0
+            ISINS_cartera = db.execute("select ISIN , Participaciones , Importe , Porcentaje "
+                                       "from ( select t.*, row_number() over(partition by ISIN "
+                                       "order by Fecha desc) rn "
+                                       "from [" + str(self.parent().id_usuario[0]) + "_" +
+                                       self.parent().cbCarterasReal.currentText() + "] t) t "
+                                       "where rn = 1 order by ISIN",
+                                       ([])).fetchall()
+
+            new = True
+            for isin in ISINS_cartera:
+                if ISINorigen[0] in isin:
+                    new = False
+            print('New Fund in Pie Chart : ' + str(new))
+            if new:
+
+                ISINS_cartera.append([
+                    ISINorigen[0],
+                    int(self.tfParticipaciones.text()),
+                    0
+                ])
+
+            # Recorre los ISINS en Cartera
+            for isins in ISINS_cartera:
+                isin_origen = db.execute("SELECT ISIN FROM caracterizacion WHERE Nombre = ?",
+                                         ([self.cbOrigen.currentText()])).fetchone()[0]
+                if not isins[0] == isin_origen:
+                    importeTotal = importeTotal + isins[2]
+                else:
+                    importeTotal = importeTotal + isins[2] + int(self.tfImporte.text())
+
+            print('TOTAL EN CARTERA ($) = ' + str(importeTotal))
+
+
+
+
+            # Recorre los fondos de cartera actual
+            for isin in ISINS_cartera:
+                isin_origen = db.execute("SELECT ISIN FROM caracterizacion WHERE Nombre = ?",
+                                         ([self.cbOrigen.currentText()])).fetchone()[0]
+
+                # Compra de participaciones. No hay fondo de destino
+
+                # Captamos último dato
+                isin_last_data = db.execute("SELECT * FROM [" + str(self.parent().id_usuario[0]) + "_" +
+                                            self.parent().cbCarterasReal.currentText() + "] "
+                                            "WHERE ISIN = ? ORDER BY Fecha DESC",
+                                            [isin[0]]).fetchone()
+
+                # Current isin es el seleccionado
+                if isin_origen == isin[0]:
+
+                    try:
+                        db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
+                                   self.parent().cbCarterasReal.currentText() + "]"
+                                                                                "VALUES (?,?,?,?,?)",
+                                   [datetime.today().strftime('%Y%m%d %H%M%S%f'),
+                                    isin[0],
+                                    isin_last_data[2] + int(self.tfParticipaciones.text()),
+                                    isin_last_data[3] + int(self.tfImporte.text()),
+                                    int(isin_last_data[3] + int(self.tfImporte.text())) / importeTotal * 100
+                                    ])
+                    except TypeError:
+                        db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
+                                   self.parent().cbCarterasReal.currentText() + "]"
+                                                                                "VALUES (?,?,?,?,?)",
+                                   [datetime.today().strftime('%Y%m%d %H%M%S%f'),
+                                    isin[0],
+                                    int(self.tfParticipaciones.text()),
+                                    int(self.tfImporte.text()),
+                                    int(self.tfImporte.text()) / importeTotal * 100
+                                    ])
+
+
+                # Current isin no es el que varía
+                else:
+
+                    # Captamos último dato
+                    isin_last_data = db.execute("SELECT * FROM [" + str(self.parent().id_usuario[0]) + "_" +
+                                                self.parent().cbCarterasReal.currentText() + "] "
+                                                "WHERE ISIN = ? ORDER BY Fecha DESC",
+                                                [isin[0]]).fetchone()
+
+                    try:
+                        db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
+                                   self.parent().cbCarterasReal.currentText() + "]"
+                                                                                "VALUES (?,?,?,?,?)",
+                                   [datetime.today().strftime('%Y%m%d %H%M%S%f'),
+                                    isin[0],
+                                    isin_last_data[2],
+                                    isin_last_data[3],
+                                    isin_last_data[3] / importeTotal * 100
+                                    ])
+                    except TypeError:
+                        db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
+                                   self.parent().cbCarterasReal.currentText() + "]"
+                                                                                "VALUES (?,?,?,?,?)",
+                                   [datetime.today().strftime('%Y%m%d %H%M%S%f'),
+                                    isin[0],
+                                    int(self.tfParticipaciones.text()),
+                                    int(self.tfImporte.text()),
+                                    int(self.tfImporte.text()) / importeTotal * 100
+                                    ])
+
+            db_connection.commit()
+            db.close()
             operationCompleteDialog(self).exec()
             self.parent().UpdateTableOperaciones()
+            self.parent().updatePieChart()
             self.hide()
+
         else:
             badQueryDialog(self).exec()
-
-
-    '''
-        - Activa/Desactiva los QLineEdit del Fondo Destino
-        al pulsar el CheckBox
-    '''
-
-    def refreshDestino(self):
-
-        if self.checkBoxDestino.isChecked():
-            print('Destino checked')
-            self.cbDestino.setEnabled(True)
-            self.tfValorDestino.setEnabled(True)
-
-        else:
-            print('Destino unchecked')
-
-            self.cbDestino.setEnabled(False)
-            self.tfValorDestino.setEnabled(False)
-
 
     '''
         - Retorna cierto si todos los campos necesarios para 
         realizar la operación están cubiertos
     '''
-    def camposLlenos(self):
-        if(self.tfTitular.text() and
-           self.tfParticipaciones.text() and
-           self.tfImporte.text() and
-           self.tfValorOrigen.text() and
-           self.tfHoraCorte.text() ):
 
-                if self.checkBoxDestino.isChecked():
-                    if self.tfValorDestino.text() and self.cbDestino.currentText() != 'Ninguno':
-                        return True
-                    else: return False
-        else:
-            return False
+    def camposLlenos(self):
+
+        if (self.tfTitular.text() and
+                self.tfParticipaciones.text() and
+                self.tfImporte.text() and
+                self.tfValorOrigen.text() and
+                self.tfHoraCorte.text()):  return True
+
+        else:  return False

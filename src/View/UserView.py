@@ -91,6 +91,9 @@ class UserView(QMainWindow):
         view.buttonCartVirt.setAutoExclusive(True)
         view.frameVirt.hide()
 
+        view.layoutButtonsCarteras.hide()
+
+
         view.H = Highstock()
 
         # Desactivación de los botones de borrar Cartera y Añadir Nuevo Fondo
@@ -143,7 +146,10 @@ class UserView(QMainWindow):
 
         # Adición de las Carteras al ComboBox de Selección de Carteras
         view.cbCarteras.addItems(view.nombres_carteras)
+
+
         view.cbCarterasReal.addItems(view.nombres_carteras_real)
+
 
         # Activación del botón añadir Fondo si hay alguna cartera
         if view.cbCarteras.count() > 0:
@@ -466,6 +472,7 @@ class UserView(QMainWindow):
 
     def showVistaReal(self):
         self.frameVirt.hide()
+        self.layoutButtonsCarteras.show()
         self.frameReal.show()
 
     ''' 
@@ -479,6 +486,7 @@ class UserView(QMainWindow):
 
     def showVistaVirtual(self):
         self.frameReal.hide()
+        self.layoutButtonsCarteras.hide()
         self.frameVirt.show()
 
     '''
