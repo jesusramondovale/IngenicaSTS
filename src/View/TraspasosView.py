@@ -39,7 +39,7 @@ class TraspasosView(QMainWindow):
             "SELECT ca.Nombre FROM carteras_usuario_real cr " +
             "INNER JOIN caracterizacion ca USING(ISIN) " +
             "WHERE cr.id_usuario = ? AND cr.nombre_cartera = ?",
-            ([parent.id_usuario[0], parent.cbCarterasReal.currentText()])).fetchall()
+            ([parent.id_usuario[0], parent.currentCartera])).fetchall()
 
         for e in view.isins_usuario:
             view.cbOrigen.addItem(e[0])
@@ -88,7 +88,7 @@ class TraspasosView(QMainWindow):
                 datetime.today().strftime('%d/%m/%Y'),
                 'ENVIADA',
                 self.parent().id_usuario[0],
-                self.parent().cbCarterasReal.currentText(),
+                self.parent().currentCartera,
                 self.tfTitular.text(),
                 time.strftime('%H.%M', t),
                 self.tfHoraCorte.text(),
@@ -110,7 +110,7 @@ class TraspasosView(QMainWindow):
                                        "from ( select t.*, row_number() over(partition by ISIN "
                                        "order by Fecha desc) rn "
                                        "from [" + str(self.parent().id_usuario[0]) + "_" +
-                                       self.parent().cbCarterasReal.currentText() + "] t) t "
+                                       self.parent().currentCartera + "] t) t "
                                        "where rn = 1 order by ISIN",
                                        ([])).fetchall()
 
@@ -141,14 +141,14 @@ class TraspasosView(QMainWindow):
                 # Transferencia de participaciones. Sí hay fondo de destino
                  # Captamos último dato
                 isin_last_data = db.execute("SELECT * FROM [" + str(self.parent().id_usuario[0]) + "_" +
-                                                self.parent().cbCarterasReal.currentText() + "] "
+                                                self.parent().currentCartera + "] "
                                                 "WHERE ISIN = ? ORDER BY Fecha DESC",
                                                 [isin[0]]).fetchone()
 
                 # Current isin es el seleccionado como origen
                 if isin_origen == isin[0]:
                         db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
-                                   self.parent().cbCarterasReal.currentText() + "]"
+                                   self.parent().currentCartera + "]"
                                    "VALUES (?,?,?,?,?)",
                                    [datetime.today().strftime('%Y%m%d %H%M%S%f'),
                                     isin[0],
@@ -161,7 +161,7 @@ class TraspasosView(QMainWindow):
                     # Current isin es el seleccionado como destino
                     if isin_destino == isin[0]:
                         db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
-                                       self.parent().cbCarterasReal.currentText() + "]"
+                                       self.parent().currentCartera + "]"
                                                                                     "VALUES (?,?,?,?,?)",
                                        [datetime.today().strftime('%Y%m%d %H%M%S%f'),
                                         isin[0],
@@ -175,12 +175,12 @@ class TraspasosView(QMainWindow):
 
                         # Captamos último dato
                         isin_last_data = db.execute("SELECT * FROM [" + str(self.parent().id_usuario[0]) + "_" +
-                                                        self.parent().cbCarterasReal.currentText() + "] "
+                                                        self.parent().currentCartera + "] "
                                                         "WHERE ISIN = ? ORDER BY Fecha DESC",
                                                         [isin[0]]).fetchone()
 
                         db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
-                                       self.parent().cbCarterasReal.currentText() + "]"
+                                       self.parent().currentCartera + "]"
                                                                                     "VALUES (?,?,?,?,?)",
                                        [datetime.today().strftime('%Y%m%d %H%M%S%f'),
                                         isin[0],
@@ -193,7 +193,7 @@ class TraspasosView(QMainWindow):
             db.close()
             operationCompleteDialog(self).exec()
             self.parent().UpdateTableOperaciones()
-            self.parent().updatePieChart()
+            self.parent().updatePieChart(self.parent().currentCartera)
             self.hide()
 
         else:

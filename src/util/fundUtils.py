@@ -198,7 +198,7 @@ def saveHistoricalFund(self, isin):
 
 
 def graphHistoricalISIN(self, isins_selected, absolute):
-
+    print('ISINS a Graficar -> ' + str(isins_selected))
     if len(isins_selected) != 0:
 
         names = []

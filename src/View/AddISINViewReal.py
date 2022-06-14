@@ -151,7 +151,7 @@ class AddISINViewReal(QMainWindow):
             temp = db.execute(
                 "SELECT * FROM carteras_usuario_real cu INNER JOIN carteras_real c USING(nombre_cartera)"
                 "WHERE cu.id_usuario == ? AND cu.ISIN == ? AND c.nombre_cartera == ? ",
-                [id[0], ISIN, parent.cbCarterasReal.currentText()]).fetchone()
+                [id[0], ISIN, parent.currentCartera]).fetchone()
 
             # Si el usuario YA DISPONE de ese ISIN/Symbol en su cartera actual
             # entonces temp no estará vacío -> no se añade dos veces el mismo fondo
@@ -173,7 +173,7 @@ class AddISINViewReal(QMainWindow):
 
                     # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
                     db.execute("INSERT INTO carteras_usuario_real VALUES ( ? , ? , ? )",
-                               (id[0], parent.cbCarterasReal.currentText(), ISIN))
+                               (id[0], parent.currentCartera, ISIN))
 
                     # Si el ISIN no ha sido grabado previamente en la tabla caracterización
                     if len(db.execute('SELECT * FROM caracterizacion WHERE ISIN == ?' ,

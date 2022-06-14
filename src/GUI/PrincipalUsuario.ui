@@ -125,12 +125,32 @@ QPushButton:checked {
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="layoutButtonsCarteras">
+      <widget class="QFrame" name="frameButtonsCarteras">
        <property name="maximumSize">
         <size>
          <width>16777215</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+
+	border-radius: 5px;
+	background-color: rgb(84, 84, 84);
+	color:rgb(255, 255, 255)
+
+}
+
+QPushButton:hover {
+	 background-color: rgb(0, 85,124);
+     color: rgb(255, 255, 255)
+}
+
+QPushButton:checked {
+                                    background-color: rgb(0, 85,124);
+                                    color: rgb(255, 255, 255)
+                                }
+</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
@@ -138,123 +158,55 @@ QPushButton:checked {
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="leftMargin">
-         <number>29</number>
+         <number>25</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>22</number>
+         <number>0</number>
         </property>
         <item>
-         <widget class="QPushButton" name="buttonCartReal_2">
-          <property name="font">
-           <font>
-            <family>Yu Gothic UI Light</family>
-            <pointsize>9</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
+         <layout class="QVBoxLayout" name="layoutButtonsCarteras">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMaximumSize</enum>
           </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="text">
-           <string>Cartera Real</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="buttonCartReal_3">
-          <property name="font">
-           <font>
-            <family>Yu Gothic UI Light</family>
-            <pointsize>9</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="text">
-           <string>Cartera Real</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="buttonCartReal_4">
-          <property name="font">
-           <font>
-            <family>Yu Gothic UI Light</family>
-            <pointsize>9</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="text">
-           <string>Cartera Real</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="buttonAddCarteraReal_2">
-          <property name="maximumSize">
-           <size>
-            <width>183</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>Yu Gothic UI Light</family>
-            <pointsize>8</pointsize>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">*{
+          <item>
+           <widget class="QPushButton" name="buttonAddCarteraReal">
+            <property name="maximumSize">
+             <size>
+              <width>183</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Yu Gothic UI Light</family>
+              <pointsize>8</pointsize>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">*{
 background: rgb(206, 206, 206)
 }</string>
-          </property>
-          <property name="text">
-           <string>Nueva Cartera</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../feather/plus-circle.svg</normaloff>../../../feather/plus-circle.svg</iconset>
-          </property>
-         </widget>
+            </property>
+            <property name="text">
+             <string>Nueva Cartera</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../../../feather/plus-circle.svg</normaloff>../../../feather/plus-circle.svg</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -855,7 +807,7 @@ background: rgb(206, 206, 206)
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="buttonAddCarteraReal">
+    <widget class="QPushButton" name="buttonAddCarteraReal2">
      <property name="geometry">
       <rect>
        <x>840</x>
@@ -1179,17 +1131,6 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
       <string>--- USUARIO@EMAIL.COM ---</string>
      </property>
     </widget>
-    <widget class="QWidget" name="horizontalLayoutWidget_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>140</y>
-       <width>371</width>
-       <height>311</height>
-      </rect>
-     </property>
-     <layout class="QHBoxLayout" name="layoutPieChart"/>
-    </widget>
     <widget class="QPushButton" name="buttonOpTraspaso">
      <property name="geometry">
       <rect>
@@ -1221,104 +1162,22 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
       <bool>false</bool>
      </property>
     </widget>
-   </widget>
-   <widget class="QPushButton" name="buttonCartX">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>690</y>
-      <width>142</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Yu Gothic UI Light</family>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>Cartera C</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="buttonCartY">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>645</y>
-      <width>142</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Yu Gothic UI Light</family>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>Cartera B</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="buttonCartZ">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>600</y>
-      <width>142</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Yu Gothic UI Light</family>
-      <pointsize>9</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
-    </property>
-    <property name="text">
-     <string>Cartera A</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
+    <widget class="QWidget" name="horizontalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>150</y>
+       <width>411</width>
+       <height>321</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="layoutPieChart"/>
+    </widget>
    </widget>
    <zorder>frameBarra</zorder>
    <zorder>line</zorder>
    <zorder>frameMain_Up</zorder>
    <zorder>frameReal</zorder>
-   <zorder>buttonCartX</zorder>
-   <zorder>buttonCartY</zorder>
-   <zorder>buttonCartZ</zorder>
   </widget>
  </widget>
  <resources/>
