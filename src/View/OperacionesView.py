@@ -20,7 +20,7 @@ from src.util.fundUtils import *
 
 class OperacionesView(QMainWindow):
 
-    def __init__(view, parent=QMainWindow):
+    def __init__(view , parent=QMainWindow):
         super().__init__(parent)
 
         # Carga de la interfaz gráfica
@@ -38,7 +38,7 @@ class OperacionesView(QMainWindow):
             "SELECT ca.Nombre FROM carteras_usuario_real cr " +
             "INNER JOIN caracterizacion ca USING(ISIN) " +
             "WHERE cr.id_usuario = ? AND cr.nombre_cartera = ?",
-            ([parent.id_usuario[0], parent.currentCartera])).fetchall()
+            ([view.parent().id_usuario[0], parent.currentCarteraReal ])).fetchall()
 
         for e in view.isins_usuario:
             view.cbOrigen.addItem(e[0])
@@ -80,7 +80,7 @@ class OperacionesView(QMainWindow):
                 datetime.today().strftime('%d/%m/%Y'),
                 'ENVIADA',
                 self.parent().id_usuario[0],
-                self.parent().currentCartera,
+                self.parent().currentCarteraReal,
                 self.tfTitular.text(),
                 time.strftime('%H.%M', t),
                 self.tfHoraCorte.text(),
@@ -103,7 +103,7 @@ class OperacionesView(QMainWindow):
                                        "from ( select t.*, row_number() over(partition by ISIN "
                                        "order by Fecha desc) rn "
                                        "from [" + str(self.parent().id_usuario[0]) + "_" +
-                                       self.parent().currentCartera + "] t) t "
+                                       str(self.parent().currentCarteraReal) + "] t) t "
                                        "where rn = 1 order by ISIN",
                                        ([])).fetchall()
 
@@ -143,7 +143,7 @@ class OperacionesView(QMainWindow):
 
                 # Captamos último dato
                 isin_last_data = db.execute("SELECT * FROM [" + str(self.parent().id_usuario[0]) + "_" +
-                                            self.parent().currentCartera + "] "
+                                            self.parent().currentCarteraReal + "] "
                                             "WHERE ISIN = ? ORDER BY Fecha DESC",
                                             [isin[0]]).fetchone()
 
@@ -152,7 +152,7 @@ class OperacionesView(QMainWindow):
 
                     try:
                         db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
-                                   self.parent().currentCartera + "]"
+                                   self.parent().currentCarteraReal + "]"
                                                                                 "VALUES (?,?,?,?,?)",
                                    [datetime.today().strftime('%Y%m%d %H%M%S%f'),
                                     isin[0],
@@ -162,7 +162,7 @@ class OperacionesView(QMainWindow):
                                     ])
                     except TypeError:
                         db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
-                                   self.parent().currentCartera + "]"
+                                   self.parent().currentCarteraReal + "]"
                                                                                 "VALUES (?,?,?,?,?)",
                                    [datetime.today().strftime('%Y%m%d %H%M%S%f'),
                                     isin[0],
@@ -177,13 +177,13 @@ class OperacionesView(QMainWindow):
 
                     # Captamos último dato
                     isin_last_data = db.execute("SELECT * FROM [" + str(self.parent().id_usuario[0]) + "_" +
-                                                self.parent().currentCartera + "] "
+                                                self.parent().currentCarteraReal + "] "
                                                 "WHERE ISIN = ? ORDER BY Fecha DESC",
                                                 [isin[0]]).fetchone()
 
                     try:
                         db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
-                                   self.parent().currentCartera + "]"
+                                   self.parent().currentCarteraReal + "]"
                                                                                 "VALUES (?,?,?,?,?)",
                                    [datetime.today().strftime('%Y%m%d %H%M%S%f'),
                                     isin[0],
@@ -193,7 +193,7 @@ class OperacionesView(QMainWindow):
                                     ])
                     except TypeError:
                         db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
-                                   self.parent().currentCartera + "]"
+                                   self.parent().currentCarteraReal + "]"
                                                                                 "VALUES (?,?,?,?,?)",
                                    [datetime.today().strftime('%Y%m%d %H%M%S%f'),
                                     isin[0],
@@ -205,8 +205,8 @@ class OperacionesView(QMainWindow):
             db_connection.commit()
             db.close()
             operationCompleteDialog(self).exec()
-            self.parent().UpdateTableOperaciones()
-            self.parent().updatePieChart()
+            self.parent().UpdateTableOperaciones(self.parent().currentCarteraReal)
+            self.parent().updatePieChart(self.parent().currentCarteraReal)
             self.hide()
 
         else:

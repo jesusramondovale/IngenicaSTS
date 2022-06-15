@@ -85,9 +85,8 @@ class AddCarterasRealesView(QMainWindow):
                 ([self.id_usuario[0]])).fetchall()
 
             # Actualiza los nombres de las carteras para rellenar el ComboBox
-            self.nombres_carteras = []
-            for e in self.carteras_usuario:
-                self.nombres_carteras.append(e[1])
+
+            # self.carteras_usuario.append([0,nombre_cartera])
 
             # Activa el botón de Borrar Carteras (por si acaso estaba desactivado)
             self.parent().buttonBorrarCarteraReal.setEnabled(True)
@@ -99,16 +98,27 @@ class AddCarterasRealesView(QMainWindow):
             # Cierra la ventana de creación de nuevas carteras
             self.hide()
 
-            # Limpia el ComboBox en UserView
-            self.parent().cbCarterasReal.blockSignals(True)
-            self.parent().cbCarterasReal.clear()
-            self.parent().cbCarterasReal.blockSignals(False)
-            # Carga de nuevo el ComboBox en UserView con todas las carteras actualizadas
-            self.parent().cbCarterasReal.addItems(self.nombres_carteras)
+            for i in reversed(range(self.parent().layoutButtonsCarteras.count())):
+                if not i == 0:
+                    self.parent().layoutButtonsCarteras.itemAt(i).widget().setParent(None)
+
+            for nombre in self.carteras_usuario:
+                self.button = QPushButton(nombre[1], self.parent())
+                self.button.clicked.connect(
+                    lambda clicked, nombre_cartera=self.button.text(): self.parent().updatePieChart(nombre_cartera))
+
+                self.button.clicked.connect(
+                    lambda clicked, nombre_cartera=self.button.text(): self.parent().refreshLabelCartera(nombre_cartera))
+
+                self.button.clicked.connect(
+                    lambda clicked, nombre_cartera=self.button.text(): self.parent().UpdateTableOperaciones(nombre_cartera))
+                self.parent().layoutButtonsCarteras.addWidget(self.button)
+
+            self.parent().frameButtonsCarteras.setLayout(self.parent().layoutButtonsCarteras)
+
 
             # Activa el botón de añadir fondos a la cartera actual por si acaso estaba desactivado
-            if self.parent().cbCarterasReal.count() > 0:
-                self.parent().buttonAddISINReal.setEnabled(True)
+            self.parent().buttonAddISINReal.setEnabled(True)
 
         # El usuario ya dispone con una cartera con ese mismo nombre
         else:

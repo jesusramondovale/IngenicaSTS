@@ -55,6 +55,12 @@
       <height>25</height>
      </rect>
     </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
     <property name="placeholderText">
      <string>Nombre y Apellidos</string>
     </property>

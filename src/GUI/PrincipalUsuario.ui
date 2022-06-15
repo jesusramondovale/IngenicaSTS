@@ -807,75 +807,12 @@ background: rgb(206, 206, 206)
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="buttonAddCarteraReal2">
-     <property name="geometry">
-      <rect>
-       <x>840</x>
-       <y>70</y>
-       <width>131</width>
-       <height>36</height>
-      </rect>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>183</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <family>Yu Gothic UI Light</family>
-       <pointsize>8</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">*{
-background: rgb(206, 206, 206)
-}</string>
-     </property>
-     <property name="text">
-      <string>Nueva Cartera</string>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>../../../feather/plus-circle.svg</normaloff>../../../feather/plus-circle.svg</iconset>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="cbCarterasReal">
-     <property name="geometry">
-      <rect>
-       <x>700</x>
-       <y>20</y>
-       <width>181</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Yu Gothic UI Light</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">*{
-background-color: rgb(206, 206, 206) 
-}</string>
-     </property>
-     <property name="currentText">
-      <string notr="true"/>
-     </property>
-     <property name="currentIndex">
-      <number>-1</number>
-     </property>
-    </widget>
     <widget class="QPushButton" name="buttonAddISINReal">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>281</width>
+       <x>20</x>
+       <y>140</y>
+       <width>271</width>
        <height>41</height>
       </rect>
      </property>
@@ -893,7 +830,7 @@ background: rgb(206, 206, 206)
 }</string>
      </property>
      <property name="text">
-      <string>Añadir Fondos a la Cartera</string>
+      <string>Añadir Fondos a Cartera</string>
      </property>
      <property name="icon">
       <iconset>
@@ -903,16 +840,16 @@ background: rgb(206, 206, 206)
     <widget class="QLabel" name="label_3">
      <property name="geometry">
       <rect>
-       <x>560</x>
-       <y>20</y>
-       <width>131</width>
-       <height>19</height>
+       <x>20</x>
+       <y>80</y>
+       <width>151</width>
+       <height>41</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>Yu Gothic UI Light</family>
-       <pointsize>10</pointsize>
+       <pointsize>12</pointsize>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -927,24 +864,25 @@ background: rgb(206, 206, 206)
     <widget class="QPushButton" name="buttonBorrarCarteraReal">
      <property name="geometry">
       <rect>
-       <x>890</x>
-       <y>20</y>
-       <width>81</width>
-       <height>31</height>
+       <x>20</x>
+       <y>290</y>
+       <width>271</width>
+       <height>41</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <family>Yu Gothic UI Light</family>
+       <family>Yu Gothic UI</family>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">*{
-background: rgb(206, 206, 206)
-}</string>
+      <string notr="true"/>
      </property>
      <property name="text">
-      <string>Borrar</string>
+      <string>    Eliminar Cartera</string>
      </property>
      <property name="icon">
       <iconset>
@@ -954,9 +892,9 @@ background: rgb(206, 206, 206)
     <widget class="QPushButton" name="buttonOpBasica">
      <property name="geometry">
       <rect>
-       <x>300</x>
-       <y>60</y>
-       <width>241</width>
+       <x>20</x>
+       <y>190</y>
+       <width>271</width>
        <height>41</height>
       </rect>
      </property>
@@ -985,16 +923,16 @@ background: rgb(206, 206, 206)
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>110</y>
+       <x>380</x>
+       <y>30</y>
        <width>231</width>
-       <height>19</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>Yu Gothic UI Light</family>
-       <pointsize>10</pointsize>
+       <pointsize>12</pointsize>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -1083,8 +1021,8 @@ background: rgb(206, 206, 206)
     <widget class="QLabel" name="labelUsuarioReal">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>0</y>
+       <x>10</x>
+       <y>10</y>
        <width>251</width>
        <height>31</height>
       </rect>
@@ -1107,10 +1045,10 @@ background: rgb(206, 206, 206)
     <widget class="QLabel" name="labelEmailReal">
      <property name="geometry">
       <rect>
-       <x>100</x>
-       <y>30</y>
+       <x>90</x>
+       <y>40</y>
        <width>291</width>
-       <height>21</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
@@ -1134,9 +1072,9 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QPushButton" name="buttonOpTraspaso">
      <property name="geometry">
       <rect>
-       <x>550</x>
-       <y>60</y>
-       <width>231</width>
+       <x>20</x>
+       <y>240</y>
+       <width>271</width>
        <height>41</height>
       </rect>
      </property>
@@ -1165,13 +1103,32 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QWidget" name="horizontalLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>150</y>
-       <width>411</width>
-       <height>321</height>
+       <x>390</x>
+       <y>60</y>
+       <width>421</width>
+       <height>431</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="layoutPieChart"/>
+    </widget>
+    <widget class="QLabel" name="labelCarteraActual">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>80</y>
+       <width>181</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>--NOMBRE--</string>
+     </property>
     </widget>
    </widget>
    <zorder>frameBarra</zorder>
