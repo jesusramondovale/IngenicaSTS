@@ -9,14 +9,13 @@ import threading
 # Librería de Gráficos Útiles especializados en
 # la visualización de índices bursátiles
 from highstock import Highstock
+
+import requests.exceptions
 from highcharts import Highchart
 
 from PyQt5 import QtWebEngineWidgets
 from datetime import datetime, timedelta
-from src.util.dialogs import isinNotFoundDialog, errorInesperado, refreshCompleteDialog
-
-
-
+from src.util.dialogs import isinNotFoundDialog, errorInesperado, refreshCompleteDialog, connectionError
 
 '''
 - Descarga de investing.com  y actualiza en DB los históricos presentes en carteras 
@@ -29,7 +28,6 @@ del  Usuario desde la última fecha presente del registro hasta hoy
 
 
 def refreshHistorics(view):
-
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     db = db_connection.cursor()
     ISINs = db.execute("SELECT ISIN FROM carteras_usuario WHERE id_usuario = ? ",
@@ -50,19 +48,32 @@ def refreshHistorics(view):
             print(str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
 
         try:
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
             lastDateTime += timedelta(days=1)
+            print('Investpy.funds -> INTERNET REQUEST 54')
+
             data = investpy.funds.get_fund_historical_data(
-                fund=ISINtoFund(ISIN[0]),
-                country=getFundINFO(view, ISIN[0]).at[0, 'country'],
+
+                fund=ISINtoFundOffline(ISIN[0]),
+                country=db.execute('SELECT Pais FROM caracterizacion WHERE ISIN = ? ', [ISIN[0]]).fetchone()[0],
                 from_date=lastDateTime.strftime('%d/%m/%Y'),
                 to_date=datetime.today().strftime('%d/%m/%Y'),
                 as_json=False
             )
+
             print('Actualizando ... ' + str(ISIN[0]))
             data.to_sql(ISIN[0], con=db_connection, if_exists='append')
 
         except ValueError:
             pass
+
+        except ConnectionError:
+            print('No hay conexión a Internet')
+            dlg = connectionError(view)
+            dlg.exec()
+            db.close()
+            return
 
         try:
             lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
@@ -77,12 +88,13 @@ def refreshHistorics(view):
             print('NUEVO:' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
 
     if view.cbModo.currentIndex() == 0:
-        UpdateGraph(view, None , view.isins_selected , True )
+        UpdateGraph(view, None, view.isins_selected, True)
     else:
-        UpdateGraph(view, None , view.isins_selected , False )
+        UpdateGraph(view, None, view.isins_selected, False)
 
     refreshCompleteDialog(view).exec()
     return None
+
 
 '''
     - Obtiene la Información existente en investing.com 
@@ -104,6 +116,13 @@ def getFundINFO(self, isin):
         return investpy.funds.search_funds(by='symbol', value=isin)
 
 
+def ISINtoFundOffline(isin):
+    db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+    db = db_connection.cursor()
+    tmp = db.execute('SELECT Nombre FROM caracterizacion WHERE ISIN = ? ', [isin]).fetchone()
+    return tmp[0].title()
+
+
 '''
     - Convierte el ISIN/Symbol de un fondo
     en su nombre completo.
@@ -115,10 +134,12 @@ def getFundINFO(self, isin):
 
 def ISINtoFund(isin):
     try:
+        print('Investpy.funds -> INTERNET REQUEST 135')
         df = investpy.funds.search_funds(by='isin', value=isin)
         name = df.at[0, 'name']
         return name
     except RuntimeError:
+        print('Investpy.funds -> INTERNET REQUEST 140')
         df = investpy.funds.search_funds(by='symbol', value=isin)
         name = df.at[0, 'name']
         return name
@@ -164,9 +185,10 @@ def saveHistoricalFund(self, isin):
 
         try:
             print('Descargando en investing.com ...')
+            print('Investpy.funds -> INTERNET REQUEST 186')
             data = investpy.funds.get_fund_historical_data(
-                fund=ISINtoFund(isin),
-                country=getFundINFO(self, isin).at[0, 'country'],
+                fund=ISINtoFundOffline(isin),
+                country=db.execute('SELECT Pais FROM caracterizacion WHERE ISIN = ? '[isin]).fetchone()[0],
                 from_date='01/01/1970',
                 to_date=datetime.today().strftime('%d/%m/%Y'),
                 as_json=False
@@ -181,6 +203,13 @@ def saveHistoricalFund(self, isin):
         except RuntimeError:
             print('El fondo no ha sido encontrado en investing.com!')
             dlg = isinNotFoundDialog(self)
+            dlg.exec()
+            cursor.close()
+            return
+
+        except requests.exceptions.ConnectionError:
+            print('No hay conexión a Internet')
+            dlg = connectionError(self)
             dlg.exec()
             cursor.close()
             return
@@ -204,14 +233,15 @@ def graphHistoricalISIN(self, isins_selected, absolute):
         names = []
         fundNames = []
 
-        currency = getFundINFO(self, isins_selected[0]).at[0, 'currency']
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
 
+        # currency = getFundINFO(self, isins_selected[0]).at[0, 'currency']
+        currency = db.execute('SELECT Divisa FROM caracterizacion WHERE ISIN = ? ', [isins_selected[0]]).fetchone()[0]
         for a in range(0, len(isins_selected), 1):
             names.append(isins_selected[a])
-            fundNames.append(ISINtoFund(isins_selected[a]))
+            fundNames.append(ISINtoFundOffline(isins_selected[a]))
 
-        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-        cursor = db_connection.cursor()
         H = Highstock()
 
         for j in range(0, len(isins_selected), 1):
@@ -334,9 +364,6 @@ def graphHistoricalISIN(self, isins_selected, absolute):
         self.labelNoIsin.setText('Seleccione primero un ISIN de la lista!')
 
 
-
-
-
 '''
     - Actualiza el gráfico de la Vista con los Isins a graficar
     
@@ -355,19 +382,20 @@ def UpdateGraph(self, isin, isins_selected, absolute):
         fundNames = []
         for elem in isins_selected:
             names.append(elem)
-            fundNames.append((ISINtoFund(elem)))
+            fundNames.append((ISINtoFundOffline(elem)))
 
         if len(isins_selected) != 0:
-            currency = getFundINFO(self, isins_selected[0]).at[0, 'currency']
-
             db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-            cursor = db_connection.cursor()
+            db = db_connection.cursor()
+            currency = db.execute('SELECT Divisa FROM caracterizacion WHERE ISIN = ? ',
+                                  [isins_selected[0]]).fetchone()[0]
+
             self.H = Highstock()
 
             for j in range(0, len(isins_selected), 1):
 
                 try:
-                    data = cursor.execute("SELECT * FROM " + isins_selected[j] + " ").fetchall()
+                    data = db.execute("SELECT * FROM " + isins_selected[j] + " ").fetchall()
                     values = []
                     for row in range(0, len(data), 1):
                         date = data[row][0]
@@ -378,7 +406,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                     self.H.add_data_set(values, "line", fundNames[j])
                 except sqlite3.OperationalError:
                     try:
-                        data = cursor.execute("SELECT * FROM " + "[" + isins_selected[j] + "]" + " ").fetchall()
+                        data = db.execute("SELECT * FROM " + "[" + isins_selected[j] + "]" + " ").fetchall()
 
                         values = []
                         for row in range(0, len(data), 1):
@@ -528,8 +556,6 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                         "plotLines": [{"value": 0, "width": 3, "color": "white"}],
                     },
 
-
-
                     "tooltip": {
                         "pointFormat": '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ',
                         "valueDecimals": 2,
@@ -608,7 +634,8 @@ def UpdateGraph(self, isin, isins_selected, absolute):
             for elem in isins_selected:
                 names.append(elem)
 
-            currency = getFundINFO(self, isins_selected[0]).at[0, 'currency']
+            currency = db.execute('SELECT Divisa FROM caracterizacion WHERE ISIN = ? ',
+                                  [isins_selected[0]]).fetchone()[0]
 
             db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
             cursor = db_connection.cursor()
@@ -625,7 +652,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                 dataTuple = (datetime.fromtimestamp(datetime.timestamp(stamp)), data[row][1])
                 values.append(dataTuple)
 
-            self.H.add_data_set(values, "line", ISINtoFund(isin))
+            self.H.add_data_set(values, "line", ISINtoFundOffline(isin))
 
             if absolute:
                 options = {
@@ -733,11 +760,9 @@ def UpdateGraph(self, isin, isins_selected, absolute):
             self.labelNoIsin.show()
             self.labelNoIsin.setText('Seleccione primero un ISIN de la lista!')
 
+        #####################     A P É N D I C E        ###############################
 
-
-#####################     A P É N D I C E        ###############################
-
-# Grafico Figure Method
+        # Grafico Figure Method
         '''
         VÍA FIGURE
         fig = go.Figure()
@@ -774,7 +799,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
         view.browser.setHtml(fig.to_html(include_plotlyjs='cdn'))
         '''
 
-# Grafico HTML Method
+        # Grafico HTML Method
         ''' Vía llamada HTML 
         view.browser = QtWebEngineWidgets.QWebEngineView(view)
         url = 'https://funds.ddns.net/h.php?isin=' + ISINS[0][0]

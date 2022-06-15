@@ -30,7 +30,23 @@ class badRVdialog(QDialog):
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
+class connectionError(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Vaya..")
+        self.setFixedWidth(330)
+
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel(
+            "No se ha podido conectar con Internet!"))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
 
 '''
     - Avisa al Usuario de que está a punto de Cerrar su seción

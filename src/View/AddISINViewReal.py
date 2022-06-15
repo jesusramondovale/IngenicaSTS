@@ -180,7 +180,7 @@ class AddISINViewReal(QMainWindow):
                                       ([self.tfISIN.text()])).fetchall()) == 0:
 
                         #Inserción de las características del fondo en la tabla caracterización
-                        db.execute("INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ?  , ? , ? , ?)",
+                        db.execute("INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ? , ?  , ? , ? , ?)",
                                        (date.today().strftime('%d/%m/%Y'),
                                         self.tfISIN.text(),
                                         self.tfNombre.text(),
@@ -188,6 +188,7 @@ class AddISINViewReal(QMainWindow):
                                         'F',
                                         self.tfRV.text(),
                                         self.tfZona.text(),
+                                        self.tfPais.text(),
                                         self.tfEstilo.text(),
                                         self.tfSector.text(),
                                         self.tfTamano.text(),

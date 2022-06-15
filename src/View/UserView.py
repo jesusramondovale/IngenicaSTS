@@ -43,6 +43,7 @@ class UserView(QMainWindow):
 
         # Carga de la interfaz gráfica
         uic.loadUi("src/GUI/PrincipalUsuario.ui", view)
+        view.frameRefreshModes.hide()
 
         # Conexión con la BD y creación de un cursor de consultas
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
@@ -83,7 +84,7 @@ class UserView(QMainWindow):
         view.buttonAddISINReal.clicked.connect(view.showAddIsinReal)
         view.buttonAddCarteraReal.clicked.connect(view.showAddCarterasReales)
         view.buttonBorrarCarteraReal.clicked.connect(view.borrarCarteraReal)
-
+        view.buttonRefreshFake.clicked.connect(view.showRefreshModes)
         view.buttonBorrarFondo.clicked.connect(view.borrarFondo)
         view.listIsins.itemPressed.connect(view.addIsinsChecked)
         view.buttonCheckAll.clicked.connect(view.checkAll)
@@ -162,6 +163,7 @@ class UserView(QMainWindow):
             view.layoutButtonsCarteras.addWidget(view.button)
 
         view.frameButtonsCarteras.setLayout(view.layoutButtonsCarteras)
+        view.frameRefreshModes.setLayout(view.layoutRefreshModes)
 
         # Activación del botón añadir Fondo si hay alguna cartera
         if view.cbCarteras.count() > 0:
@@ -193,7 +195,7 @@ class UserView(QMainWindow):
             # Carga los nombres de los fondos en cartera añadiendo su ISIN/Symbol al final
             isin_list_view = []
             for ISIN in view.ISINS:
-                isin_list_view.append(str(fundUtils.ISINtoFund(ISIN[0])) + "  (" + ISIN[0] + ")")
+                isin_list_view.append(str(fundUtils.ISINtoFundOffline(ISIN[0])) + "  (" + ISIN[0] + ")")
 
             # Carga el Widget de Selección de Fondos para graficar con los nombres de los Fondos en cartera
             for x in isin_list_view:
@@ -201,6 +203,7 @@ class UserView(QMainWindow):
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | ~QtCore.Qt.ItemIsEnabled)
                 item.setCheckState(QtCore.Qt.Unchecked)
                 view.listIsins.addItem(item)
+
 
             # Comprueba si existe el Fondo en BD y lo descarga en caso negativo
             for e in view.isin_list:
@@ -257,7 +260,7 @@ class UserView(QMainWindow):
                               "order by Fecha desc) rn "
                               "from [" + str(view.id_usuario[0]) + "_" +
                               str(view.currentCarteraReal) + "] t) t "
-                                                             "where rn = 1 order by ISIN", ([])).fetchall()
+                              "where rn = 1 order by ISIN", ([])).fetchall()
 
             view.Pie.add_data_set(data, 'pie', 'Peso en Cartera', allowPointSelect=True,
                                   cursor='pointer',
@@ -276,6 +279,12 @@ class UserView(QMainWindow):
         view.browserPie.setHtml(view.Pie.htmlcontent)
         view.layoutPieChart.addWidget(view.browserPie)
         view.browserPie.show()
+
+    def showRefreshModes(self):
+        if self.buttonRefreshFake.isChecked():
+            self.frameRefreshModes.show()
+        else:
+            self.frameRefreshModes.hide()
 
     '''
         - Actualiza el label indicador de Cartera Actual en la Vista (Real)
@@ -389,7 +398,7 @@ class UserView(QMainWindow):
 
             isin_list_view = []
             for ISIN in ISINS:
-                isin_list_view.append(str(fundUtils.ISINtoFund(ISIN[0])) + "  (" + ISIN[0] + ")")
+                isin_list_view.append(str(fundUtils.ISINtoFundOffline(ISIN[0])) + "  (" + ISIN[0] + ")")
 
             for x in isin_list_view:
                 item = QListWidgetItem(str(x))
@@ -452,7 +461,7 @@ class UserView(QMainWindow):
         ISIN = name[name.rfind("(") + 1: name.rfind(")")]
         # Comprueba si ISIN es el ISIN del fondo (si existe en investing.com)
         # lanzando RuntimeError en caso negativo
-        fundUtils.ISINtoFund(ISIN)
+        fundUtils.ISINtoFundOffline(ISIN)
 
         # Añade o elimina el fondo seleccionado a la lista de graficación
         if ISIN in self.isins_selected:
@@ -777,7 +786,7 @@ class UserView(QMainWindow):
                                   'enabled': False,
                                   'format': '<b>{point.name}</b>: {point.percentage:.1f} %',
                                   'style': {
-                                      'color': "(Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'"
+                                      'color': "('black'"
                                   }
                               }
                               )
