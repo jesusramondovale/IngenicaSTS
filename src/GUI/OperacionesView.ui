@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>501</width>
+    <width>567</width>
     <height>328</height>
    </rect>
   </property>
@@ -41,7 +41,7 @@
      <rect>
       <x>40</x>
       <y>60</y>
-      <width>211</width>
+      <width>261</width>
       <height>25</height>
      </rect>
     </property>
@@ -49,7 +49,7 @@
    <widget class="QLineEdit" name="tfTitular">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>330</x>
       <y>60</y>
       <width>191</width>
       <height>25</height>
@@ -68,7 +68,7 @@
    <widget class="QLabel" name="labelOrigen_2">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>330</x>
       <y>20</y>
       <width>121</width>
       <height>31</height>
@@ -160,8 +160,8 @@
    <widget class="QLabel" name="labelOrigen_6">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>170</y>
+      <x>330</x>
+      <y>180</y>
       <width>131</width>
       <height>31</height>
      </rect>
@@ -178,8 +178,8 @@
    <widget class="QLineEdit" name="tfValorOrigen">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>210</y>
+      <x>330</x>
+      <y>220</y>
       <width>71</width>
       <height>25</height>
      </rect>
@@ -191,7 +191,7 @@
    <widget class="QLabel" name="labelOrigen_8">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>330</x>
       <y>100</y>
       <width>171</width>
       <height>31</height>
@@ -209,8 +209,8 @@
    <widget class="QLineEdit" name="tfHoraCorte">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>130</y>
+      <x>330</x>
+      <y>140</y>
       <width>51</width>
       <height>25</height>
      </rect>
@@ -220,7 +220,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>260</y>
+      <y>270</y>
       <width>81</width>
       <height>34</height>
      </rect>
@@ -232,8 +232,8 @@
    <widget class="QPushButton" name="buttonEnviar">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>260</y>
+      <x>380</x>
+      <y>270</y>
       <width>151</width>
       <height>34</height>
      </rect>

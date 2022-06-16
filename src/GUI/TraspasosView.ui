@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>526</width>
+    <width>655</width>
     <height>402</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <widget class="QLabel" name="labelOrigen_7">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>340</x>
       <y>240</y>
       <width>141</width>
       <height>31</height>
@@ -38,9 +38,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>340</x>
       <y>200</y>
-      <width>221</width>
+      <width>291</width>
       <height>25</height>
      </rect>
     </property>
@@ -48,7 +48,7 @@
    <widget class="QLabel" name="labelOrigen_2">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>340</x>
       <y>20</y>
       <width>121</width>
       <height>31</height>
@@ -143,7 +143,7 @@
    <widget class="QLabel" name="labelOrigen_8">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>340</x>
       <y>100</y>
       <width>171</width>
       <height>31</height>
@@ -174,7 +174,7 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>340</x>
       <y>280</y>
       <width>71</width>
       <height>25</height>
@@ -189,7 +189,7 @@
      <rect>
       <x>30</x>
       <y>60</y>
-      <width>211</width>
+      <width>281</width>
       <height>25</height>
      </rect>
     </property>
@@ -198,7 +198,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>340</y>
+      <y>350</y>
       <width>81</width>
       <height>34</height>
      </rect>
@@ -210,7 +210,7 @@
    <widget class="QLabel" name="labelDestino">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>340</x>
       <y>160</y>
       <width>171</width>
       <height>31</height>
@@ -246,9 +246,9 @@
    <widget class="QLineEdit" name="tfTitular">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>340</x>
       <y>60</y>
-      <width>191</width>
+      <width>241</width>
       <height>25</height>
      </rect>
     </property>
@@ -277,7 +277,7 @@
    <widget class="QPushButton" name="buttonEnviar">
     <property name="geometry">
      <rect>
-      <x>330</x>
+      <x>480</x>
       <y>340</y>
       <width>151</width>
       <height>34</height>
@@ -290,7 +290,7 @@
    <widget class="QLineEdit" name="tfHoraCorte">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>340</x>
       <y>130</y>
       <width>51</width>
       <height>25</height>

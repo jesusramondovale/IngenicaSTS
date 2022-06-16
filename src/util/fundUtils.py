@@ -15,7 +15,7 @@ from highcharts import Highchart
 
 from PyQt5 import QtWebEngineWidgets
 from datetime import datetime, timedelta
-from src.util.dialogs import isinNotFoundDialog, errorInesperado, refreshCompleteDialog, connectionError
+from src.util.dialogs import isinNotFoundDialog, errorInesperado, refreshCompleteDialog, connectionError, confirmAutoRefresh
 
 '''
 - Descarga de investing.com  y actualiza en DB los históricos presentes en carteras 
@@ -28,72 +28,78 @@ del  Usuario desde la última fecha presente del registro hasta hoy
 
 
 def refreshHistorics(view):
-    db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-    db = db_connection.cursor()
-    ISINs = db.execute("SELECT ISIN FROM carteras_usuario WHERE id_usuario = ? ",
-                       view.id_usuario).fetchall()
-    for ISIN in ISINs:
-        try:
-            lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
-            lastValue = lastRow[0]
-            lastDate = lastRow[1]
-            lastDateTime = datetime.strptime(lastDate, '%Y-%m-%d %H:%M:%S')
-            print(str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
 
-        except sqlite3.OperationalError:
-            lastRow = db.execute("SELECT Open , Date FROM [" + ISIN[0] + "] ORDER BY Date DESC ").fetchone()
-            lastValue = lastRow[0]
-            lastDate = lastRow[1]
-            lastDateTime = datetime.strptime(lastDate, '%Y-%m-%d %H:%M:%S')
-            print(str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+    dlg = confirmAutoRefresh(view)
+    if dlg.exec():
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+        ISINs = db.execute("SELECT ISIN FROM carteras_usuario WHERE id_usuario = ? ",
+                           view.id_usuario).fetchall()
+        for ISIN in ISINs:
+            try:
+                lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
+                lastValue = lastRow[0]
+                lastDate = lastRow[1]
+                lastDateTime = datetime.strptime(lastDate, '%Y-%m-%d %H:%M:%S')
+                print(str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
 
-        try:
-            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-            db = db_connection.cursor()
-            lastDateTime += timedelta(days=1)
-            print('Investpy.funds -> INTERNET REQUEST 54')
+            except sqlite3.OperationalError:
+                lastRow = db.execute("SELECT Open , Date FROM [" + ISIN[0] + "] ORDER BY Date DESC ").fetchone()
+                lastValue = lastRow[0]
+                lastDate = lastRow[1]
+                lastDateTime = datetime.strptime(lastDate, '%Y-%m-%d %H:%M:%S')
+                print(str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
 
-            data = investpy.funds.get_fund_historical_data(
+            try:
+                db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+                db = db_connection.cursor()
+                lastDateTime += timedelta(days=1)
+                print('Investpy.funds -> INTERNET REQUEST 54')
 
-                fund=ISINtoFundOffline(ISIN[0]),
-                country=db.execute('SELECT Pais FROM caracterizacion WHERE ISIN = ? ', [ISIN[0]]).fetchone()[0],
-                from_date=lastDateTime.strftime('%d/%m/%Y'),
-                to_date=datetime.today().strftime('%d/%m/%Y'),
-                as_json=False
-            )
+                data = investpy.funds.get_fund_historical_data(
 
-            print('Actualizando ... ' + str(ISIN[0]))
-            data.to_sql(ISIN[0], con=db_connection, if_exists='append')
+                    fund=ISINtoFundOffline(ISIN[0]),
+                    country=db.execute('SELECT Pais FROM caracterizacion WHERE ISIN = ? ', [ISIN[0]]).fetchone()[0],
+                    from_date=lastDateTime.strftime('%d/%m/%Y'),
+                    to_date=datetime.today().strftime('%d/%m/%Y'),
+                    as_json=False
+                )
 
-        except ValueError:
-            pass
+                print('Actualizando ... ' + str(ISIN[0]))
+                data.to_sql(ISIN[0], con=db_connection, if_exists='append')
 
-        except ConnectionError:
-            print('No hay conexión a Internet')
-            dlg = connectionError(view)
-            dlg.exec()
-            db.close()
-            return
+            except ValueError:
+                pass
 
-        try:
-            lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
-            lastValue = lastRow[0]
-            lastDate = lastRow[1]
-            print('NUEVO: ' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+            except ConnectionError:
+                print('No hay conexión a Internet')
+                dlg = connectionError(view)
+                dlg.exec()
+                db.close()
+                return
 
-        except sqlite3.OperationalError:
-            lastRow = db.execute("SELECT Open , Date FROM [" + ISIN[0] + "] ORDER BY Date DESC ").fetchone()
-            lastValue = lastRow[0]
-            lastDate = lastRow[1]
-            print('NUEVO:' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+            try:
+                lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
+                lastValue = lastRow[0]
+                lastDate = lastRow[1]
+                print('NUEVO: ' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
 
-    if view.cbModo.currentIndex() == 0:
-        UpdateGraph(view, None, view.isins_selected, True)
+            except sqlite3.OperationalError:
+                lastRow = db.execute("SELECT Open , Date FROM [" + ISIN[0] + "] ORDER BY Date DESC ").fetchone()
+                lastValue = lastRow[0]
+                lastDate = lastRow[1]
+                print('NUEVO:' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+
+        if view.cbModo.currentIndex() == 0:
+            UpdateGraph(view, None, view.isins_selected, True)
+        else:
+            UpdateGraph(view, None, view.isins_selected, False)
+
+        refreshCompleteDialog(view).exec()
+        return None
     else:
-        UpdateGraph(view, None, view.isins_selected, False)
-
-    refreshCompleteDialog(view).exec()
-    return None
+        print('Cancelada Operación AutoRefresh')
+        pass
 
 
 '''

@@ -30,6 +30,46 @@ class badRVdialog(QDialog):
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
+
+'''
+    - Avisa al Usuario de que está a punto de actualizar online 
+    los registros de fondos históricos 
+
+    @parent: UserView 
+'''
+
+
+class confirmAutoRefresh(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("¿Seguro?")
+        self.setFixedWidth(350)
+
+        # CONTENIDO
+        btnYes = QPushButton('Confirmar')
+        btnNo = QPushButton('Cancelar')
+
+        btnYes.clicked.connect(self.accept)
+        btnNo.clicked.connect(self.reject)
+
+        self.layoutVert = QVBoxLayout()
+        self.layoutVert.addWidget(QLabel("¿Está seguro de que desea continuar?"))
+        self.layoutVert.addWidget(QLabel("Esta operación puede tardar varios segundos"))
+
+        self.layoutHor = QHBoxLayout()
+        self.layoutHor.addWidget(btnYes)
+        self.layoutHor.addWidget(btnNo)
+
+        self.layoutVert.addLayout(self.layoutHor)
+
+        self.setLayout(self.layoutVert)
+
+
+
+
+
 class connectionError(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)

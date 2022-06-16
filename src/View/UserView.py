@@ -162,6 +162,10 @@ class UserView(QMainWindow):
                 lambda clicked, nombre_cartera=view.button.text(): view.UpdateTableOperaciones(nombre_cartera))
             view.layoutButtonsCarteras.addWidget(view.button)
 
+            view.button.clicked.connect(
+                lambda clicked, isins_selected=view.isins_selected: view.refreshIsinsEnCartera() )
+
+
         view.frameButtonsCarteras.setLayout(view.layoutButtonsCarteras)
         view.frameRefreshModes.setLayout(view.layoutRefreshModes)
 
@@ -237,6 +241,8 @@ class UserView(QMainWindow):
 
         view.updateGraph(None, view.isins_selected)
 
+        view.refreshIsinsEnCartera()
+
         # Instancia del Widget WebEngine para la creación de Gráficos
         view.Pie = Highchart(width=700, height=640)
         options = {
@@ -285,6 +291,23 @@ class UserView(QMainWindow):
             self.frameRefreshModes.show()
         else:
             self.frameRefreshModes.hide()
+
+    def refreshIsinsEnCartera(self):
+        print('RefreshIsinsEnCartera()')
+        # Conexión con la BD y creación de un cursor de consultas
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+
+        lista_Isins_cartera = db.execute(
+            "SELECT ca.Nombre FROM carteras_usuario_real cr " +
+            "INNER JOIN caracterizacion ca USING(ISIN) " +
+            "WHERE cr.id_usuario = ? AND cr.nombre_cartera = ?",
+            ([self.id_usuario[0], self.currentCarteraReal])).fetchall()
+
+        self.listFondosCartera.clear()
+        for e in lista_Isins_cartera:
+            self.listFondosCartera.addItem(e[0])
+        db.close()
 
     '''
         - Actualiza el label indicador de Cartera Actual en la Vista (Real)
@@ -573,6 +596,9 @@ class UserView(QMainWindow):
                 self.button.clicked.connect(
                     lambda clicked, nombre_cartera=self.button.text(): self.UpdateTableOperaciones(
                         nombre_cartera))
+
+                self.button.clicked.connect(self.refreshIsinsEnCartera())
+
                 self.layoutButtonsCarteras.addWidget(self.button)
 
             self.frameButtonsCarteras.setLayout(self.layoutButtonsCarteras)

@@ -67,6 +67,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfISIN">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string>Ej. ES0113002036</string>
           </property>
@@ -135,6 +138,9 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string>Ej. Bankia Investments SL</string>
           </property>
@@ -189,6 +195,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfGestora">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string>Ej. BBVA </string>
           </property>
@@ -242,6 +251,9 @@
          <widget class="QLineEdit" name="tfDivisa">
           <property name="enabled">
            <bool>true</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
           <property name="placeholderText">
            <string>Ej. EUR, USD</string>
@@ -297,6 +309,9 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string>Ej. ESP, USA, LUX</string>
           </property>
@@ -351,6 +366,9 @@
           <property name="enabled">
            <bool>true</bool>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string>Ej. Europa, América</string>
           </property>
@@ -402,6 +420,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfTipoAct">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string>Ej. Fondo, Valor</string>
           </property>
@@ -464,6 +485,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfRV">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string>Ej. 0 - 0.1 - 0.4 - 0.7 - 1</string>
           </property>
@@ -515,6 +539,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfTamano">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string>Ej. Grande/mid/Peq.</string>
           </property>
@@ -566,6 +593,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfSector">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string/>
           </property>
@@ -617,6 +647,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfCubierta">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string>Ej. Hedged / No Hedged</string>
           </property>
@@ -668,6 +701,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfDuracion">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string/>
           </property>
@@ -719,6 +755,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="tfEstilo">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
           <property name="placeholderText">
            <string>Ej. Blend</string>
           </property>

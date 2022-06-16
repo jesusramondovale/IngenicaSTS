@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>346</width>
-    <height>175</height>
+    <height>220</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
       <x>20</x>
       <y>20</y>
       <width>291</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="font">
@@ -68,7 +68,7 @@
     <property name="geometry">
      <rect>
       <x>200</x>
-      <y>120</y>
+      <y>170</y>
       <width>112</width>
       <height>34</height>
      </rect>
@@ -81,13 +81,26 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>120</y>
+      <y>170</y>
       <width>112</width>
       <height>34</height>
      </rect>
     </property>
     <property name="text">
      <string>Cancelar</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="buttonNewUser">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>121</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Nuevo Usuario</string>
     </property>
    </widget>
   </widget>

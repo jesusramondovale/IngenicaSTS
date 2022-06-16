@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1422</width>
+    <width>1411</width>
     <height>724</height>
    </rect>
   </property>
@@ -77,6 +77,12 @@ QPushButton:checked {
       <height>721</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
     <property name="styleSheet">
      <string notr="true"/>
     </property>
@@ -113,6 +119,96 @@ QPushButton:checked {
        <property name="checked">
         <bool>true</bool>
        </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="frameButtonsCarteras">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+
+	border-radius: 5px;
+	background-color: rgb(84, 84, 84);
+	color:rgb(255, 255, 255)
+
+}
+
+QPushButton:hover {
+	 background-color: rgb(0, 85,124);
+     color: rgb(255, 255, 255)
+}
+
+QPushButton:checked {
+                                    background-color: rgb(0, 85,124);
+                                    color: rgb(255, 255, 255)
+                                }
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="leftMargin">
+         <number>40</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="layoutButtonsCarteras">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMaximumSize</enum>
+          </property>
+          <item>
+           <widget class="QPushButton" name="buttonAddCarteraReal">
+            <property name="maximumSize">
+             <size>
+              <width>183</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Yu Gothic UI Light</family>
+              <pointsize>8</pointsize>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">*{
+background: rgb(206, 206, 206)
+}</string>
+            </property>
+            <property name="text">
+             <string> Nueva Cartera</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../feather/plus-circle.svg</normaloff>../feather/plus-circle.svg</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
@@ -166,7 +262,7 @@ QPushButton:checked {
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="buttonRefresh">
+      <widget class="QPushButton" name="buttonRefreshFake">
        <property name="font">
         <font>
          <family>Yu Gothic UI Light</family>
@@ -183,7 +279,7 @@ QPushButton:checked {
          <normaloff>../feather/refresh-cw.svg</normaloff>../feather/refresh-cw.svg</iconset>
        </property>
        <property name="checkable">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -191,7 +287,114 @@ QPushButton:checked {
       </widget>
      </item>
      <item>
-      <spacer name="verticalSpacer">
+      <widget class="QFrame" name="frameRefreshModes">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+
+	border-radius: 5px;
+	background-color: rgb(84, 84, 84);
+	color:rgb(255, 255, 255)
+
+}
+
+QPushButton:hover {
+	 background-color: rgb(0, 85,124);
+     color: rgb(255, 255, 255)
+}
+
+QPushButton:checked {
+                                    background-color: rgb(0, 85,124);
+                                    color: rgb(255, 255, 255)
+                                }
+</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="leftMargin">
+         <number>50</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="layoutRefreshModes">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMaximumSize</enum>
+          </property>
+          <item>
+           <widget class="QPushButton" name="buttonRefresh">
+            <property name="font">
+             <font>
+              <family>Yu Gothic UI Light</family>
+              <pointsize>9</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>  Auto</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../feather/download.svg</normaloff>../feather/download.svg</iconset>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="buttonRefreshManal">
+            <property name="font">
+             <font>
+              <family>Yu Gothic UI Light</family>
+              <pointsize>9</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string> Manual</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../feather/tool.svg</normaloff>../feather/tool.svg</iconset>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -623,6 +826,21 @@ background: rgb(206, 206, 206)
         <normaloff>../feather/check-square.svg</normaloff>../feather/check-square.svg</iconset>
       </property>
      </widget>
+     <zorder>buttonAddISIN</zorder>
+     <zorder>labelEmail</zorder>
+     <zorder>labelUsuario</zorder>
+     <zorder>listIsins</zorder>
+     <zorder>label</zorder>
+     <zorder>cbModo</zorder>
+     <zorder>label_2</zorder>
+     <zorder>cbCarteras</zorder>
+     <zorder>labelCartera</zorder>
+     <zorder>buttonBorrarCartera</zorder>
+     <zorder>buttonAddCarteras</zorder>
+     <zorder>buttonBorrarFondo</zorder>
+     <zorder>line_2</zorder>
+     <zorder>line_3</zorder>
+     <zorder>buttonCheckAll</zorder>
     </widget>
     <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
@@ -696,75 +914,12 @@ background: rgb(206, 206, 206)
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="buttonAddCarteraReal">
-     <property name="geometry">
-      <rect>
-       <x>230</x>
-       <y>60</y>
-       <width>131</width>
-       <height>36</height>
-      </rect>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>183</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <family>Yu Gothic UI Light</family>
-       <pointsize>8</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">*{
-background: rgb(206, 206, 206)
-}</string>
-     </property>
-     <property name="text">
-      <string>Nueva Cartera</string>
-     </property>
-     <property name="icon">
-      <iconset>
-       <normaloff>../feather/plus-circle.svg</normaloff>../feather/plus-circle.svg</iconset>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="cbCarterasReal">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>30</y>
-       <width>181</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Yu Gothic UI Light</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">*{
-background-color: rgb(206, 206, 206) 
-}</string>
-     </property>
-     <property name="currentText">
-      <string notr="true"/>
-     </property>
-     <property name="currentIndex">
-      <number>-1</number>
-     </property>
-    </widget>
     <widget class="QPushButton" name="buttonAddISINReal">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>120</y>
-       <width>281</width>
+       <y>140</y>
+       <width>271</width>
        <height>41</height>
       </rect>
      </property>
@@ -782,7 +937,7 @@ background: rgb(206, 206, 206)
 }</string>
      </property>
      <property name="text">
-      <string>Añadir Fondos a la Cartera</string>
+      <string>Añadir Fondos a Cartera</string>
      </property>
      <property name="icon">
       <iconset>
@@ -792,16 +947,16 @@ background: rgb(206, 206, 206)
     <widget class="QLabel" name="label_3">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>30</y>
+       <x>20</x>
+       <y>80</y>
        <width>151</width>
-       <height>19</height>
+       <height>41</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>Yu Gothic UI Light</family>
-       <pointsize>10</pointsize>
+       <pointsize>12</pointsize>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -816,106 +971,37 @@ background: rgb(206, 206, 206)
     <widget class="QPushButton" name="buttonBorrarCarteraReal">
      <property name="geometry">
       <rect>
-       <x>380</x>
-       <y>30</y>
-       <width>81</width>
-       <height>31</height>
+       <x>20</x>
+       <y>290</y>
+       <width>271</width>
+       <height>41</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <family>Yu Gothic UI Light</family>
+       <family>Yu Gothic UI</family>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">*{
-background: rgb(206, 206, 206)
-}</string>
+      <string notr="true"/>
      </property>
      <property name="text">
-      <string>Borrar</string>
+      <string>    Eliminar Cartera</string>
      </property>
      <property name="icon">
       <iconset>
        <normaloff>../feather/delete.svg</normaloff>../feather/delete.svg</iconset>
      </property>
     </widget>
-    <widget class="QTableWidget" name="tableFondos">
+    <widget class="QPushButton" name="buttonOpBasica">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>180</y>
-       <width>1161</width>
-       <height>481</height>
-      </rect>
-     </property>
-     <column>
-      <property name="text">
-       <string>ISIN</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Fondo</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Gestora</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Tipo Actv.</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>R.V</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Zona</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Estilo</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Sector</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Tamaño</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Divisa</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Cubierta</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Duración</string>
-      </property>
-     </column>
-    </widget>
-    <widget class="QPushButton" name="buttonOperacion">
-     <property name="geometry">
-      <rect>
-       <x>310</x>
-       <y>120</y>
-       <width>301</width>
+       <y>190</y>
+       <width>271</width>
        <height>41</height>
       </rect>
      </property>
@@ -928,7 +1014,7 @@ background: rgb(206, 206, 206)
       </font>
      </property>
      <property name="text">
-      <string>Nueva Operación en Cartera</string>
+      <string>  Nueva Compra-Venta</string>
      </property>
      <property name="icon">
       <iconset>
@@ -941,7 +1027,231 @@ background: rgb(206, 206, 206)
       <bool>false</bool>
      </property>
     </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>90</y>
+       <width>201</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>12</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string> Fondos en Cartera</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>420</y>
+       <width>251</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>10</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>Operaciones sobre la Cartera</string>
+     </property>
+    </widget>
+    <widget class="QTableWidget" name="tableOperaciones">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>470</y>
+       <width>1181</width>
+       <height>241</height>
+      </rect>
+     </property>
+     <column>
+      <property name="text">
+       <string>Fecha</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Estado</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Titular</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Incidencias</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Fondo (Origen)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Fondo (Destino)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Particip. (Origen)</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Importe (Origen)</string>
+      </property>
+     </column>
+    </widget>
+    <widget class="QLabel" name="labelUsuarioReal">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>251</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>12</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>-- NOMBRE USUARIO --</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelEmailReal">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>40</y>
+       <width>291</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>10</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">*{
+background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0
+rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0)) 
+}</string>
+     </property>
+     <property name="text">
+      <string>--- USUARIO@EMAIL.COM ---</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="buttonOpTraspaso">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>240</y>
+       <width>271</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>  Nuevo Traspaso</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../feather/refresh-cw.svg</normaloff>../feather/refresh-cw.svg</iconset>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>760</x>
+       <y>20</y>
+       <width>421</width>
+       <height>431</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="layoutPieChart"/>
+    </widget>
+    <widget class="QLabel" name="labelCarteraActual">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>80</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="listFondosCartera">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>120</y>
+       <width>421</width>
+       <height>331</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
+   <zorder>frameBarra</zorder>
+   <zorder>line</zorder>
+   <zorder>frameMain_Up</zorder>
+   <zorder>frameReal</zorder>
   </widget>
  </widget>
  <resources/>

@@ -3,6 +3,7 @@
 ################################################################################
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow
+from src.View.SignInView import SignIn
 
 '''
     - Ventana de Configuración para el Usuario
@@ -13,9 +14,10 @@ from PyQt5.QtWidgets import QMainWindow
      @children:
 '''
 
+
 class ConfigView(QMainWindow):
 
-    def __init__(view , parent=QMainWindow):
+    def __init__(view, parent=QMainWindow):
 
         super().__init__(parent)
         # Carga de la interfaz gráfica
@@ -24,8 +26,14 @@ class ConfigView(QMainWindow):
         # Carga del Combobox de selección de Tema
         view.cbTema.addItems(['Dark', 'Light'])
 
+        if view.parent().id_usuario[0] == 5:
+            view.buttonNewUser.show()
+        else:
+            view.buttonNewUser.hide()
+
         # Conexión de los eventos de botones clickados a la lógica de los controladores
         view.buttonAplicar.clicked.connect(view.applyChanges)
+        view.buttonNewUser.clicked.connect(view.register)
 
     def applyChanges(view):
 
@@ -132,3 +140,6 @@ class ConfigView(QMainWindow):
         view.parent().updateGraph(None, view.parent().isins_selected)
         view.close()
 
+    def register(self):
+        conf = SignIn(self)
+        conf.show()

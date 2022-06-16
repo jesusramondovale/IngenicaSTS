@@ -1030,9 +1030,9 @@ background: rgb(206, 206, 206)
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>380</x>
-       <y>30</y>
-       <width>231</width>
+       <x>330</x>
+       <y>90</y>
+       <width>201</width>
        <height>21</height>
       </rect>
      </property>
@@ -1048,14 +1048,14 @@ background: rgb(206, 206, 206)
       <string notr="true"/>
      </property>
      <property name="text">
-      <string>Fondos en Cartera</string>
+      <string> Fondos en Cartera</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>480</y>
+       <y>420</y>
        <width>251</width>
        <height>31</height>
       </rect>
@@ -1079,9 +1079,9 @@ background: rgb(206, 206, 206)
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>520</y>
-       <width>1161</width>
-       <height>191</height>
+       <y>470</y>
+       <width>1181</width>
+       <height>241</height>
       </rect>
      </property>
      <column>
@@ -1210,8 +1210,8 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QWidget" name="horizontalLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>390</x>
-       <y>60</y>
+       <x>760</x>
+       <y>20</y>
        <width>421</width>
        <height>431</height>
       </rect>
@@ -1223,7 +1223,7 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
       <rect>
        <x>180</x>
        <y>80</y>
-       <width>181</width>
+       <width>151</width>
        <height>41</height>
       </rect>
      </property>
@@ -1234,7 +1234,17 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
       </font>
      </property>
      <property name="text">
-      <string>--NOMBRE--</string>
+      <string/>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="listFondosCartera">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>120</y>
+       <width>421</width>
+       <height>331</height>
+      </rect>
      </property>
     </widget>
    </widget>

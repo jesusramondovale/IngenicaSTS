@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>460</width>
-    <height>391</height>
+    <width>567</width>
+    <height>328</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,7 +41,7 @@
      <rect>
       <x>40</x>
       <y>60</y>
-      <width>161</width>
+      <width>261</width>
       <height>25</height>
      </rect>
     </property>
@@ -49,11 +49,17 @@
    <widget class="QLineEdit" name="tfTitular">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>50</y>
+      <x>330</x>
+      <y>60</y>
       <width>191</width>
       <height>25</height>
      </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
     <property name="placeholderText">
      <string>Nombre y Apellidos</string>
@@ -62,7 +68,7 @@
    <widget class="QLabel" name="labelOrigen_2">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>330</x>
       <y>20</y>
       <width>121</width>
       <height>31</height>
@@ -109,7 +115,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>170</y>
+      <y>180</y>
       <width>81</width>
       <height>31</height>
      </rect>
@@ -127,7 +133,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>200</y>
+      <y>210</y>
       <width>71</width>
       <height>25</height>
      </rect>
@@ -136,8 +142,8 @@
    <widget class="QLabel" name="labelOrigen_5">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>190</y>
+      <x>110</x>
+      <y>200</y>
       <width>111</width>
       <height>31</height>
      </rect>
@@ -151,47 +157,11 @@
      <string> -$/€-</string>
     </property>
    </widget>
-   <widget class="QLabel" name="labelDestino">
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>160</y>
-      <width>171</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Fondo (Destino)</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbDestino">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>200</y>
-      <width>191</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>Ninguno</string>
-     </property>
-    </item>
-   </widget>
    <widget class="QLabel" name="labelOrigen_6">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>240</y>
+      <x>330</x>
+      <y>180</y>
       <width>131</width>
       <height>31</height>
      </rect>
@@ -208,8 +178,8 @@
    <widget class="QLineEdit" name="tfValorOrigen">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>280</y>
+      <x>330</x>
+      <y>220</y>
       <width>71</width>
       <height>25</height>
      </rect>
@@ -218,57 +188,10 @@
      <string>D+4 ..</string>
     </property>
    </widget>
-   <widget class="QLabel" name="labelOrigen_7">
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>240</y>
-      <width>141</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Valor (Destino)</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBoxDestino">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>170</y>
-      <width>21</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="tfValorDestino">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>280</y>
-      <width>71</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="placeholderText">
-     <string>D+1 ...</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="labelOrigen_8">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>330</x>
       <y>100</y>
       <width>171</width>
       <height>31</height>
@@ -283,34 +206,21 @@
      <string>Hora (Corte)</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="fHoraCorte">
+   <widget class="QLineEdit" name="tfHoraCorte">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>130</y>
+      <x>330</x>
+      <y>140</y>
       <width>51</width>
       <height>25</height>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="buttonEnviar">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>340</y>
-      <width>151</width>
-      <height>34</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Enviar Operación</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="buttonBorrar">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>340</y>
+      <x>30</x>
+      <y>270</y>
       <width>81</width>
       <height>34</height>
      </rect>
@@ -319,10 +229,39 @@
      <string>Borrar</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="buttonEnviar">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>270</y>
+      <width>151</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enviar Operación</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
  <connections>
+  <connection>
+   <sender>buttonBorrar</sender>
+   <signal>clicked()</signal>
+   <receiver>tfImporte</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>53</x>
+     <y>213</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>buttonBorrar</sender>
    <signal>clicked()</signal>
@@ -342,16 +281,16 @@
   <connection>
    <sender>buttonBorrar</sender>
    <signal>clicked()</signal>
-   <receiver>tfImporte</receiver>
+   <receiver>tfHoraCorte</receiver>
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>69</x>
-     <y>344</y>
+     <x>87</x>
+     <y>343</y>
     </hint>
     <hint type="destinationlabel">
-     <x>53</x>
-     <y>213</y>
+     <x>260</x>
+     <y>145</y>
     </hint>
    </hints>
   </connection>
@@ -384,38 +323,6 @@
     <hint type="destinationlabel">
      <x>310</x>
      <y>65</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBorrar</sender>
-   <signal>clicked()</signal>
-   <receiver>fHoraCorte</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>87</x>
-     <y>343</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>260</x>
-     <y>145</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBorrar</sender>
-   <signal>clicked()</signal>
-   <receiver>tfValorDestino</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>92</x>
-     <y>350</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>264</x>
-     <y>291</y>
     </hint>
    </hints>
   </connection>

@@ -209,7 +209,7 @@ class AddISINViewReal(QMainWindow):
 
                     self.parent().ISINS_real.append(ISIN)
                     #parent.updateTable()
-
+                    self.parent().refreshIsinsEnCartera()
                     # Avisa al usuario de la operación completada con éxito y
                     # esconde la ventana actual (vuelve a UserView)
                     dlg = TickerAddedSuccesfully(self)
