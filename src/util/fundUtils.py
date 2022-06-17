@@ -2,9 +2,8 @@
 #   LIBRERÍA DE ÚTILES PARA CONSULTA DE DATOS SOBRE INVESTING.COM  ##
 #          EMPAQUETANDO LLAMADAS A LA API investpy                 ##
 ######################################################################
-import sqlite3
-import investpy
-import threading
+import sqlite3, investpy, threading
+
 
 # Librería de Gráficos Útiles especializados en
 # la visualización de índices bursátiles
@@ -26,23 +25,31 @@ del  Usuario desde la última fecha presente del registro hasta hoy
 
 '''
 
-
 def refreshHistorics(view):
 
+    # Diálogo de Confirmación de Operación
     dlg = confirmAutoRefresh(view)
+    # Si se Confirma la Operación
     if dlg.exec():
+
+        # Conexión a base de Datos
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
+
+        # Capturamos de DB los fondos en carteras virtuales y reales
         ISINs = db.execute("SELECT ISIN FROM carteras_usuario  WHERE id_usuario = ? ",
                            view.id_usuario).fetchall()
         ISINs_real = db.execute("SELECT ISIN FROM carteras_usuario_real  WHERE id_usuario = ? ",
                            view.id_usuario).fetchall()
 
+        # Recorremos y cargamos la lista de Fondos
         for e in ISINs_real:
             ISINs.append(e)
 
+
         for ISIN in ISINs:
             try:
+                #Buscamos el último valor en DB
                 lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
                 lastValue = lastRow[0]
                 lastDate = lastRow[1]
@@ -75,8 +82,10 @@ def refreshHistorics(view):
                 data.to_sql(ISIN[0], con=db_connection, if_exists='append')
 
             except ValueError:
-                pass
+                db.close()
+                return
 
+            # Captura del error por fallo de conexión
             except ConnectionError:
                 print('No hay conexión a Internet')
                 dlg = connectionError(view)
@@ -96,6 +105,7 @@ def refreshHistorics(view):
                 lastDate = lastRow[1]
                 print('NUEVO:' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
 
+        # Actualiza el Gráfico de Cartera Virtual
         if view.cbModo.currentIndex() == 0:
             UpdateGraph(view, None, view.isins_selected, True)
         else:
@@ -119,7 +129,6 @@ def refreshHistorics(view):
     
 '''
 
-
 def getFundINFO(self, isin):
     try:
         return investpy.funds.search_funds(by='isin', value=isin)
@@ -128,12 +137,27 @@ def getFundINFO(self, isin):
         return investpy.funds.search_funds(by='symbol', value=isin)
 
 
+'''
+    - Convierte el ISIN de un Fondo en el Nombre Completo
+    del mismo 
+    
+    @params: isin del fondo
+    @returns: str (nombre del fondo)
+'''
 def ISINtoFundOffline(isin):
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     db = db_connection.cursor()
     tmp = db.execute('SELECT Nombre FROM caracterizacion WHERE ISIN = ? ', [isin]).fetchone()
     return tmp[0].title()
 
+
+'''
+    - Convierte el Nombre de un Fondo en el ISIN/Symbol
+    del mismo 
+
+    @params: isin del fondo
+    @returns: str (nombre del fondo)
+'''
 def FundtoISINOffline(fund):
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     db = db_connection.cursor()
@@ -143,6 +167,7 @@ def FundtoISINOffline(fund):
     else:
         return tmp[0]
 
+
 '''
     - Convierte el ISIN/Symbol de un fondo
     en su nombre completo.
@@ -150,7 +175,6 @@ def FundtoISINOffline(fund):
     @params: ISIN | Symbol
     @returns: Nombre (str) del Fondo     
 '''
-
 
 def ISINtoFund(isin):
     try:
@@ -163,6 +187,7 @@ def ISINtoFund(isin):
         df = investpy.funds.search_funds(by='symbol', value=isin)
         name = df.at[0, 'name']
         return name
+
 
 
 '''
@@ -244,7 +269,6 @@ def saveHistoricalFund(self, isin):
            : bool -> Modo de graficación (absolute=True o evolución=False)
     @returns: None
 '''
-
 
 def graphHistoricalISIN(self, isins_selected, absolute):
     print('ISINS a Graficar -> ' + str(isins_selected))
@@ -393,7 +417,6 @@ def graphHistoricalISIN(self, isins_selected, absolute):
              Modo de Graficación: Aboluste (True)
     @returns: None
 '''
-
 
 def UpdateGraph(self, isin, isins_selected, absolute):
     if isin is None:

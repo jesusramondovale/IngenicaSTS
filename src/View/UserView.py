@@ -45,23 +45,27 @@ class UserView(QMainWindow):
 
         # Carga de la interfaz gráfica
         uic.loadUi("src/GUI/PrincipalUsuario.ui", view)
+
+        # Esconde los submenús de Actualización hasta que se necesiten
         view.frameRefreshModes.hide()
 
         # Conexión con la BD y creación de un cursor de consultas
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
 
-        # Tema seleccionado
+        # Almacenamiento del tema seleccionado
         view.theme = 'Light'
 
-        # Captura del Usuario a través de la vista parent (MainView - LoginView)
+        # Captura del Nombre Usuario a través de la vista parent (MainView - LoginView)
         usuario = parent.textFieldUser.text()
-        # Captura del ID de usuario actual en BD
+
+        # Captura del ID de usuario actual a través de BD
         view.id_usuario = db.execute("SELECT id FROM users WHERE nombre = ?", [usuario]).fetchone()
 
         # Captura del monedero
         view.monedero = db.execute("SELECT monedero FROM users WHERE nombre = ?", [usuario]).fetchone()[0]
         view.labelMonederoTotal.setText(str(view.monedero) + '€')
+
         # Captura de la Cartera Actual (la primera de todas las del Usuario)
         view.currentCartera = db.execute(
             "SELECT nombre_cartera FROM carteras WHERE id_usuario = ? ORDER BY (nombre_cartera)",
@@ -73,6 +77,7 @@ class UserView(QMainWindow):
             ([view.id_usuario[0]])).fetchone()
         if view.currentCarteraReal is not None:
             view.currentCarteraReal = view.currentCarteraReal[0]
+
         # Estructura de almacenamiento para los fondos seleccionados para graficar
         view.isins_selected = []
         view.allChecked = False
@@ -81,11 +86,9 @@ class UserView(QMainWindow):
 
         # Conexión de los eventos de botones clickados a la lógica de los controladores
         view.buttonLogout.clicked.connect(view.logout)
-
         view.buttonAddISIN.clicked.connect(view.showAddIsin)
         view.buttonAddCarteras.clicked.connect(view.showAddCarteras)
         view.buttonBorrarCartera.clicked.connect(view.borrarCartera)
-
         view.buttonAddISINReal.clicked.connect(view.showAddIsinReal)
         view.buttonAddCarteraReal.clicked.connect(view.showAddCarterasReales)
         view.buttonBorrarCarteraReal.clicked.connect(view.borrarCarteraReal)
@@ -103,12 +106,14 @@ class UserView(QMainWindow):
         view.buttonCartVirt.setAutoExclusive(True)
         view.frameVirt.hide()
 
+        # Gráfico de carteras virtuales
         view.H = Highstock()
 
-        # Desactivación de los botones de borrar Cartera y Añadir Nuevo Fondo
+        # Desactivación de los botones de borrar Cartera y Añadir Nuevo Fondo (Cartera Virtual)
         view.buttonBorrarCartera.setEnabled(False)
         view.buttonAddISIN.setEnabled(False)
 
+        # Desactivación de los botones de borrar Cartera y Añadir Nuevo Fondo (Cartera Real)
         view.buttonBorrarCarteraReal.setEnabled(False)
         view.buttonAddISINReal.setEnabled(False)
 
@@ -158,17 +163,19 @@ class UserView(QMainWindow):
         # Adición de las Carteras al ComboBox de Selección de Carteras
         view.cbCarteras.addItems(view.nombres_carteras)
 
+        # Creación de los botones del submenú. Un nuevo botón por cada Cartera Real existente
         for nombre in view.nombres_carteras_real:
+            # Generación del Botón
             view.button = QPushButton(nombre, view)
+
+            # Enlace a los controladores de pulsación sobre cada botón
             view.button.clicked.connect(
                 lambda clicked, nombre_cartera=view.button.text(): view.updatePieChart(nombre_cartera))
             view.button.clicked.connect(
                 lambda clicked, nombre_cartera=view.button.text(): view.refreshLabelCartera(nombre_cartera))
             view.button.clicked.connect(
                 lambda clicked, nombre_cartera=view.button.text(): view.UpdateTableOperaciones(nombre_cartera))
-
             view.layoutButtonsCarteras.addWidget(view.button)
-
             view.button.clicked.connect(
                 lambda clicked, isins_selected=view.isins_selected: view.refreshIsinsEnCartera())
 
@@ -186,13 +193,14 @@ class UserView(QMainWindow):
         # Si hay una cartera actual (si existen carteras) para el usuario actual
         if view.currentCartera is not None and view.currentCarteraReal is not None:
 
-            # Carga todos los ISIN/Symbol de los fondos para la cartera actual
+            # Carga todos los ISIN/Symbol de los fondos para la cartera actual (Virtual)
             view.ISINS = db.execute(
                 "SELECT cu.ISIN FROM carteras c INNER JOIN carteras_usuario cu "
                 "USING (nombre_cartera)"
                 "WHERE c.nombre_cartera = ? AND cu.id_usuario = ? ",
                 ([view.currentCartera[0], view.id_usuario[0]])).fetchall()
 
+            # Carga todos los ISIN/Symbol de los fondos para la cartera actual (Real)
             view.ISINS_real = db.execute(
                 "SELECT cu.ISIN FROM carteras_real c INNER JOIN carteras_usuario_real cu "
                 "USING (nombre_cartera)"
@@ -244,12 +252,14 @@ class UserView(QMainWindow):
         if len(view.ISINS) != 0:
             view.checkAll()
 
+        # Actualiza el gráfico y las etiquetas de cartera
         view.updateGraph(None, view.isins_selected)
-
         view.refreshIsinsEnCartera()
 
         # Instancia del Widget WebEngine para la creación de Gráficos
         view.Pie = Highchart(width=700, height=640)
+
+        # Propiedades del Gráfico
         options = {
             'chart': {
                 'plotBackgroundColor': '#979797',
@@ -266,7 +276,9 @@ class UserView(QMainWindow):
         }
         view.Pie.set_dict_options(options)
 
+        # Si hay al menos una cartera real en la cuenta de usuario...
         if not view.currentCarteraReal == None:
+            # Captura de DB del estado actual de la cartera actual
             data = db.execute("select ISIN , Porcentaje "
                               "from ( select t.*, row_number() over(partition by ISIN "
                               "order by Fecha desc) rn "
@@ -274,6 +286,7 @@ class UserView(QMainWindow):
                               str(view.currentCarteraReal) + "] t) t "
                                                              "where rn = 1 order by ISIN", ([])).fetchall()
 
+            # Añade los datos de cartera al gráfico
             view.Pie.add_data_set(data, 'pie', 'Peso en Cartera', allowPointSelect=True,
                                   cursor='pointer',
                                   showInLegend=True,
@@ -288,17 +301,32 @@ class UserView(QMainWindow):
 
             view.updatePieChart(view.nombres_carteras_real[0])
 
+        # Actualiza el estado de los botones y las etiquetas
         view.refreshButtons()
         view.labelValorTotal.setText(str(view.importeTotalCartera(None)) + '€')
         view.browserPie.setHtml(view.Pie.htmlcontent)
         view.layoutPieChart.addWidget(view.browserPie)
         view.browserPie.show()
 
+    '''
+    - Muestra y oculta los botones del submenú 
+    de actualización de históricos
+    
+    @params: None
+    '''
+
     def showRefreshModes(self):
         if self.buttonRefreshFake.isChecked():
             self.frameRefreshModes.show()
         else:
             self.frameRefreshModes.hide()
+
+    '''
+        - Activa/desactiva los botones de operaciones 
+        de cartera en caso de que haya alguna cartera o no
+
+        @params: None
+    '''
 
     def refreshButtons(self):
         if self.currentCarteraReal is None:
@@ -474,12 +502,12 @@ class UserView(QMainWindow):
             dlg.exec()
 
     '''
-            - Añade todos los fondos a la lista de graficación
-            y los inserta en el gráfico.
+        - Añade todos los fondos a la lista de graficación
+        y los inserta en el gráfico.
 
-             @params: self (UserView)
-             @returns: None
-        '''
+            @params: self (UserView)
+            @returns: None
+    '''
 
     def checkAll(view):
 
@@ -586,15 +614,24 @@ class UserView(QMainWindow):
         cart.show()
 
     '''
-               - Muestra la Interfaz para añadir Carteras Reales
+        - Muestra la Interfaz para añadir Carteras Reales
 
-                @params: self (UserView)
-                @returns: None
-           '''
+        @params: self (UserView)
+        @returns: None
+    '''
 
     def showAddCarterasReales(self):
         cart = AddCarterasRealesView(self)
         cart.show()
+
+    ''' 
+        - Borra la cartera (real) actual, eliminando su registro de 
+        las tablas CARTERAS_REAL y CARTERAS_REAL_USUARIO y elimina de DB
+        la tabla de estados de cartera -> [id_NombreCartera]
+        
+        @params: self (UserView)
+        @returns: None
+    '''
 
     def borrarCarteraReal(self):
         # print('Borrar Cartera Real()')
@@ -678,7 +715,7 @@ class UserView(QMainWindow):
         merc.show()
 
     '''
-           - Muestra la Interfaz Gráfica de Operaciones (reales)
+           - Muestra la Interfaz Gráfica de Traspasos (reales)
 
             @params: self (UserView)
             @returns: None
@@ -688,9 +725,23 @@ class UserView(QMainWindow):
         ops = TraspasosView(self)
         ops.show()
 
+    '''
+            - Muestra la Interfaz Gráfica de Ventas (reales)
+
+            @params: self (UserView)
+            @returns: None
+    '''
+
     def showVentas(self):
         ops = OperacionesVentaView(self)
         ops.show()
+
+    '''
+            - Muestra la Interfaz Gráfica de Compras (reales)
+
+            @params: self (UserView)
+            @returns: None
+    '''
 
     def showCompraventas(self):
 
@@ -811,6 +862,13 @@ class UserView(QMainWindow):
 
             db.close()
 
+    '''
+        - Actualiza el gráfico (tarta) de Fondos en Cartera Real
+
+        @params: self(UserView)
+        @returns: None
+    '''
+
     def updatePieChart(self, nombre_cartera=None):
         print('Botón Pulsado --> ' + str(nombre_cartera))
         self.Pie = Highchart(width=420, height=420)
@@ -879,7 +937,40 @@ class UserView(QMainWindow):
         self.layoutPieChart.addWidget(self.browserPie)
         self.browserPie.show()
 
+    ''' 
+        - Calcula el valor total de Cartera actual a fecha X
+    
+        @params: Fecha a calcular el importe | if None: importe actual
+        @returns: int (importe total de cartera)
     '''
+    def importeTotalCartera(self, fecha=None):
+        importeTotal = 0
+
+        # Cartera Actual
+        if fecha is None and self.currentCarteraReal is not None:
+
+            # Conexión con la BD y creación de un cursor de consultas
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+            ISINS_cartera = db.execute("select Importe "
+                                       "from ( select t.*, row_number() over(partition by ISIN "
+                                       "order by Fecha desc) rn "
+                                       "from [" + str(self.id_usuario[0]) + "_" +
+                                       str(self.currentCarteraReal) + "] t) t "
+                                                                      "where rn = 1 order by ISIN",
+                                       ([])).fetchall()
+
+            # Recorre los ISINS en Cartera
+            for isins in ISINS_cartera:
+                importeTotal = importeTotal + isins[0]
+
+        return importeTotal
+
+
+# --------------------------------------------------- IGNORE ---------------------------------------------------
+# --------------------------------------------------- IGNORE ---------------------------------------------------
+# --------------------------------------------------- IGNORE ---------------------------------------------------
+'''
     def updateTable(view):
         # print('Update Table()')
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
@@ -925,27 +1016,3 @@ class UserView(QMainWindow):
 
         db.close()
     '''
-
-    # Calcula el valor total de Cartera actual a fecha X
-    def importeTotalCartera(self, fecha=None):
-        importeTotal = 0
-
-        # Cartera Actual
-        if fecha is None and self.currentCarteraReal is not None:
-
-            # Conexión con la BD y creación de un cursor de consultas
-            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-            db = db_connection.cursor()
-            ISINS_cartera = db.execute("select Importe "
-                                       "from ( select t.*, row_number() over(partition by ISIN "
-                                       "order by Fecha desc) rn "
-                                       "from [" + str(self.id_usuario[0]) + "_" +
-                                       str(self.currentCarteraReal) + "] t) t "
-                                                                      "where rn = 1 order by ISIN",
-                                       ([])).fetchall()
-
-            # Recorre los ISINS en Cartera
-            for isins in ISINS_cartera:
-                importeTotal = importeTotal + isins[0]
-
-        return importeTotal

@@ -6,9 +6,9 @@ from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayo
 from PyQt5 import QtCore
 '''
     - Avisa al Usuario de que está intentando realizar una operación
-    con parámetros erróneos
+    sobre cartera real con parámetros erróneos
 
-    @parent: AddISINViewReal
+    @parent: UserView
 
 '''
 class badOperationDialog(QDialog):
@@ -28,10 +28,6 @@ class badOperationDialog(QDialog):
             "Fondos Insuficientes para realizar la operación!"))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
-
-
-
-
 
 
 
@@ -59,6 +55,7 @@ class badRVdialog(QDialog):
             parent.tfRV.text() + " no es un valor de R.V válido!"))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
+
 
 
 '''
@@ -98,7 +95,12 @@ class confirmAutoRefresh(QDialog):
 
 
 
+'''
+    - Avisa al Usuario de que está intentando actualizar un fondo
+    online sin conexión a Internet 
 
+    @parent: UserView 
+'''
 
 class connectionError(QDialog):
     def __init__(self, parent=None):
@@ -117,6 +119,7 @@ class connectionError(QDialog):
             "No se ha podido conectar con Internet!"))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
+
 
 '''
     - Avisa al Usuario de que está a punto de Cerrar su seción
@@ -153,6 +156,7 @@ class confirmLogoutDialog(QDialog):
         self.layoutVert.addLayout(self.layoutHor)
 
         self.setLayout(self.layoutVert)
+
 
 
 '''
@@ -218,6 +222,7 @@ class confirmDeleteCarteraDialog(QDialog):
         self.setLayout(self.layoutVert)
 
 
+
 '''
     - Avisa al Usuario de que está a punto de borrar un fondo de su cartera
     permitiéndole cancelar o confirmar su acción. 
@@ -279,6 +284,12 @@ class downloadingIsinDialog(QDialog):
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
+
+'''
+    - Avisa al Usuario de que el fondo introducido
+    ya está en su cartere
+    @parent: AddISINView
+'''
 
 class ISINAlready(QDialog):
     def __init__(self, parent=None):
