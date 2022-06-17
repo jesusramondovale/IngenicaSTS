@@ -33,8 +33,14 @@ def refreshHistorics(view):
     if dlg.exec():
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
-        ISINs = db.execute("SELECT ISIN FROM carteras_usuario WHERE id_usuario = ? ",
+        ISINs = db.execute("SELECT ISIN FROM carteras_usuario  WHERE id_usuario = ? ",
                            view.id_usuario).fetchall()
+        ISINs_real = db.execute("SELECT ISIN FROM carteras_usuario_real  WHERE id_usuario = ? ",
+                           view.id_usuario).fetchall()
+
+        for e in ISINs_real:
+            ISINs.append(e)
+
         for ISIN in ISINs:
             try:
                 lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()

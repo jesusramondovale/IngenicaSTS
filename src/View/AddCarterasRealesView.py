@@ -89,7 +89,6 @@ class AddCarterasRealesView(QMainWindow):
             # self.carteras_usuario.append([0,nombre_cartera])
 
             # Activa el botón de Borrar Carteras (por si acaso estaba desactivado)
-            self.parent().buttonBorrarCarteraReal.setEnabled(True)
 
             # Avisa al usuario de que la operación se ha realizado con éxito
             dlg = CarteraAddedSuccesfully(self)
@@ -112,13 +111,17 @@ class AddCarterasRealesView(QMainWindow):
 
                 self.button.clicked.connect(
                     lambda clicked, nombre_cartera=self.button.text(): self.parent().UpdateTableOperaciones(nombre_cartera))
+                self.button.clicked.connect(
+                    lambda clicked, isins_selected=self.parent().isins_selected: self.parent().refreshIsinsEnCartera())
+
                 self.parent().layoutButtonsCarteras.addWidget(self.button)
 
+
+
             self.parent().frameButtonsCarteras.setLayout(self.parent().layoutButtonsCarteras)
-
-
-            # Activa el botón de añadir fondos a la cartera actual por si acaso estaba desactivado
-            self.parent().buttonAddISINReal.setEnabled(True)
+            self.parent().currentCarteraReal = nombre_cartera
+            self.parent().refreshLabelCartera(self.parent().currentCarteraReal)
+            self.parent().refreshButtons()
 
         # El usuario ya dispone con una cartera con ese mismo nombre
         else:

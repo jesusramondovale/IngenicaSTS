@@ -1234,7 +1234,7 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
       </font>
      </property>
      <property name="text">
-      <string/>
+      <string>Ninguna</string>
      </property>
     </widget>
     <widget class="QListWidget" name="listFondosCartera">
@@ -1245,6 +1245,32 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
        <width>421</width>
        <height>331</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelSinCarteras">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>340</y>
+       <width>181</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Añada una nueva cartera</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelSinCarteras2">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>360</y>
+       <width>211</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>utilizando el menú a la izqda.</string>
      </property>
     </widget>
    </widget>

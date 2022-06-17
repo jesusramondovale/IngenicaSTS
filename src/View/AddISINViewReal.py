@@ -207,8 +207,7 @@ class AddISINViewReal(QMainWindow):
                     # Añade el NOMBRE del Fondo introducido en la Lista de Cartera de Usuario
                     self.parent().isin_list.append(ISIN)
 
-                    self.parent().ISINS_real.append(ISIN)
-                    #parent.updateTable()
+                    #self.parent().ISINS_real.append(ISIN)
                     self.parent().refreshIsinsEnCartera()
                     # Avisa al usuario de la operación completada con éxito y
                     # esconde la ventana actual (vuelve a UserView)
