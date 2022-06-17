@@ -121,6 +121,9 @@ class AddCarterasRealesView(QMainWindow):
             self.parent().frameButtonsCarteras.setLayout(self.parent().layoutButtonsCarteras)
             self.parent().currentCarteraReal = nombre_cartera
             self.parent().refreshLabelCartera(self.parent().currentCarteraReal)
+            self.parent().updatePieChart(self.parent().currentCarteraReal)
+            self.parent().UpdateTableOperaciones(self.parent().currentCarteraReal)
+            self.parent().refreshIsinsEnCartera()
             self.parent().refreshButtons()
 
         # El usuario ya dispone con una cartera con ese mismo nombre

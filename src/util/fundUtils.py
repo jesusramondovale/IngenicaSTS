@@ -134,6 +134,14 @@ def ISINtoFundOffline(isin):
     tmp = db.execute('SELECT Nombre FROM caracterizacion WHERE ISIN = ? ', [isin]).fetchone()
     return tmp[0].title()
 
+def FundtoISINOffline(fund):
+    db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+    db = db_connection.cursor()
+    tmp = db.execute('SELECT ISIN FROM caracterizacion WHERE Nombre = ? ', [fund]).fetchone()
+    if len(tmp) >= 5:
+        return tmp[0].upper()
+    else:
+        return tmp[0]
 
 '''
     - Convierte el ISIN/Symbol de un fondo

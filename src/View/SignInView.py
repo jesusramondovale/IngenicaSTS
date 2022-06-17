@@ -50,7 +50,7 @@ class SignIn(QMainWindow):
             else:
                 db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
                 db = db_connection.cursor()
-                db.execute("INSERT INTO users VALUES ( null , ? , ? , ?)", (nombre, email, pass_SHA))
+                db.execute("INSERT INTO users VALUES ( null , ? , ? , ? , ?)", (nombre, email, pass_SHA, 0))
                 db.close()
                 dlg = registerCompleteDialog(view)
                 dlg.exec()

@@ -4,6 +4,36 @@
 #########################################################
 from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayout, QVBoxLayout
 from PyQt5 import QtCore
+'''
+    - Avisa al Usuario de que está intentando realizar una operación
+    con parámetros erróneos
+
+    @parent: AddISINViewReal
+
+'''
+class badOperationDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Vaya..")
+        self.setFixedWidth(350)
+
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel(
+            "Fondos Insuficientes para realizar la operación!"))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
+
+
+
+
 
 '''
     - Avisa al Usuario de que está intentando añadir un fondo

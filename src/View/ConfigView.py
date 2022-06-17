@@ -138,6 +138,7 @@ class ConfigView(QMainWindow):
             view.parent().theme = 'Light'
 
         view.parent().updateGraph(None, view.parent().isins_selected)
+        view.parent().updatePieChart(view.parent().currentCarteraReal)
         view.close()
 
     def register(self):

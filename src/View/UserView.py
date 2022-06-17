@@ -19,6 +19,8 @@ from src.View.ConfigView import ConfigView
 from src.View.cargandoView import cargandoView
 from src.View.TraspasosView import TraspasosView
 from src.View.OperacionesView import OperacionesView
+from src.View.OperacionesVentaView import OperacionesVentaView
+
 from src.View.AddCarterasRealesView import AddCarterasRealesView
 from src.View.AddISINViewReal import AddISINViewReal
 
@@ -54,10 +56,12 @@ class UserView(QMainWindow):
 
         # Captura del Usuario a través de la vista parent (MainView - LoginView)
         usuario = parent.textFieldUser.text()
-
         # Captura del ID de usuario actual en BD
         view.id_usuario = db.execute("SELECT id FROM users WHERE nombre = ?", [usuario]).fetchone()
 
+        # Captura del monedero
+        view.monedero = db.execute("SELECT monedero FROM users WHERE nombre = ?", [usuario]).fetchone()[0]
+        view.labelMonederoTotal.setText(str(view.monedero) + '€')
         # Captura de la Cartera Actual (la primera de todas las del Usuario)
         view.currentCartera = db.execute(
             "SELECT nombre_cartera FROM carteras WHERE id_usuario = ? ORDER BY (nombre_cartera)",
@@ -91,6 +95,7 @@ class UserView(QMainWindow):
         view.buttonCheckAll.clicked.connect(view.checkAll)
         view.buttonConfig.clicked.connect(view.showConfigView)
         view.buttonOpBasica.clicked.connect(view.showCompraventas)
+        view.buttonOpBasicaVenta.clicked.connect(view.showVentas)
         view.buttonOpTraspaso.clicked.connect(view.showTraspasos)
         view.buttonCartReal.clicked.connect(view.showVistaReal)
         view.buttonCartVirt.clicked.connect(view.showVistaVirtual)
@@ -165,8 +170,7 @@ class UserView(QMainWindow):
             view.layoutButtonsCarteras.addWidget(view.button)
 
             view.button.clicked.connect(
-                lambda clicked, isins_selected=view.isins_selected: view.refreshIsinsEnCartera() )
-
+                lambda clicked, isins_selected=view.isins_selected: view.refreshIsinsEnCartera())
 
         view.frameButtonsCarteras.setLayout(view.layoutButtonsCarteras)
         view.frameRefreshModes.setLayout(view.layoutRefreshModes)
@@ -210,7 +214,6 @@ class UserView(QMainWindow):
                 item.setCheckState(QtCore.Qt.Unchecked)
                 view.listIsins.addItem(item)
 
-
             # Comprueba si existe el Fondo en BD y lo descarga en caso negativo
             for e in view.isin_list:
                 fundUtils.saveHistoricalFund(view, e)
@@ -222,9 +225,6 @@ class UserView(QMainWindow):
 
             if len(view.nombres_carteras_real) > 0:
                 view.UpdateTableOperaciones(view.nombres_carteras_real[0])
-
-
-
 
         # Activa el botón de borrar Carteras si hay alguna Cartera
         if len(view.nombres_carteras) > 0:
@@ -253,6 +253,7 @@ class UserView(QMainWindow):
         options = {
             'chart': {
                 'plotBackgroundColor': '#979797',
+                'backgroundColor': '#979797',
                 'plotBorderWidth': None,
                 'plotShadow': False
             },
@@ -271,7 +272,7 @@ class UserView(QMainWindow):
                               "order by Fecha desc) rn "
                               "from [" + str(view.id_usuario[0]) + "_" +
                               str(view.currentCarteraReal) + "] t) t "
-                              "where rn = 1 order by ISIN", ([])).fetchall()
+                                                             "where rn = 1 order by ISIN", ([])).fetchall()
 
             view.Pie.add_data_set(data, 'pie', 'Peso en Cartera', allowPointSelect=True,
                                   cursor='pointer',
@@ -288,7 +289,7 @@ class UserView(QMainWindow):
             view.updatePieChart(view.nombres_carteras_real[0])
 
         view.refreshButtons()
-
+        view.labelValorTotal.setText(str(view.importeTotalCartera(None)) + '€')
         view.browserPie.setHtml(view.Pie.htmlcontent)
         view.layoutPieChart.addWidget(view.browserPie)
         view.browserPie.show()
@@ -303,21 +304,20 @@ class UserView(QMainWindow):
         if self.currentCarteraReal is None:
             self.buttonAddISINReal.setEnabled(False)
             self.buttonOpBasica.setEnabled(False)
+            self.buttonOpBasicaVenta.setEnabled(False)
             self.buttonOpTraspaso.setEnabled(False)
             self.buttonBorrarCarteraReal.setEnabled(False)
             self.labelSinCarteras.show()
             self.labelSinCarteras2.show()
 
-        else :
+        else:
             self.buttonAddISINReal.setEnabled(True)
             self.buttonOpBasica.setEnabled(True)
             self.buttonOpTraspaso.setEnabled(True)
+            self.buttonOpBasicaVenta.setEnabled(True)
             self.buttonBorrarCarteraReal.setEnabled(True)
             self.labelSinCarteras.hide()
             self.labelSinCarteras2.hide()
-
-
-
 
     def refreshIsinsEnCartera(self):
         print('RefreshIsinsEnCartera()')
@@ -333,7 +333,7 @@ class UserView(QMainWindow):
 
         self.listFondosCartera.clear()
         for e in lista_Isins_cartera:
-            self.listFondosCartera.addItem(e[0])
+            self.listFondosCartera.addItem((e[0][:40]))
         db.close()
 
     '''
@@ -343,8 +343,12 @@ class UserView(QMainWindow):
     def refreshLabelCartera(self, cart=None):
         if cart:
             self.labelCarteraActual.setText(cart)
+            self.labelValorTotal.setText(str(self.importeTotalCartera(None)) + '€')
+            self.labelMonederoTotal.setText(str(self.monedero) + '€')
         else:
             self.labelCarteraActual.setText('Ninguna')
+            self.labelValorTotal.setText('0 €')
+            self.labelMonederoTotal.setText(str(self.monedero) + '€')
 
     '''
         - Borra el fondo seleccionado del ComboBox de la vista
@@ -644,6 +648,7 @@ class UserView(QMainWindow):
                 self.UpdateTableOperaciones()
 
             self.refreshButtons()
+            self.labelValorTotal.setText(str(self.importeTotalCartera(None)) + '€')
 
 
         else:
@@ -681,6 +686,10 @@ class UserView(QMainWindow):
 
     def showTraspasos(self):
         ops = TraspasosView(self)
+        ops.show()
+
+    def showVentas(self):
+        ops = OperacionesVentaView(self)
         ops.show()
 
     def showCompraventas(self):
@@ -806,20 +815,36 @@ class UserView(QMainWindow):
         print('Botón Pulsado --> ' + str(nombre_cartera))
         self.Pie = Highchart(width=420, height=420)
         self.currentCarteraReal = nombre_cartera
-        options = {
-            'chart': {
-                'plotBackgroundColor': '#979797',
-                'plotBorderWidth': None,
-                'plotShadow': False
-            },
-            'title': {
-                'text': nombre_cartera
-            },
-            'tooltip': {
-                'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-        }
-
+        if self.theme == 'Light':
+            options = {
+                'chart': {
+                    'plotBackgroundColor': '#979797',
+                    'backgroundColor': '#979797',
+                    'plotBorderWidth': None,
+                    'plotShadow': False
+                },
+                'title': {
+                    'text': nombre_cartera
+                },
+                'tooltip': {
+                    'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+            }
+        if self.theme == 'Dark':
+            options = {
+                'chart': {
+                    'plotBackgroundColor': '#222222',
+                    'backgroundColor': '#222222',
+                    'plotBorderWidth': None,
+                    'plotShadow': False
+                },
+                'title': {
+                    'text': nombre_cartera
+                },
+                'tooltip': {
+                    'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+            }
         self.Pie.set_dict_options(options)
 
         # Conexión con la BD y creación de un cursor de consultas
@@ -829,24 +854,23 @@ class UserView(QMainWindow):
         if nombre_cartera:
 
             data = db.execute("select ISIN , Porcentaje "
-                                "from ( select t.*, row_number() over(partition by ISIN "
-                                "order by Fecha desc) rn "
-                                "from [" + str(self.id_usuario[0]) + "_" +
-                                str(nombre_cartera) + "] t) t "
-                                "where rn = 1 order by ISIN", ([])).fetchall()
-
+                              "from ( select t.*, row_number() over(partition by ISIN "
+                              "order by Fecha desc) rn "
+                              "from [" + str(self.id_usuario[0]) + "_" +
+                              str(nombre_cartera) + "] t) t "
+                                                    "where rn = 1 order by ISIN", ([])).fetchall()
 
             self.Pie.add_data_set(data, 'pie', 'Peso en Cartera', allowPointSelect=True,
-                              cursor='pointer',
-                              showInLegend=True,
-                              dataLabels={
-                                  'enabled': False,
-                                  'format': '<b>{point.name}</b>: {point.percentage:.1f} %',
-                                  'style': {
-                                      'color': "('black'"
+                                  cursor='pointer',
+                                  showInLegend=True,
+                                  dataLabels={
+                                      'enabled': False,
+                                      'format': '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                      'style': {
+                                          'color': "('black'"
                                       }
                                   }
-                             )
+                                  )
 
         else:
             pass
@@ -901,3 +925,27 @@ class UserView(QMainWindow):
 
         db.close()
     '''
+
+    # Calcula el valor total de Cartera actual a fecha X
+    def importeTotalCartera(self, fecha=None):
+        importeTotal = 0
+
+        # Cartera Actual
+        if fecha is None and self.currentCarteraReal is not None:
+
+            # Conexión con la BD y creación de un cursor de consultas
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+            ISINS_cartera = db.execute("select Importe "
+                                       "from ( select t.*, row_number() over(partition by ISIN "
+                                       "order by Fecha desc) rn "
+                                       "from [" + str(self.id_usuario[0]) + "_" +
+                                       str(self.currentCarteraReal) + "] t) t "
+                                                                      "where rn = 1 order by ISIN",
+                                       ([])).fetchall()
+
+            # Recorre los ISINS en Cartera
+            for isins in ISINS_cartera:
+                importeTotal = importeTotal + isins[0]
+
+        return importeTotal
