@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1373</width>
+    <width>1370</width>
     <height>724</height>
    </rect>
   </property>
@@ -1059,9 +1059,9 @@ background: rgb(206, 206, 206)
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>220</x>
+       <x>530</x>
        <y>190</y>
-       <width>201</width>
+       <width>191</width>
        <height>21</height>
       </rect>
      </property>
@@ -1085,7 +1085,7 @@ background: rgb(206, 206, 206)
       <rect>
        <x>10</x>
        <y>390</y>
-       <width>201</width>
+       <width>181</width>
        <height>31</height>
       </rect>
      </property>
@@ -1102,7 +1102,7 @@ background: rgb(206, 206, 206)
       <string notr="true">font: 25 10pt &quot;Yu Gothic UI Light&quot;;</string>
      </property>
      <property name="text">
-      <string>Operaciones en Cartera</string>
+      <string>Lista de Operaciones</string>
      </property>
     </widget>
     <widget class="QTableWidget" name="tableOperaciones">
@@ -1246,8 +1246,8 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
       <rect>
        <x>740</x>
        <y>0</y>
-       <width>421</width>
-       <height>421</height>
+       <width>490</width>
+       <height>431</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="layoutPieChart"/>
@@ -1274,10 +1274,10 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QListWidget" name="listFondosCartera">
      <property name="geometry">
       <rect>
-       <x>230</x>
+       <x>200</x>
        <y>220</y>
-       <width>501</width>
-       <height>181</height>
+       <width>531</width>
+       <height>191</height>
       </rect>
      </property>
     </widget>
@@ -1341,14 +1341,14 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QLabel" name="label_7">
      <property name="geometry">
       <rect>
-       <x>270</x>
-       <y>112</y>
+       <x>460</x>
+       <y>100</y>
        <width>261</width>
        <height>31</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">	font: 25 14pt &quot;Yu Gothic UI Light&quot;;</string>
+      <string notr="true">font: 75 14pt &quot;Yu Gothic UI&quot;;</string>
      </property>
      <property name="text">
       <string>Valor Total de Cartera:</string>
@@ -1357,9 +1357,9 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QLabel" name="labelValorTotal">
      <property name="geometry">
       <rect>
-       <x>550</x>
-       <y>110</y>
-       <width>111</width>
+       <x>570</x>
+       <y>130</y>
+       <width>161</width>
        <height>31</height>
       </rect>
      </property>
@@ -1368,6 +1368,9 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
      </property>
      <property name="text">
       <string>--€--</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
     <widget class="Line" name="line_4">
@@ -1381,6 +1384,53 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
      </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <widget class="QFrame" name="frameFecha">
+     <property name="geometry">
+      <rect>
+       <x>580</x>
+       <y>20</y>
+       <width>151</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>10</y>
+       <width>171</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>12</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>Fecha de Estado</string>
      </property>
     </widget>
    </widget>

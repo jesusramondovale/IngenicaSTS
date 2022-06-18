@@ -65,6 +65,7 @@ class TraspasosView(QMainWindow):
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
 
+        # Captura del estado actual del Fondo Origen
         ISIN_origen = db.execute("select ISIN , Participaciones , Importe , Porcentaje "
                                  "from ( select t.*, row_number() over(partition by ISIN "
                                  "order by Fecha desc) rn "
@@ -73,8 +74,17 @@ class TraspasosView(QMainWindow):
                                                                          "where rn = 1 and ISIN = ? order by ISIN",
                                  ([FundtoISINOffline(self.cbOrigen.currentText())])).fetchone()
 
+        # Se han rellenado los campos
         if self.camposLlenos():
+
+            # Si todavía no existen participaciones del fondo origen -> Fondos Insuficientes para la operación
+            if ISIN_origen is None:
+                badOperationDialog(self).exec()
+                return
+
+            # Si existen participaciones, y son suficientes
             if ISIN_origen[2] >= int(self.tfImporte.text()) and ISIN_origen[1] >= int(self.tfParticipaciones.text()):
+
                 # Captura de la hora de operación
                 t = time.localtime()
 
@@ -138,6 +148,14 @@ class TraspasosView(QMainWindow):
                 isin_destino = db.execute("SELECT ISIN FROM caracterizacion WHERE Nombre = ?",
                                           ([self.cbDestino.currentText()])).fetchone()[0]
 
+                newDestino = True
+                for e in ISINS_cartera:
+                    if isin_destino in e:
+                        newDestino = False
+
+                if newDestino:
+                    ISINS_cartera.append([isin_destino,0,0,0])
+
                 # Recorre los fondos de cartera actual
                 for isin in ISINS_cartera:
 
@@ -163,15 +181,29 @@ class TraspasosView(QMainWindow):
 
                         # Current isin es el seleccionado como destino
                         if isin_destino == isin[0]:
-                            db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
-                                       self.parent().currentCarteraReal + "]"
-                                                                          "VALUES (?,?,?,?,?)",
-                                       [datetime.today().strftime('%Y%m%d %H%M%S%f'),
-                                        isin[0],
-                                        isin_last_data[2] + int(self.tfParticipaciones.text()),
-                                        isin_last_data[3] + int(self.tfImporte.text()),
-                                        int(isin_last_data[3] + int(self.tfImporte.text())) / importeTotal * 100
-                                        ])
+
+                            if newDestino:
+                                db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
+                                           self.parent().currentCarteraReal + "]"
+                                                                              "VALUES (?,?,?,?,?)",
+                                           [datetime.today().strftime('%Y%m%d %H%M%S%f'),
+                                            isin[0],
+                                            int(self.tfParticipaciones.text()),
+                                            int(self.tfImporte.text()),
+                                            int(self.tfImporte.text()) / importeTotal * 100
+                                            ])
+
+
+                            else:
+                                db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
+                                           self.parent().currentCarteraReal + "]"
+                                                                              "VALUES (?,?,?,?,?)",
+                                           [datetime.today().strftime('%Y%m%d %H%M%S%f'),
+                                            isin[0],
+                                            isin_last_data[2] + int(self.tfParticipaciones.text()),
+                                            isin_last_data[3] + int(self.tfImporte.text()),
+                                            int(isin_last_data[3] + int(self.tfImporte.text())) / importeTotal * 100
+                                            ])
 
                         # Current isin no es el que varía
                         else:
@@ -204,16 +236,20 @@ class TraspasosView(QMainWindow):
 
                 self.hide()
 
+            # Son insuficientes
             else:
-
                 badOperationDialog(self).exec()
 
+        # No se han rellenado los campos
         else:
             badQueryDialog(self).exec()
+
 
     '''
         - Retorna cierto si todos los campos necesarios para 
         realizar la operación están cubiertos
+        
+        @ params: self (TraspasosView)
     '''
 
     def camposLlenos(self):

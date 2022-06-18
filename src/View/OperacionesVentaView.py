@@ -70,6 +70,10 @@ class OperacionesVentaView(QMainWindow):
                                    str(self.parent().currentCarteraReal) + "] t) t "
                                   "where rn = 1 and ISIN = ? order by ISIN", ([FundtoISINOffline(self.cbOrigen.currentText())])).fetchone()
 
+        newOrigen = False
+        if ISIN_origen is None:
+            ISIN_origen = [(FundtoISINOffline(self.cbOrigen.currentText())), 0,0,0]
+
         if self.camposLlenos():
 
             if ISIN_origen[2] >= int(self.tfImporte.text()) and ISIN_origen[1] >= int(self.tfParticipaciones.text()):

@@ -1,12 +1,16 @@
 ###############################################################################
 #   GUI  Y  LÓGICA   DE    PROGRAMACIÓN    DE     LA     VISTA    UserView  ##
 ###############################################################################
-import sqlite3
-
+import sqlite3, time, datetime
+import PySide2
 # Importamos las librerías de carga y Widgets de Python QT v5
 # para graficar el contenido de los ficheros GUI
 from PyQt5 import uic, QtWebEngineWidgets
 from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import *
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 # Importamos la lógica de otras vistas
 from highstock import Highstock
@@ -45,6 +49,19 @@ class UserView(QMainWindow):
 
         # Carga de la interfaz gráfica
         uic.loadUi("src/GUI/PrincipalUsuario.ui", view)
+
+        # Selector de Fecha
+        view.selectorFecha = QDateEdit(calendarPopup=True)
+        view.selectorFecha.setStyleSheet('font: 25 9pt "Yu Gothic UI Light";')
+        view.selectorFecha.setFixedHeight(40)
+        view.selectorFecha.setFixedWidth(140)
+        view.selectorFecha.setDate(QDate.currentDate())
+        view.selectorFecha.setMaximumDate(QDate.currentDate())
+        view.layoutFecha = QVBoxLayout(view.frameFecha)
+        view.layoutFecha.addWidget(view.selectorFecha)
+        view.frameFecha.setLayout(view.layoutFecha)
+        view.selectorFecha.dateTimeChanged.connect(
+            lambda dateTimeChanged, fecha=None: view.refreshFecha(view.selectorFecha.dateTime().toString('yyyyMMdd 999999999999')))
 
         # Esconde los submenús de Actualización hasta que se necesiten
         view.frameRefreshModes.hide()
@@ -286,8 +303,13 @@ class UserView(QMainWindow):
                               str(view.currentCarteraReal) + "] t) t "
                                                              "where rn = 1 order by ISIN", ([])).fetchall()
 
+            dataList = list()
+
+            for i in range(0, len(data), 1):
+                dataList.insert(i, [fundUtils.ISINtoFundOffline(data[i][0]), data[i][1]])
+
             # Añade los datos de cartera al gráfico
-            view.Pie.add_data_set(data, 'pie', 'Peso en Cartera', allowPointSelect=True,
+            view.Pie.add_data_set(dataList, 'pie', 'Peso en Cartera', allowPointSelect=True,
                                   cursor='pointer',
                                   showInLegend=True,
                                   dataLabels={
@@ -308,6 +330,17 @@ class UserView(QMainWindow):
         view.layoutPieChart.addWidget(view.browserPie)
         view.browserPie.show()
 
+    def refreshFecha(self, fecha):
+        print('refreshFecha() ' + str(fecha))
+
+        # Capturar de tabla de estados de cartera todos aquellos que sean anteriores a fecha
+        # para quedarnos con el último
+        # Refrescar el PieChart con el nuevo Data de la fecha seleccionada
+        self.updatePieChart(self.currentCarteraReal,fecha)
+
+
+        # Refrescar label de Importe Total
+        self.labelValorTotal.setText(str(self.importeTotalCartera(fecha)) + ' €')
     '''
     - Muestra y oculta los botones del submenú 
     de actualización de históricos
@@ -361,7 +394,7 @@ class UserView(QMainWindow):
 
         self.listFondosCartera.clear()
         for e in lista_Isins_cartera:
-            self.listFondosCartera.addItem((e[0][:40]))
+            self.listFondosCartera.addItem((e[0]) + ' (' + fundUtils.FundtoISINOffline(e[0]) + ')')
         db.close()
 
     '''
@@ -869,73 +902,157 @@ class UserView(QMainWindow):
         @returns: None
     '''
 
-    def updatePieChart(self, nombre_cartera=None):
-        print('Botón Pulsado --> ' + str(nombre_cartera))
-        self.Pie = Highchart(width=420, height=420)
-        self.currentCarteraReal = nombre_cartera
-        if self.theme == 'Light':
-            options = {
-                'chart': {
-                    'plotBackgroundColor': '#979797',
-                    'backgroundColor': '#979797',
-                    'plotBorderWidth': None,
-                    'plotShadow': False
-                },
-                'title': {
-                    'text': nombre_cartera
-                },
-                'tooltip': {
-                    'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
-                },
-            }
-        if self.theme == 'Dark':
-            options = {
-                'chart': {
-                    'plotBackgroundColor': '#222222',
-                    'backgroundColor': '#222222',
-                    'plotBorderWidth': None,
-                    'plotShadow': False
-                },
-                'title': {
-                    'text': nombre_cartera
-                },
-                'tooltip': {
-                    'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
-                },
-            }
-        self.Pie.set_dict_options(options)
+    def updatePieChart(self, nombre_cartera=None, fecha=None):
 
-        # Conexión con la BD y creación de un cursor de consultas
-        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
-        db = db_connection.cursor()
+        if not fecha:
+            print('updatePieChart(sin fecha) en Cartera --> ' + str(nombre_cartera))
+            self.Pie = Highchart(width=420, height=420)
+            self.currentCarteraReal = nombre_cartera
+            if self.theme == 'Light':
+                options = {
+                    'chart': {
+                        'plotBackgroundColor': '#979797',
+                        'backgroundColor': '#979797',
+                        'plotBorderWidth': None,
+                        'plotShadow': False
+                    },
+                    'title': {
+                        'text': nombre_cartera
+                    },
+                    'tooltip': {
+                        'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                }
+            if self.theme == 'Dark':
+                options = {
+                    'chart': {
+                        'plotBackgroundColor': '#222222',
+                        'backgroundColor': '#222222',
+                        'plotBorderWidth': None,
+                        'plotShadow': False
+                    },
+                    'title': {
+                        'text': nombre_cartera
+                    },
+                    'tooltip': {
+                        'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                }
+            self.Pie.set_dict_options(options)
 
-        if nombre_cartera:
+            # Conexión con la BD y creación de un cursor de consultas
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
 
-            data = db.execute("select ISIN , Porcentaje "
-                              "from ( select t.*, row_number() over(partition by ISIN "
-                              "order by Fecha desc) rn "
-                              "from [" + str(self.id_usuario[0]) + "_" +
-                              str(nombre_cartera) + "] t) t "
-                                                    "where rn = 1 order by ISIN", ([])).fetchall()
+            if nombre_cartera:
 
-            self.Pie.add_data_set(data, 'pie', 'Peso en Cartera', allowPointSelect=True,
-                                  cursor='pointer',
-                                  showInLegend=True,
-                                  dataLabels={
-                                      'enabled': False,
-                                      'format': '<b>{point.name}</b>: {point.percentage:.1f} %',
-                                      'style': {
-                                          'color': "('black'"
+                data = db.execute("select ISIN , Porcentaje "
+                                  "from ( select t.*, row_number() over(partition by ISIN "
+                                  "order by Fecha desc) rn "
+                                  "from [" + str(self.id_usuario[0]) + "_" +
+                                  str(nombre_cartera) + "] t) t "
+                                                        "where rn = 1 order by ISIN", ([])).fetchall()
+                dataList = list()
+
+                for i in range(0, len(data), 1):
+                    dataList.insert(i, [fundUtils.ISINtoFundOffline(data[i][0]), data[i][1]])
+
+                self.Pie.add_data_set(dataList, 'pie', 'Peso en Cartera', allowPointSelect=True,
+                                      cursor='pointer',
+                                      showInLegend=True,
+                                      dataLabels={
+                                          'enabled': False,
+                                          'format': '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                          'style': {
+                                              'color': "('black'"
+                                          }
                                       }
-                                  }
-                                  )
+                                      )
 
+            else:
+                pass
+
+            self.browserPie.setHtml(self.Pie.htmlcontent)
+            self.layoutPieChart.addWidget(self.browserPie)
+            self.browserPie.show()
+
+        # Hay fecha
         else:
-            pass
+            print('updatePieChart(con fecha)' + str(fecha) + 'en Cartera --> ' + str(nombre_cartera))
+            self.Pie = Highchart(width=420, height=420)
+            self.currentCarteraReal = nombre_cartera
+            if self.theme == 'Light':
+                options = {
+                    'chart': {
+                        'plotBackgroundColor': '#979797',
+                        'backgroundColor': '#979797',
+                        'plotBorderWidth': None,
+                        'plotShadow': False
+                    },
+                    'title': {
+                        'text': nombre_cartera
+                    },
+                    'tooltip': {
+                        'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                }
+            if self.theme == 'Dark':
+                options = {
+                    'chart': {
+                        'plotBackgroundColor': '#222222',
+                        'backgroundColor': '#222222',
+                        'plotBorderWidth': None,
+                        'plotShadow': False
+                    },
+                    'title': {
+                        'text': nombre_cartera
+                    },
+                    'tooltip': {
+                        'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                }
+            self.Pie.set_dict_options(options)
 
-        self.browserPie.setHtml(self.Pie.htmlcontent)
-        self.layoutPieChart.addWidget(self.browserPie)
-        self.browserPie.show()
+            # Conexión con la BD y creación de un cursor de consultas
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+
+
+
+            if nombre_cartera:
+
+                data = db.execute("select ISIN , Porcentaje "
+                                  "from ( select t.*, row_number() over(partition by ISIN "
+                                  "order by Fecha desc) rn "
+                                  "from "
+                                  "(select * from [" + str(self.id_usuario[0]) + "_" +
+                                  str(nombre_cartera) + "] where Fecha < ? ) t) t "
+                                  "where rn = 1 order by ISIN", ([str(fecha)])).fetchall()
+                dataList = list()
+
+                for i in range(0, len(data), 1):
+                    dataList.insert(i, [fundUtils.ISINtoFundOffline(data[i][0]), data[i][1]])
+
+                self.Pie.add_data_set(dataList, 'pie', 'Peso en Cartera', allowPointSelect=True,
+                                      cursor='pointer',
+                                      showInLegend=True,
+                                      dataLabels={
+                                          'enabled': False,
+                                          'format': '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                          'style': {
+                                              'color': "('black'"
+                                          }
+                                      }
+                                      )
+
+            else:
+                pass
+
+            self.browserPie.setHtml(self.Pie.htmlcontent)
+            self.layoutPieChart.addWidget(self.browserPie)
+            self.browserPie.show()
+
+            pass
 
     ''' 
         - Calcula el valor total de Cartera actual a fecha X
@@ -943,6 +1060,7 @@ class UserView(QMainWindow):
         @params: Fecha a calcular el importe | if None: importe actual
         @returns: int (importe total de cartera)
     '''
+
     def importeTotalCartera(self, fecha=None):
         importeTotal = 0
 
@@ -959,6 +1077,22 @@ class UserView(QMainWindow):
                                        str(self.currentCarteraReal) + "] t) t "
                                                                       "where rn = 1 order by ISIN",
                                        ([])).fetchall()
+
+            # Recorre los ISINS en Cartera
+            for isins in ISINS_cartera:
+                importeTotal = importeTotal + isins[0]
+
+        if not fecha is None and self.currentCarteraReal is not None:
+            # Conexión con la BD y creación de un cursor de consultas
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+            ISINS_cartera = db.execute("select Importe "
+                                  "from ( select t.*, row_number() over(partition by ISIN "
+                                  "order by Fecha desc) rn "
+                                  "from "
+                                  "(select * from [" + str(self.id_usuario[0]) + "_" +
+                                  str(self.currentCarteraReal) + "] where Fecha < ? ) t) t "
+                                  "where rn = 1 order by ISIN", ([str(fecha)])).fetchall()
 
             # Recorre los ISINS en Cartera
             for isins in ISINS_cartera:
