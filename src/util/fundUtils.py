@@ -203,8 +203,10 @@ def ISINtoFund(isin):
 
 
 def saveHistoricalFund(self, isin):
+
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     cursor = db_connection.cursor()
+
     try:
         try:
             # Comprobar existencia de tabla 'isin'
@@ -221,7 +223,6 @@ def saveHistoricalFund(self, isin):
                 cursor.close()
                 return
             except:
-                cursor.close()
                 raise ValueError
                 return
 
@@ -233,7 +234,7 @@ def saveHistoricalFund(self, isin):
             print('Investpy.funds -> INTERNET REQUEST 186')
             data = investpy.funds.get_fund_historical_data(
                 fund=ISINtoFundOffline(isin),
-                country=db.execute('SELECT Pais FROM caracterizacion WHERE ISIN = ? '[isin]).fetchone()[0],
+                country=cursor.execute('SELECT Pais FROM caracterizacion WHERE ISIN = ?' , [isin]).fetchone()[0],
                 from_date='01/01/1970',
                 to_date=datetime.today().strftime('%d/%m/%Y'),
                 as_json=False

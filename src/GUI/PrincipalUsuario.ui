@@ -1357,9 +1357,9 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QLabel" name="labelValorTotal">
      <property name="geometry">
       <rect>
-       <x>570</x>
+       <x>520</x>
        <y>130</y>
-       <width>161</width>
+       <width>201</width>
        <height>31</height>
       </rect>
      </property>
@@ -1431,6 +1431,25 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
      </property>
      <property name="text">
       <string>Fecha de Estado</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelRendimientoTotal">
+     <property name="geometry">
+      <rect>
+       <x>497</x>
+       <y>160</y>
+       <width>221</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 25 10pt &quot;Yu Gothic UI Light&quot;;</string>
+     </property>
+     <property name="text">
+      <string>-- % --</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </widget>

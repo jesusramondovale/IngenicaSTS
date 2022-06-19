@@ -11,6 +11,7 @@ import threading
 
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
+from datetime import date
 
 # Librerías útiles personalizadas para consulta de datos sobre fondos
 from src.util import fundUtils
@@ -188,7 +189,24 @@ class AddISINView(QMainWindow):
                     # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
                     db.execute("INSERT INTO carteras_usuario VALUES ( ? , ? , ? )",
                                (id[0], parent.cbCarteras.currentText(), ISIN))
-
+                    # Inserción de las características del fondo en la tabla caracterización
+                    db.execute(
+                        "INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ? , ?  , ? , ? , ?)",
+                        (date.today().strftime('%d/%m/%Y'),
+                         self.tfISIN.text().strip(),
+                         self.tfNombre.text(),
+                         self.tfGestora.text(),
+                         'F',
+                         self.tfRV.text(),
+                         self.tfPais.text().lower(),
+                         self.tfZona.text(),
+                         self.tfEstilo.text(),
+                         self.tfSector.text(),
+                         self.tfTamano.text(),
+                         self.tfDivisa.text(),
+                         self.tfCubierta.text(),
+                         self.tfDuracion.text(),
+                         ))
                     db.close()
 
                     # Descarga los históricos completos del fondo y los almacena en BD

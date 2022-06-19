@@ -61,7 +61,8 @@ class UserView(QMainWindow):
         view.layoutFecha.addWidget(view.selectorFecha)
         view.frameFecha.setLayout(view.layoutFecha)
         view.selectorFecha.dateTimeChanged.connect(
-            lambda dateTimeChanged, fecha=None: view.refreshFecha(view.selectorFecha.dateTime().toString('yyyyMMdd 999999999999')))
+            lambda dateTimeChanged, fecha=None: view.refreshFecha(
+                view.selectorFecha.dateTime().toString('yyyyMMdd 999999999999')))
 
         # Esconde los submenús de Actualización hasta que se necesiten
         view.frameRefreshModes.hide()
@@ -322,13 +323,58 @@ class UserView(QMainWindow):
                                   )
 
             view.updatePieChart(view.nombres_carteras_real[0])
-
+        else:
+            view.updatePieChart()
         # Actualiza el estado de los botones y las etiquetas
+
         view.refreshButtons()
+        view.refreshRendimientoTotal()
         view.labelValorTotal.setText(str(view.importeTotalCartera(None)) + '€')
         view.browserPie.setHtml(view.Pie.htmlcontent)
         view.layoutPieChart.addWidget(view.browserPie)
         view.browserPie.show()
+
+    def refreshRendimientoTotal(self, fechaIni=None, fechaFin=None):
+
+        if self.currentCarteraReal is None:
+            self.labelRendimientoTotal.setText('')
+
+        else:
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+
+            if not fechaIni:
+                # Fecha Inicial -> Creacion de cartera
+                strFechaIni = \
+                    db.execute('SELECT fecha_creacion FROM carteras_real WHERE id_usuario = ? AND nombre_cartera = ?',
+                               ([self.id_usuario[0], self.currentCarteraReal])).fetchone()[0]
+                dateIni = datetime.datetime.strptime(strFechaIni, "%d/%m/%Y").date()
+                fechaIni = dateIni.strftime('%Y%m%d 999999999999')
+
+            if not fechaFin:
+                # Fecha Final -> Ho
+                fechaFin = datetime.datetime.today().strftime('%Y%m%d 999999999999')
+
+            importeIni = self.importeTotalCartera(fechaIni)
+            importeFin = self.importeTotalCartera(fechaFin)
+            if importeIni == 0:
+                rend = 'Incalculable'
+                self.labelRendimientoTotal.setText((str(rend)))
+
+            else:
+                ratio = importeFin / importeIni
+                rend = (ratio - 1) * 100
+                if len(str(rend)) > 10:
+                    self.labelRendimientoTotal.setText((str(rend))[:-13] + ' %')
+                else:
+                    self.labelRendimientoTotal.setText((str(rend)) + ' %')
+
+            if rend == 'Incalculable':
+                self.labelRendimientoTotal.setStyleSheet('color: rgb(255, 255, 255);')
+            if rend != 'Incalculable' and rend >= 0:
+                self.labelRendimientoTotal.setStyleSheet('color: rgb(0, 255, 0);')
+            if rend != 'Incalculable' and rend < 0:
+                self.labelRendimientoTotal.setStyleSheet('color: rgb(255, 0, 0);')
 
     def refreshFecha(self, fecha):
         print('refreshFecha() ' + str(fecha))
@@ -336,11 +382,13 @@ class UserView(QMainWindow):
         # Capturar de tabla de estados de cartera todos aquellos que sean anteriores a fecha
         # para quedarnos con el último
         # Refrescar el PieChart con el nuevo Data de la fecha seleccionada
-        self.updatePieChart(self.currentCarteraReal,fecha)
-
+        self.updatePieChart(self.currentCarteraReal, fecha)
 
         # Refrescar label de Importe Total
         self.labelValorTotal.setText(str(self.importeTotalCartera(fecha)) + ' €')
+
+        # Refrescar rendimiento total
+        self.refreshRendimientoTotal(fechaIni=None, fechaFin=fecha)
     '''
     - Muestra y oculta los botones del submenú 
     de actualización de históricos
@@ -403,14 +451,17 @@ class UserView(QMainWindow):
 
     def refreshLabelCartera(self, cart=None):
         if cart:
+            self.selectorFecha.setDate(datetime.datetime.today())
             self.labelCarteraActual.setText(cart)
             self.labelValorTotal.setText(str(self.importeTotalCartera(None)) + '€')
             self.labelMonederoTotal.setText(str(self.monedero) + '€')
+            self.refreshRendimientoTotal()
         else:
+            self.selectorFecha.setDate(datetime.datetime.today())
             self.labelCarteraActual.setText('Ninguna')
             self.labelValorTotal.setText('0 €')
             self.labelMonederoTotal.setText(str(self.monedero) + '€')
-
+            self.labelRendimientoTotal.setText('')
     '''
         - Borra el fondo seleccionado del ComboBox de la vista
         y elimina el registro de usuario para la cartera actual. 
@@ -677,6 +728,10 @@ class UserView(QMainWindow):
                        ([self.id_usuario[0], self.currentCarteraReal]))
             db.execute("DELETE FROM carteras_usuario_real WHERE id_usuario = ? AND nombre_cartera = ?",
                        ([self.id_usuario[0], self.currentCarteraReal]))
+
+            db.execute("DELETE FROM operaciones WHERE id_usuario = ? AND nombre_cartera = ?",
+                       ([self.id_usuario[0], self.currentCarteraReal]))
+
             db.execute("DROP TABLE [" + str(self.id_usuario[0]) + "_" + self.currentCarteraReal + "]", ([]))
             db.execute("DELETE FROM operaciones WHERE id_usuario = ? AND nombre_cartera = ? ",
                        ([self.id_usuario[0], self.currentCarteraReal]))
@@ -1017,8 +1072,6 @@ class UserView(QMainWindow):
             db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
             db = db_connection.cursor()
 
-
-
             if nombre_cartera:
 
                 data = db.execute("select ISIN , Porcentaje "
@@ -1027,7 +1080,7 @@ class UserView(QMainWindow):
                                   "from "
                                   "(select * from [" + str(self.id_usuario[0]) + "_" +
                                   str(nombre_cartera) + "] where Fecha < ? ) t) t "
-                                  "where rn = 1 order by ISIN", ([str(fecha)])).fetchall()
+                                                        "where rn = 1 order by ISIN", ([str(fecha)])).fetchall()
                 dataList = list()
 
                 for i in range(0, len(data), 1):
@@ -1087,12 +1140,13 @@ class UserView(QMainWindow):
             db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
             db = db_connection.cursor()
             ISINS_cartera = db.execute("select Importe "
-                                  "from ( select t.*, row_number() over(partition by ISIN "
-                                  "order by Fecha desc) rn "
-                                  "from "
-                                  "(select * from [" + str(self.id_usuario[0]) + "_" +
-                                  str(self.currentCarteraReal) + "] where Fecha < ? ) t) t "
-                                  "where rn = 1 order by ISIN", ([str(fecha)])).fetchall()
+                                       "from ( select t.*, row_number() over(partition by ISIN "
+                                       "order by Fecha desc) rn "
+                                       "from "
+                                       "(select * from [" + str(self.id_usuario[0]) + "_" +
+                                       str(self.currentCarteraReal) + "] where Fecha < ? ) t) t "
+                                                                      "where rn = 1 order by ISIN",
+                                       ([str(fecha)])).fetchall()
 
             # Recorre los ISINS en Cartera
             for isins in ISINS_cartera:
