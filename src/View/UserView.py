@@ -7,7 +7,6 @@ import PySide2
 # para graficar el contenido de los ficheros GUI
 from PyQt5 import uic, QtWebEngineWidgets
 from PyQt5.QtWidgets import *
-from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -428,6 +427,7 @@ class UserView(QMainWindow):
             self.labelSinCarteras.hide()
             self.labelSinCarteras2.hide()
 
+
     def refreshIsinsEnCartera(self):
         print('RefreshIsinsEnCartera()')
         # Conexión con la BD y creación de un cursor de consultas
@@ -515,8 +515,7 @@ class UserView(QMainWindow):
 
     def borrarCartera(view):
 
-        dlg = confirmDeleteCarteraDialog(view)
-        if dlg.exec():
+        if confirmDeleteCarteraDialog(view).exec():
 
             index = view.cbCarteras.currentIndex()
 

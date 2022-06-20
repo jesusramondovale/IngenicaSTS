@@ -81,12 +81,16 @@ def refreshHistorics(view):
                 print('Actualizando ... ' + str(ISIN[0]))
                 data.to_sql(ISIN[0], con=db_connection, if_exists='append')
 
+
+            #ValueError es arrojado si no hay resultados para concatenar
             except ValueError:
                 db.close()
+                refreshCompleteDialog(view).exec()
                 return
 
+
             # Captura del error por fallo de conexión
-            except ConnectionError:
+            except:
                 print('No hay conexión a Internet')
                 dlg = connectionError(view)
                 dlg.exec()

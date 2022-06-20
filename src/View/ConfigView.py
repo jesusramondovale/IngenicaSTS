@@ -4,7 +4,7 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow
 from src.View.SignInView import SignIn
-
+from src.View.ChangeUsersView import ChangeUsersView
 '''
     - Ventana de Configuración para el Usuario
     - En ella se podrá:
@@ -28,12 +28,22 @@ class ConfigView(QMainWindow):
 
         if view.parent().id_usuario[0] == 5:
             view.buttonNewUser.show()
+            view.buttonResetPass.show()
+
         else:
             view.buttonNewUser.hide()
+            view.buttonResetPass.hide()
+
 
         # Conexión de los eventos de botones clickados a la lógica de los controladores
         view.buttonAplicar.clicked.connect(view.applyChanges)
         view.buttonNewUser.clicked.connect(view.register)
+        view.buttonResetPass.clicked.connect(view.showResetPass)
+
+    def showResetPass(self):
+        ch = ChangeUsersView(self)
+        ch.show()
+
 
     def applyChanges(view):
 

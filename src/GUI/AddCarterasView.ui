@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Crear Cartera</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../dist/launcher/src/feather/mainLogo.ico</normaloff>../../dist/launcher/src/feather/mainLogo.ico</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true"/>
   </property>
@@ -130,8 +134,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>77</x>
-     <y>200</y>
+     <x>78</x>
+     <y>154</y>
     </hint>
     <hint type="destinationlabel">
      <x>357</x>

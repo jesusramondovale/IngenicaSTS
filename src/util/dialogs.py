@@ -94,6 +94,64 @@ class confirmAutoRefresh(QDialog):
         self.setLayout(self.layoutVert)
 
 
+class badPasswords(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Vaya..")
+        self.setFixedWidth(300)
+
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel(
+            "Las contraseñas no coinciden!\nInténtelo de nuevo"))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
+class userChangedSuccesfully(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Éxito!")
+        self.setFixedWidth(300)
+
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel(
+            "El cambio de contraseña \nse ha realizado correctamente"))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
+class userNotFound(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Vaya..")
+        self.setFixedWidth(300)
+
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel(
+            "No existe el usuario con \nnombre " + self.parent().tfNombre.text()))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
+
 
 '''
     - Avisa al Usuario de que está intentando actualizar un fondo
@@ -108,7 +166,7 @@ class connectionError(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Vaya..")
-        self.setFixedWidth(330)
+        self.setFixedWidth(300)
 
         # CONTENIDO
         btnOK = QPushButton('OK')
@@ -116,7 +174,7 @@ class connectionError(QDialog):
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
-            "No se ha podido conectar con Internet!"))
+            "No se ha podido descargar!\nInténtelo de forma manual"))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 

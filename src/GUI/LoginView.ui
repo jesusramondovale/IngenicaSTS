@@ -18,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../feather/mainLogo.ico</normaloff>../feather/mainLogo.ico</iconset>
+    <normaloff>../../dist/launcher/src/feather/mainLogo.ico</normaloff>../../dist/launcher/src/feather/mainLogo.ico</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">* {
