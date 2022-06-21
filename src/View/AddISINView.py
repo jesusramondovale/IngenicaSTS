@@ -189,24 +189,31 @@ class AddISINView(QMainWindow):
                     # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
                     db.execute("INSERT INTO carteras_usuario VALUES ( ? , ? , ? )",
                                (id[0], parent.cbCarteras.currentText(), ISIN))
-                    # Inserción de las características del fondo en la tabla caracterización
-                    db.execute(
-                        "INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ? , ?  , ? , ? , ?)",
-                        (date.today().strftime('%d/%m/%Y'),
-                         self.tfISIN.text().strip(),
-                         self.tfNombre.text(),
-                         self.tfGestora.text(),
-                         'F',
-                         self.tfRV.text(),
-                         self.tfPais.text().lower(),
-                         self.tfZona.text(),
-                         self.tfEstilo.text(),
-                         self.tfSector.text(),
-                         self.tfTamano.text(),
-                         self.tfDivisa.text(),
-                         self.tfCubierta.text(),
-                         self.tfDuracion.text(),
-                         ))
+
+
+                    # Si el ISIN no ha sido grabado previamente en la tabla caracterización
+                    if len(db.execute('SELECT * FROM caracterizacion WHERE ISIN == ?',
+                                      ([self.tfISIN.text().strip()])).fetchall()) == 0:
+
+                        # Inserción de las características del fondo en la tabla caracterización
+                        db.execute(
+                            "INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ? , ?  , ? , ? , ?)",
+                            (date.today().strftime('%d/%m/%Y'),
+                             self.tfISIN.text().strip(),
+                             self.tfNombre.text(),
+                             self.tfGestora.text(),
+                             'F',
+                             self.tfRV.text(),
+                             self.tfPais.text().lower(),
+                             self.tfZona.text(),
+                             self.tfEstilo.text(),
+                             self.tfSector.text(),
+                             self.tfTamano.text(),
+                             self.tfDivisa.text(),
+                             self.tfCubierta.text(),
+                             self.tfDuracion.text(),
+                             ))
+
                     db.close()
 
                     # Descarga los históricos completos del fondo y los almacena en BD

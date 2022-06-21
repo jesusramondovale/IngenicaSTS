@@ -225,7 +225,7 @@ class TraspasosView(QMainWindow):
                                         ])
 
                 print('TOTAL EN CARTERA TRAS TRASPASO ($) = ' + str(importeTotal))
-                self.parent().labelValorTotal.setText(str(self.parent().importeTotalCartera(None)) + '€')
+                self.parent().labelValorTotal.setText("{:.2f}".format(self.parent().importeTotalCartera(None)) + '€')
 
                 db_connection.commit()
                 db.close()

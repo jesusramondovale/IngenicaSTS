@@ -4,7 +4,6 @@
 ######################################################################
 import sqlite3, investpy, threading
 
-
 # Librería de Gráficos Útiles especializados en
 # la visualización de índices bursátiles
 from highstock import Highstock
@@ -14,7 +13,8 @@ from highcharts import Highchart
 
 from PyQt5 import QtWebEngineWidgets
 from datetime import datetime, timedelta
-from src.util.dialogs import isinNotFoundDialog, errorInesperado, refreshCompleteDialog, connectionError, confirmAutoRefresh
+from src.util.dialogs import isinNotFoundDialog, errorInesperado, refreshCompleteDialog, connectionError, \
+    confirmAutoRefresh
 
 '''
 - Descarga de investing.com  y actualiza en DB los históricos presentes en carteras 
@@ -25,8 +25,8 @@ del  Usuario desde la última fecha presente del registro hasta hoy
 
 '''
 
-def refreshHistorics(view):
 
+def refreshHistorics(view):
     # Diálogo de Confirmación de Operación
     dlg = confirmAutoRefresh(view)
     # Si se Confirma la Operación
@@ -40,16 +40,15 @@ def refreshHistorics(view):
         ISINs = db.execute("SELECT ISIN FROM carteras_usuario  WHERE id_usuario = ? ",
                            view.id_usuario).fetchall()
         ISINs_real = db.execute("SELECT ISIN FROM carteras_usuario_real  WHERE id_usuario = ? ",
-                           view.id_usuario).fetchall()
+                                view.id_usuario).fetchall()
 
         # Recorremos y cargamos la lista de Fondos
         for e in ISINs_real:
             ISINs.append(e)
 
-
         for ISIN in ISINs:
             try:
-                #Buscamos el último valor en DB
+                # Buscamos el último valor en DB
                 lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
                 lastValue = lastRow[0]
                 lastDate = lastRow[1]
@@ -82,11 +81,9 @@ def refreshHistorics(view):
                 data.to_sql(ISIN[0], con=db_connection, if_exists='append')
 
 
-            #ValueError es arrojado si no hay resultados para concatenar
+            # ValueError es arrojado si no hay resultados para concatenar
             except ValueError:
-                db.close()
-                refreshCompleteDialog(view).exec()
-                return
+                print('ValueError')
 
 
             # Captura del error por fallo de conexión
@@ -94,8 +91,7 @@ def refreshHistorics(view):
                 print('No hay conexión a Internet')
                 dlg = connectionError(view)
                 dlg.exec()
-                db.close()
-                return
+
 
             try:
                 lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
@@ -108,6 +104,83 @@ def refreshHistorics(view):
                 lastValue = lastRow[0]
                 lastDate = lastRow[1]
                 print('NUEVO:' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+
+        # Actualizar el estado actual de todas las carteras reales del usuario en sesión
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+        carteras_reales = db.execute('SELECT nombre_cartera FROM carteras_usuario_real WHERE id_usuario = ? GROUP BY nombre_cartera ',
+                                     [view.id_usuario[0]]).fetchall()
+
+        # Para cada cartera real del Usuario
+        for c in carteras_reales:
+
+            isins_cartera = db.execute(
+                'SELECT ISIN FROM carteras_usuario_real WHERE nombre_cartera = ? AND id_usuario = ?',
+                [c[0], view.id_usuario[0]]).fetchall()
+
+            # Para cada fondo en cartera
+            for i in isins_cartera:
+
+                # Buscamos el valor actual de cotización por participación del fondo
+                currentValue = db.execute(
+                    'SELECT Close FROM [' + i[0] + '] ORDER BY Date DESC LIMIT 1').fetchone()
+
+                # Captamos el número actual de participaciones del fondo en cartera actualmente
+                currentPart = db.execute(
+                    'SELECT Participaciones FROM [' + str(view.id_usuario[0]) + '_' + str(c[0]) + ']'
+                    ' WHERE ISIN == ? and Fecha == (SELECT MAX(Fecha) FROM [' + str(view.id_usuario[0]) + '_' + str(c[0]) + ']'
+                    ' WHERE ISIN == ? ) ', [i[0], i[0]]).fetchone()
+
+                # Si el fondo ya tiene operaciones sobre él
+                if currentPart and currentValue:
+
+                    # Actualiza importes
+                    db.execute(
+                        'update [' + str(view.id_usuario[0]) + '_' + str(c[0]) + '] '
+                        'set Importe = ? where ISIN == ? and Fecha = ' \
+                         '(select max(Fecha) from [' + str(view.id_usuario[0]) + '_' + str(c[0]) + '] '
+                         'where ISIN == ? )',
+                        [currentValue[0]*currentPart[0], i[0], i[0]]
+
+                    )
+
+
+            totalImporte = db.execute("SELECT SUM(Importe) "
+                          "from ( select t.*, row_number() over(partition by ISIN "
+                          "order by Fecha desc) rn "
+                          "from [" + str(view.id_usuario[0]) + "_" + str(c[0]) + "] t) t "
+                         "where rn = 1 order by ISIN", ([])).fetchone()
+
+
+            # Para cada fondo en cartera
+            for i in isins_cartera:
+
+                # Buscamos el importe ya actualizado del fondo
+                currentImporte = db.execute("SELECT Importe "
+                          "from ( select t.*, row_number() over(partition by ISIN "
+                          "order by Fecha desc) rn "
+                          "from [" + str(view.id_usuario[0]) + "_" + str(c[0]) + "] t) t "
+                         "where rn = 1 and ISIN = ? order by ISIN", ([i[0]])).fetchone()
+
+                if currentImporte:
+
+                    # Actualiza porcentajes
+                    db.execute(
+                        'update [' + str(view.id_usuario[0]) + '_' + str(c[0]) + '] '
+                        'set Porcentaje = ? where ISIN == ? and Fecha == ' \
+                        '(select max(Fecha) from [' + str(view.id_usuario[0]) + '_' + str(c[0]) + '] '
+                        'where ISIN == ? )', [(currentImporte[0] / totalImporte[0])*100, i[0], i[0]]
+
+                    )
+
+
+
+        # Actualiza el Gráfico de Cartera Real y los labels de rendimiento
+        try:
+            view.updatePieChart(view.currentCarteraReal)
+        except:
+            pass
+        view.refreshRendimientoTotal()
 
         # Actualiza el Gráfico de Cartera Virtual
         if view.cbModo.currentIndex() == 0:
@@ -123,6 +196,179 @@ def refreshHistorics(view):
 
 
 '''
+- Descarga de investing.com  y actualiza en DB los históricos presentes en carteras 
+del  Usuario desde la última fecha presente del registro hasta hoy
+
+@params: None
+@:returns: None
+
+'''
+
+
+def refreshHistoricsNoConfirm(view):
+    # Conexión a base de Datos
+    db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+    db = db_connection.cursor()
+
+    # Capturamos de DB los fondos en carteras virtuales y reales
+    ISINs = db.execute("SELECT ISIN FROM carteras_usuario  WHERE id_usuario = ? ",
+                       view.id_usuario).fetchall()
+    ISINs_real = db.execute("SELECT ISIN FROM carteras_usuario_real  WHERE id_usuario = ? ",
+                            view.id_usuario).fetchall()
+
+    # Recorremos y cargamos la lista de Fondos
+    for e in ISINs_real:
+        ISINs.append(e)
+
+    for ISIN in ISINs:
+        try:
+            # Buscamos el último valor en DB
+            lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
+            lastValue = lastRow[0]
+            lastDate = lastRow[1]
+            lastDateTime = datetime.strptime(lastDate, '%Y-%m-%d %H:%M:%S')
+            print(str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+
+        except sqlite3.OperationalError:
+            lastRow = db.execute("SELECT Open , Date FROM [" + ISIN[0] + "] ORDER BY Date DESC ").fetchone()
+            lastValue = lastRow[0]
+            lastDate = lastRow[1]
+            lastDateTime = datetime.strptime(lastDate, '%Y-%m-%d %H:%M:%S')
+            print(str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+
+        try:
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+            lastDateTime += timedelta(days=1)
+            print('Investpy.funds -> INTERNET REQUEST 54')
+
+            data = investpy.funds.get_fund_historical_data(
+
+                fund=ISINtoFundOffline(ISIN[0]),
+                country=db.execute('SELECT Pais FROM caracterizacion WHERE ISIN = ? ', [ISIN[0]]).fetchone()[0],
+                from_date=lastDateTime.strftime('%d/%m/%Y'),
+                to_date=datetime.today().strftime('%d/%m/%Y'),
+                as_json=False
+            )
+
+            print('Actualizando ... ' + str(ISIN[0]))
+            data.to_sql(ISIN[0], con=db_connection, if_exists='append')
+
+
+        # ValueError es arrojado si no hay resultados para concatenar
+        except ValueError:
+            print('ValueError')
+
+
+        # Captura del error por fallo de conexión
+        except:
+            print('No hay conexión a Internet')
+            dlg = connectionError(view)
+            dlg.exec()
+
+        try:
+            lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()
+            lastValue = lastRow[0]
+            lastDate = lastRow[1]
+            print('NUEVO: ' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+
+        except sqlite3.OperationalError:
+            lastRow = db.execute("SELECT Open , Date FROM [" + ISIN[0] + "] ORDER BY Date DESC ").fetchone()
+            lastValue = lastRow[0]
+            lastDate = lastRow[1]
+            print('NUEVO:' + str(ISIN[0]) + ' -> ' + str(lastValue) + ' @ (' + str(lastDate) + ')')
+
+    # Actualizar el estado actual de todas las carteras reales del usuario en sesión
+    db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+    db = db_connection.cursor()
+    carteras_reales = db.execute(
+        'SELECT nombre_cartera FROM carteras_usuario_real WHERE id_usuario = ? GROUP BY nombre_cartera ',
+        [view.id_usuario[0]]).fetchall()
+
+    # Para cada cartera real del Usuario
+    for c in carteras_reales:
+
+        isins_cartera = db.execute(
+            'SELECT ISIN FROM carteras_usuario_real WHERE nombre_cartera = ? AND id_usuario = ?',
+            [c[0], view.id_usuario[0]]).fetchall()
+
+        # Para cada fondo en cartera
+        for i in isins_cartera:
+
+            # Buscamos el valor actual de cotización por participación del fondo
+            currentValue = db.execute(
+                'SELECT Close FROM [' + i[0] + '] ORDER BY Date DESC LIMIT 1').fetchone()
+
+            # Captamos el número actual de participaciones del fondo en cartera actualmente
+            currentPart = db.execute(
+                'SELECT Participaciones FROM [' + str(view.id_usuario[0]) + '_' + str(c[0]) + ']'
+                                                                                              ' WHERE ISIN == ? and Fecha == (SELECT MAX(Fecha) FROM [' + str(
+                    view.id_usuario[0]) + '_' + str(c[0]) + ']'
+                                                            ' WHERE ISIN == ? ) ', [i[0], i[0]]).fetchone()
+
+            # Si el fondo ya tiene operaciones sobre él
+            if currentPart and currentValue:
+                # Actualiza importes
+                db.execute(
+                    'update [' + str(view.id_usuario[0]) + '_' + str(c[0]) + '] '
+                                                                             'set Importe = ? where ISIN == ? and Fecha = ' \
+                                                                             '(select max(Fecha) from [' + str(
+                        view.id_usuario[0]) + '_' + str(c[0]) + '] '
+                                                                'where ISIN == ? )',
+                    [currentValue[0] * currentPart[0], i[0], i[0]]
+
+                )
+
+        totalImporte = db.execute("SELECT SUM(Importe) "
+                                  "from ( select t.*, row_number() over(partition by ISIN "
+                                  "order by Fecha desc) rn "
+                                  "from [" + str(view.id_usuario[0]) + "_" + str(c[0]) + "] t) t "
+                                  "where rn = 1 order by ISIN",
+                                  ([])).fetchone()
+
+        # Para cada fondo en cartera
+        for i in isins_cartera:
+
+            # Buscamos el importe ya actualizado del fondo
+            currentImporte = db.execute("SELECT Importe "
+                                        "from ( select t.*, row_number() over(partition by ISIN "
+                                        "order by Fecha desc) rn "
+                                        "from [" + str(view.id_usuario[0]) + "_" + str(c[0]) + "] t) t "
+                                        "where rn = 1 and ISIN = ? order by ISIN",
+                                        ([i[0]])).fetchone()
+
+            if currentImporte:
+                # Calcula porcentaje
+                porcentaje = (currentImporte[0] / totalImporte[0])*100
+                # Actualiza porcentaje
+                db.execute(
+                    'update [' + str(view.id_usuario[0]) + '_' + str(c[0]) + '] '
+                    'set Porcentaje = ? where ISIN == ? and Fecha == ' \
+                     '(select max(Fecha) from [' + str(
+                        view.id_usuario[0]) + '_' + str(c[0]) + '] '
+                       'where ISIN == ? )',
+                    [porcentaje, i[0], i[0]]
+
+                )
+
+    # Actualiza el Gráfico de Cartera Real y los labels de rendimiento
+    try:
+        view.updatePieChart(view.currentCarteraReal)
+    except:
+        pass
+    view.refreshRendimientoTotal()
+
+    # Actualiza el Gráfico de Cartera Virtual
+    if view.cbModo.currentIndex() == 0:
+        UpdateGraph(view, None, view.isins_selected, True)
+    else:
+        UpdateGraph(view, None, view.isins_selected, False)
+
+
+
+
+
+'''
     - Obtiene la Información existente en investing.com 
     del Fondo introducido como parámetro de manera indiferente 
     entre ISINs o Symbols. 
@@ -132,6 +378,7 @@ def refreshHistorics(view):
     por investing.com del Fondo (nombre, país, isin, moneda..)
     
 '''
+
 
 def getFundINFO(self, isin):
     try:
@@ -148,6 +395,8 @@ def getFundINFO(self, isin):
     @params: isin del fondo
     @returns: str (nombre del fondo)
 '''
+
+
 def ISINtoFundOffline(isin):
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     db = db_connection.cursor()
@@ -162,6 +411,8 @@ def ISINtoFundOffline(isin):
     @params: isin del fondo
     @returns: str (nombre del fondo)
 '''
+
+
 def FundtoISINOffline(fund):
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     db = db_connection.cursor()
@@ -180,6 +431,7 @@ def FundtoISINOffline(fund):
     @returns: Nombre (str) del Fondo     
 '''
 
+
 def ISINtoFund(isin):
     try:
         print('Investpy.funds -> INTERNET REQUEST 135')
@@ -191,7 +443,6 @@ def ISINtoFund(isin):
         df = investpy.funds.search_funds(by='symbol', value=isin)
         name = df.at[0, 'name']
         return name
-
 
 
 '''
@@ -207,7 +458,6 @@ def ISINtoFund(isin):
 
 
 def saveHistoricalFund(self, isin):
-
     db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
     cursor = db_connection.cursor()
 
@@ -238,7 +488,7 @@ def saveHistoricalFund(self, isin):
             print('Investpy.funds -> INTERNET REQUEST 186')
             data = investpy.funds.get_fund_historical_data(
                 fund=ISINtoFundOffline(isin),
-                country=cursor.execute('SELECT Pais FROM caracterizacion WHERE ISIN = ?' , [isin]).fetchone()[0],
+                country=cursor.execute('SELECT Pais FROM caracterizacion WHERE ISIN = ?', [isin]).fetchone()[0],
                 from_date='01/01/1970',
                 to_date=datetime.today().strftime('%d/%m/%Y'),
                 as_json=False
@@ -274,6 +524,7 @@ def saveHistoricalFund(self, isin):
            : bool -> Modo de graficación (absolute=True o evolución=False)
     @returns: None
 '''
+
 
 def graphHistoricalISIN(self, isins_selected, absolute):
     print('ISINS a Graficar -> ' + str(isins_selected))
@@ -422,6 +673,7 @@ def graphHistoricalISIN(self, isins_selected, absolute):
              Modo de Graficación: Aboluste (True)
     @returns: None
 '''
+
 
 def UpdateGraph(self, isin, isins_selected, absolute):
     if isin is None:

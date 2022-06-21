@@ -328,10 +328,14 @@ class UserView(QMainWindow):
 
         view.refreshButtons()
         view.refreshRendimientoTotal()
-        view.labelValorTotal.setText(str(view.importeTotalCartera(None)) + '€')
+        view.labelValorTotal.setText("{:.2f}".format(view.importeTotalCartera(None)) + '€')
         view.browserPie.setHtml(view.Pie.htmlcontent)
         view.layoutPieChart.addWidget(view.browserPie)
+        fundUtils.refreshHistoricsNoConfirm(view)
         view.browserPie.show()
+
+
+
 
     def refreshRendimientoTotal(self, fechaIni=None, fechaFin=None):
 
@@ -358,15 +362,15 @@ class UserView(QMainWindow):
             importeFin = self.importeTotalCartera(fechaFin)
             if importeIni == 0:
                 rend = 'Incalculable'
-                self.labelRendimientoTotal.setText((str(rend)))
+                self.labelRendimientoTotal.setText(rend)
 
             else:
                 ratio = importeFin / importeIni
                 rend = (ratio - 1) * 100
                 if len(str(rend)) > 10:
-                    self.labelRendimientoTotal.setText((str(rend))[:-13] + ' %')
+                    self.labelRendimientoTotal.setText("{:.2f}".format(rend) + ' %')
                 else:
-                    self.labelRendimientoTotal.setText((str(rend)) + ' %')
+                    self.labelRendimientoTotal.setText("{:.2f}".format(rend) + ' %')
 
             if rend == 'Incalculable':
                 self.labelRendimientoTotal.setStyleSheet('color: rgb(255, 255, 255);')
@@ -374,6 +378,7 @@ class UserView(QMainWindow):
                 self.labelRendimientoTotal.setStyleSheet('color: rgb(0, 255, 0);')
             if rend != 'Incalculable' and rend < 0:
                 self.labelRendimientoTotal.setStyleSheet('color: rgb(255, 0, 0);')
+
 
     def refreshFecha(self, fecha):
         print('refreshFecha() ' + str(fecha))
@@ -384,7 +389,7 @@ class UserView(QMainWindow):
         self.updatePieChart(self.currentCarteraReal, fecha)
 
         # Refrescar label de Importe Total
-        self.labelValorTotal.setText(str(self.importeTotalCartera(fecha)) + ' €')
+        self.labelValorTotal.setText("{:.2f}".format(self.importeTotalCartera(fecha)) + ' €')
 
         # Refrescar rendimiento total
         self.refreshRendimientoTotal(fechaIni=None, fechaFin=fecha)
@@ -453,7 +458,7 @@ class UserView(QMainWindow):
         if cart:
             self.selectorFecha.setDate(datetime.datetime.today())
             self.labelCarteraActual.setText(cart)
-            self.labelValorTotal.setText(str(self.importeTotalCartera(None)) + '€')
+            self.labelValorTotal.setText("{:.2f}".format(self.importeTotalCartera(None)) + '€')
             self.labelMonederoTotal.setText(str(self.monedero) + '€')
             self.refreshRendimientoTotal()
         else:
@@ -772,7 +777,7 @@ class UserView(QMainWindow):
                 self.UpdateTableOperaciones()
 
             self.refreshButtons()
-            self.labelValorTotal.setText(str(self.importeTotalCartera(None)) + '€')
+            self.labelValorTotal.setText("{:.2f}".format(self.importeTotalCartera(None)) + '€')
 
 
         else:

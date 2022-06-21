@@ -197,7 +197,7 @@ class OperacionesView(QMainWindow):
                                         ])
 
                 print('TOTAL EN CARTERA TRAS COMPRA ($) = ' + str(importeTotal))
-                self.parent().labelValorTotal.setText(str(importeTotal) + '€')
+                self.parent().labelValorTotal.setText("{:.2f}".format(importeTotal) + '€')
 
                 self.parent().monedero = self.parent().monedero - int(self.tfImporte.text())
 
