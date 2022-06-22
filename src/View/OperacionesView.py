@@ -2,7 +2,7 @@
 #   GUI  Y  LÓGICA   DE    PROGRAMACIÓN    DE     LA     VISTA    OperacionesView  #
 #####################################################################################
 
-import datetime, time, datetime, sqlite3
+import datetime, time, datetime, sqlite3, random
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWebEngineWidgets
 
@@ -75,9 +75,12 @@ class OperacionesView(QMainWindow):
                 valorDestino = None
 
                 # Escribe en la 'cartilla' de operaciones
-                SQL = 'INSERT INTO operaciones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-                db.execute(SQL, [
+                SQL = 'INSERT INTO operaciones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
 
+                random_number = random.randint(0, 200000000)
+                hex_number = format(random_number, 'x')
+                db.execute(SQL, [
+                    hex_number,
                     datetime.today().strftime('%d/%m/%Y'),
                     'ENVIADA',
                     self.parent().id_usuario[0],
@@ -89,10 +92,10 @@ class OperacionesView(QMainWindow):
                     self.tfValorOrigen.text(),
                     valorDestino,
                     'D',
-                    ISINorigen[0],
+                    'Monedero',
                     self.tfParticipaciones.text(),
                     self.tfImporte.text(),
-                    ISINdestino
+                    ISINorigen[0]
 
                 ])
 
@@ -155,6 +158,10 @@ class OperacionesView(QMainWindow):
                                         int(isin_last_data[3] + int(self.tfImporte.text())) / importeTotal * 100
                                         ])
                         except TypeError:
+                            if importeTotal != 0:
+                                p = int(self.tfImporte.text()) / importeTotal * 100
+                            else:
+                                p = 0
                             db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
                                        self.parent().currentCarteraReal + "]"
                                                                           "VALUES (?,?,?,?,?)",
@@ -162,7 +169,7 @@ class OperacionesView(QMainWindow):
                                         isin[0],
                                         int(self.tfParticipaciones.text()),
                                         int(self.tfImporte.text()),
-                                        int(self.tfImporte.text()) / importeTotal * 100
+                                        int(p)
                                         ])
 
 

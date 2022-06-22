@@ -178,10 +178,13 @@ def refreshHistorics(view):
         # Actualiza el Gráfico de Cartera Real y los labels de rendimiento
         try:
             view.updatePieChart(view.currentCarteraReal)
+            view.refreshIsinsEnCartera(view.currentCarteraReal)
+            view.refreshLabelCartera(view.currentCarteraReal)
+
         except:
             pass
-        view.refreshRendimientoTotal()
 
+        view.refreshRendimientoTotal()
         # Actualiza el Gráfico de Cartera Virtual
         if view.cbModo.currentIndex() == 0:
             UpdateGraph(view, None, view.isins_selected, True)
@@ -262,9 +265,7 @@ def refreshHistoricsNoConfirm(view):
 
         # Captura del error por fallo de conexión
         except:
-            print('No hay conexión a Internet')
-            dlg = connectionError(view)
-            dlg.exec()
+            pass
 
         try:
             lastRow = db.execute("SELECT Open , Date FROM " + ISIN[0] + " ORDER BY Date DESC ").fetchone()

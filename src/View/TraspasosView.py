@@ -3,6 +3,7 @@
 #####################################################################################
 import datetime
 import sqlite3
+import random
 import datetime, time
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWebEngineWidgets
@@ -100,9 +101,12 @@ class TraspasosView(QMainWindow):
                 if self.tfValorDestino.text():
                     valorDestino = self.tfValorDestino.text()
 
-                SQL = 'INSERT INTO operaciones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-                db.execute(SQL, [
+                SQL = 'INSERT INTO operaciones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+                random_number = random.randint(0, 200000000)
+                hex_number = format(random_number, 'x')
 
+                db.execute(SQL, [
+                    hex_number,
                     datetime.today().strftime('%d/%m/%Y'),
                     'ENVIADA',
                     self.parent().id_usuario[0],
@@ -168,6 +172,10 @@ class TraspasosView(QMainWindow):
 
                     # Current isin es el seleccionado como origen
                     if isin_origen == isin[0]:
+                        if importeTotal != 0:
+                            p = int(isin_last_data[3] - int(self.tfImporte.text())) / importeTotal * 100
+                        else :
+                            p=0
                         db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
                                    self.parent().currentCarteraReal + "]"
                                                                       "VALUES (?,?,?,?,?)",
@@ -175,7 +183,7 @@ class TraspasosView(QMainWindow):
                                     isin[0],
                                     isin_last_data[2] - int(self.tfParticipaciones.text()),
                                     isin_last_data[3] - int(self.tfImporte.text()),
-                                    int(isin_last_data[3] - int(self.tfImporte.text())) / importeTotal * 100
+                                    p
                                     ])
                     else:
 
@@ -183,6 +191,10 @@ class TraspasosView(QMainWindow):
                         if isin_destino == isin[0]:
 
                             if newDestino:
+                                if importeTotal != 0:
+                                    p = int(self.tfImporte.text())/importeTotal * 100
+                                else:
+                                    p=0
                                 db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
                                            self.parent().currentCarteraReal + "]"
                                                                               "VALUES (?,?,?,?,?)",
@@ -190,11 +202,15 @@ class TraspasosView(QMainWindow):
                                             isin[0],
                                             int(self.tfParticipaciones.text()),
                                             int(self.tfImporte.text()),
-                                            int(self.tfImporte.text()) / importeTotal * 100
+                                            p
                                             ])
 
 
                             else:
+                                if importeTotal != 0:
+                                    p = int(isin_last_data[3] - int(self.tfImporte.text())) / importeTotal * 100
+                                else:
+                                    p=0
                                 db.execute("INSERT INTO [" + str(self.parent().id_usuario[0]) + "_" +
                                            self.parent().currentCarteraReal + "]"
                                                                               "VALUES (?,?,?,?,?)",
@@ -202,7 +218,7 @@ class TraspasosView(QMainWindow):
                                             isin[0],
                                             isin_last_data[2] + int(self.tfParticipaciones.text()),
                                             isin_last_data[3] + int(self.tfImporte.text()),
-                                            int(isin_last_data[3] + int(self.tfImporte.text())) / importeTotal * 100
+                                            p
                                             ])
 
                         # Current isin no es el que varía

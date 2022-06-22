@@ -4,6 +4,50 @@
 #########################################################
 from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayout, QVBoxLayout
 from PyQt5 import QtCore
+
+
+'''
+    - Avisa al Usuario de que está a punto de actualizar 
+    los registros de la tabla operaciones
+
+    @parent: UserView 
+'''
+
+
+class confirmSaveDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("¿Seguro?")
+        self.setFixedWidth(380)
+
+        # CONTENIDO
+        btnYes = QPushButton('Confirmar')
+        btnNo = QPushButton('Cancelar')
+        btnYes.setFixedWidth(100)
+        btnYes.setFixedHeight(20)
+        btnNo.setFixedWidth(100)
+        btnNo.setFixedHeight(20)
+
+
+        btnYes.clicked.connect(self.accept)
+        btnNo.clicked.connect(self.reject)
+
+        self.layoutVert = QVBoxLayout()
+        self.layoutVert.addWidget(QLabel("¿Está seguro de que desea continuar?"))
+        self.layoutVert.addWidget(QLabel("Revise los datos introducidos"))
+
+        self.layoutHor = QHBoxLayout()
+        self.layoutHor.addWidget(btnYes)
+        self.layoutHor.addWidget(btnNo)
+
+        self.layoutVert.addLayout(self.layoutHor)
+
+        self.setLayout(self.layoutVert)
+
+
+
 '''
     - Avisa al Usuario de que está intentando realizar una operación
     sobre cartera real con parámetros erróneos

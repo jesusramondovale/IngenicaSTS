@@ -172,9 +172,12 @@ class AddISINViewReal(QMainWindow):
                     fundUtils.getFundINFO(self, ISIN)
 
                     # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
-                    db.execute("INSERT INTO carteras_usuario_real VALUES ( ? , ? , ? )",
-                               (id[0], parent.currentCarteraReal, ISIN))
-
+                    if len(ISIN) > 5:
+                        db.execute("INSERT INTO carteras_usuario_real VALUES ( ? , ? , ? )",
+                                   (id[0], parent.currentCarteraReal, ISIN.upper()))
+                    else:
+                        db.execute("INSERT INTO carteras_usuario_real VALUES ( ? , ? , ? )",
+                                   (id[0], parent.currentCarteraReal, ISIN.lower()))
                     # Si el ISIN no ha sido grabado previamente en la tabla caracterización
                     if len(db.execute('SELECT * FROM caracterizacion WHERE ISIN == ?' ,
                                       ([self.tfISIN.text()])).fetchall()) == 0:

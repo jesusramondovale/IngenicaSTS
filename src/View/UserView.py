@@ -4,6 +4,8 @@
 import sqlite3, time, datetime
 import PySide2
 import sys,os
+import pandas as pd
+
 # Importamos las librerías de carga y Widgets de Python QT v5
 # para graficar el contenido de los ficheros GUI
 from PyQt5 import uic, QtWebEngineWidgets
@@ -126,6 +128,8 @@ class UserView(QMainWindow):
         view.buttonOpTraspaso.clicked.connect(view.showTraspasos)
         view.buttonCartReal.clicked.connect(view.showVistaReal)
         view.buttonCartVirt.clicked.connect(view.showVistaVirtual)
+        view.buttonSaveOperaciones.clicked.connect(view.saveOperaciones)
+
         view.buttonCartReal.setAutoExclusive(True)
         view.buttonCartVirt.setAutoExclusive(True)
         view.frameVirt.hide()
@@ -351,6 +355,66 @@ class UserView(QMainWindow):
 
 
 
+    def saveOperaciones(self):
+
+        if confirmSaveDialog(self).exec():
+
+            columna = self.tableOperaciones.currentColumn()
+            fila  = self.tableOperaciones.currentRow()
+
+            # Conexión a base de Datos
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+
+            if columna == 2:
+                sql = 'UPDATE operaciones SET Estado = ? WHERE id_usuario == ? AND ID == ? '
+                db.execute(sql,[self.tableOperaciones.item(fila,columna).text() ,
+                                self.id_usuario[0],
+                                self.tableOperaciones.item(fila,0).text()])
+
+            if columna == 3:
+                sql = 'UPDATE operaciones SET Titular = ? WHERE id_usuario == ? AND ID == ? '
+                db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
+                                 self.id_usuario[0],
+                                 self.tableOperaciones.item(fila, 0).text()])
+
+            if columna == 4:
+                sql = 'UPDATE operaciones SET Incidencias = ? WHERE id_usuario == ? AND ID == ? '
+                db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
+                                 self.id_usuario[0],
+                                 self.tableOperaciones.item(fila, 0).text()])
+
+            if columna == 5:
+                sql = 'UPDATE operaciones SET Origen = ? WHERE id_usuario == ? AND ID == ? '
+                db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
+                                 self.id_usuario[0],
+                                 self.tableOperaciones.item(fila, 0).text()])
+
+            if columna == 6:
+                sql = 'UPDATE operaciones SET Destino = ? WHERE id_usuario == ? AND ID == ? '
+                db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
+                                 self.id_usuario[0],
+                                 self.tableOperaciones.item(fila, 0).text()])
+
+            if columna == 7:
+                sql = 'UPDATE operaciones SET Titular = ? WHERE id_usuario == ? AND ID == ? '
+                db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
+                                 self.id_usuario[0],
+                                 self.tableOperaciones.item(fila, 0).text()])
+
+            if columna == 8:
+                sql = 'UPDATE operaciones SET Titular = ? WHERE id_usuario == ? AND ROWID == ? '
+                db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
+                                 self.id_usuario[0],
+                                 self.tableOperaciones.item(fila, 0).text()])
+            else:
+                pass
+
+            operationCompleteDialog(self).exec()
+
+        else:
+            print('Cancelada operación guardado operaciones')
+            pass
 
     def refreshRendimientoTotal(self, fechaIni=None, fechaFin=None):
 
@@ -995,30 +1059,33 @@ class UserView(QMainWindow):
             db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
             db = db_connection.cursor()
 
-            sql = 'SELECT fecha , orden , titular , incidencias , ISINorigen, ISINdestino, origenParticipaciones , origenImporte ' \
+            sql = 'SELECT ID , Fecha , Estado , Titular , Incidencias , Origen, Destino, Participaciones , Importe ' \
                   'FROM operaciones ' \
-                  'WHERE id_usuario == ? AND nombre_cartera == ? ORDER BY fecha Desc'
+                  'WHERE id_usuario == ? AND nombre_cartera == ? ORDER BY Fecha Desc '
 
             try:
                 funds = db.execute(sql, ([view.id_usuario[0], nombre_cartera])).fetchall()
 
                 view.tableOperaciones.clear()
-                view.tableOperaciones.setHorizontalHeaderItem(0, QTableWidgetItem('Fecha'))
-                view.tableOperaciones.setHorizontalHeaderItem(1, QTableWidgetItem('Estado'))
-                view.tableOperaciones.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
-                view.tableOperaciones.setHorizontalHeaderItem(3, QTableWidgetItem('Incidencias'))
-                view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Fondo (Origen.)'))
-                view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Fondo (Destino)'))
-                view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Particip. (Origen)'))
-                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Importe. (Origen)'))
-                view.tableOperaciones.setColumnWidth(0, 120)
-                view.tableOperaciones.setColumnWidth(1, 100)
-                view.tableOperaciones.setColumnWidth(2, 160)
-                view.tableOperaciones.setColumnWidth(3, 100)
-                view.tableOperaciones.setColumnWidth(4, 160)
-                view.tableOperaciones.setColumnWidth(5, 160)
-                view.tableOperaciones.setColumnWidth(6, 160)
-                view.tableOperaciones.setColumnWidth(7, 160)
+                view.tableOperaciones.setHorizontalHeaderItem(0, QTableWidgetItem('#ID'))
+                view.tableOperaciones.setHorizontalHeaderItem(1, QTableWidgetItem('Fecha'))
+                view.tableOperaciones.setHorizontalHeaderItem(2, QTableWidgetItem('Estado'))
+                view.tableOperaciones.setHorizontalHeaderItem(3, QTableWidgetItem('Titular'))
+                view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Incidencias'))
+                view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Origen'))
+                view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Destino'))
+                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Participaciones'))
+                view.tableOperaciones.setHorizontalHeaderItem(8, QTableWidgetItem('Importe'))
+
+                view.tableOperaciones.setColumnWidth(0, 0)
+                view.tableOperaciones.setColumnWidth(1, 120)
+                view.tableOperaciones.setColumnWidth(2, 100)
+                view.tableOperaciones.setColumnWidth(3, 160)
+                view.tableOperaciones.setColumnWidth(4, 100)
+                view.tableOperaciones.setColumnWidth(5, 140)
+                view.tableOperaciones.setColumnWidth(6, 140)
+                view.tableOperaciones.setColumnWidth(7, 140)
+                view.tableOperaciones.setColumnWidth(8, 140)
 
                 view.tableOperaciones.setRowCount(len(funds))
 
@@ -1033,6 +1100,7 @@ class UserView(QMainWindow):
                     view.tableOperaciones.setItem(f, 5, QTableWidgetItem(str(fila[5])))
                     view.tableOperaciones.setItem(f, 6, QTableWidgetItem(str(fila[6])))
                     view.tableOperaciones.setItem(f, 7, QTableWidgetItem(str(fila[7])))
+                    view.tableOperaciones.setItem(f, 8, QTableWidgetItem(str(fila[8])))
 
                     f += 1
 
@@ -1041,16 +1109,25 @@ class UserView(QMainWindow):
                 funds = db.execute(sql, ([view.id_usuario[0], view.nombres_carteras_real[0]])).fetchall()
 
                 view.tableOperaciones.clear()
-                view.tableOperaciones.setHorizontalHeaderItem(0, QTableWidgetItem('Fecha'))
-                view.tableOperaciones.setHorizontalHeaderItem(1, QTableWidgetItem('Estado'))
-                view.tableOperaciones.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
-                view.tableOperaciones.setHorizontalHeaderItem(3, QTableWidgetItem('Incidencias'))
-                view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Fondo (Origen)'))
-                view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Fondo (Destino)'))
-                view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Participaciones (Origen)'))
-                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Participaciones (Destino)'))
-                view.tableOperaciones.setColumnWidth(2, 350)
-                view.tableOperaciones.setRowCount(len(funds))
+                view.tableOperaciones.setHorizontalHeaderItem(0, QTableWidgetItem('#ID'))
+                view.tableOperaciones.setHorizontalHeaderItem(1, QTableWidgetItem('Fecha'))
+                view.tableOperaciones.setHorizontalHeaderItem(2, QTableWidgetItem('Estado'))
+                view.tableOperaciones.setHorizontalHeaderItem(3, QTableWidgetItem('Titular'))
+                view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Incidencias'))
+                view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Origen'))
+                view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Destino'))
+                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Participaciones'))
+                view.tableOperaciones.setHorizontalHeaderItem(8, QTableWidgetItem('Importe'))
+
+                view.tableOperaciones.setColumnWidth(0, 0)
+                view.tableOperaciones.setColumnWidth(1, 120)
+                view.tableOperaciones.setColumnWidth(2, 100)
+                view.tableOperaciones.setColumnWidth(3, 160)
+                view.tableOperaciones.setColumnWidth(4, 100)
+                view.tableOperaciones.setColumnWidth(5, 140)
+                view.tableOperaciones.setColumnWidth(6, 140)
+                view.tableOperaciones.setColumnWidth(7, 140)
+                view.tableOperaciones.setColumnWidth(8, 140)
 
                 f = 0
 
@@ -1063,7 +1140,7 @@ class UserView(QMainWindow):
                     view.tableOperaciones.setItem(f, 5, QTableWidgetItem(str(fila[5])))
                     view.tableOperaciones.setItem(f, 6, QTableWidgetItem(str(fila[6])))
                     view.tableOperaciones.setItem(f, 7, QTableWidgetItem(str(fila[7])))
-
+                    view.tableOperaciones.setItem(f, 8,QTableWidgetItem(str(fila[8])))
                     f += 1
 
             db.close()

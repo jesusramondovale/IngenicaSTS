@@ -3,6 +3,7 @@
 #####################################################################################
 import datetime
 import sqlite3
+import random
 import datetime, time
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWebEngineWidgets
@@ -88,9 +89,12 @@ class OperacionesVentaView(QMainWindow):
                 valorDestino = None
 
                 # Escribe en la 'cartilla' de operaciones
-                SQL = 'INSERT INTO operaciones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
-                db.execute(SQL, [
+                SQL = 'INSERT INTO operaciones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+                random_number = random.randint(0, 200000000)
+                hex_number = format(random_number, 'x')
 
+                db.execute(SQL, [
+                    hex_number,
                     datetime.today().strftime('%d/%m/%Y'),
                     'ENVIADA',
                     self.parent().id_usuario[0],

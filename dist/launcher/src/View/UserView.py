@@ -918,9 +918,9 @@ class UserView(QMainWindow):
             db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
             db = db_connection.cursor()
 
-            sql = 'SELECT fecha , orden , titular , incidencias , ISINorigen, ISINdestino, origenParticipaciones , origenImporte ' \
+            sql = 'SELECT Fecha , Estado , Titular , Incidencias , Origen, Destino, Participaciones , Importe ' \
                   'FROM operaciones ' \
-                  'WHERE id_usuario == ? AND nombre_cartera == ? ORDER BY fecha Desc'
+                  'WHERE id_usuario == ? AND nombre_cartera == ? ORDER BY Fecha '
 
             try:
                 funds = db.execute(sql, ([view.id_usuario[0], nombre_cartera])).fetchall()
@@ -930,10 +930,10 @@ class UserView(QMainWindow):
                 view.tableOperaciones.setHorizontalHeaderItem(1, QTableWidgetItem('Estado'))
                 view.tableOperaciones.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
                 view.tableOperaciones.setHorizontalHeaderItem(3, QTableWidgetItem('Incidencias'))
-                view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Fondo (Origen.)'))
-                view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Fondo (Destino)'))
-                view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Particip. (Origen)'))
-                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Importe. (Origen)'))
+                view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Origen'))
+                view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Destino'))
+                view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Participaciones'))
+                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Importe'))
                 view.tableOperaciones.setColumnWidth(0, 120)
                 view.tableOperaciones.setColumnWidth(1, 100)
                 view.tableOperaciones.setColumnWidth(2, 160)

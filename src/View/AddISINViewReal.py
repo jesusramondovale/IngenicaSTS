@@ -171,9 +171,15 @@ class AddISINViewReal(QMainWindow):
                     # en caso de que el fondo no exista
                     fundUtils.getFundINFO(self, ISIN)
 
-                    # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
-                    db.execute("INSERT INTO carteras_usuario_real VALUES ( ? , ? , ? )",
-                               (id[0], parent.currentCarteraReal, ISIN))
+                    if len(ISIN) > 5:
+
+                        # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
+                        db.execute("INSERT INTO carteras_usuario_real VALUES ( ? , ? , ? )",
+                                   (id[0], parent.currentCarteraReal, ISIN))
+                    else:
+                        # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
+                        db.execute("INSERT INTO carteras_usuario_real VALUES ( ? , ? , ? )",
+                                   (id[0], parent.currentCarteraReal, ISIN.lower()))
 
                     # Si el ISIN no ha sido grabado previamente en la tabla caracterización
                     if len(db.execute('SELECT * FROM caracterizacion WHERE ISIN == ?' ,
