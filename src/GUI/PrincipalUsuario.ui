@@ -1289,8 +1289,8 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QLabel" name="labelSinCarteras">
      <property name="geometry">
       <rect>
-       <x>350</x>
-       <y>290</y>
+       <x>340</x>
+       <y>300</y>
        <width>241</width>
        <height>21</height>
       </rect>
@@ -1302,8 +1302,8 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QLabel" name="labelSinCarteras2">
      <property name="geometry">
       <rect>
-       <x>360</x>
-       <y>310</y>
+       <x>350</x>
+       <y>320</y>
        <width>211</width>
        <height>21</height>
       </rect>
@@ -1518,8 +1518,6 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <zorder>buttonOpTraspaso</zorder>
     <zorder>horizontalLayoutWidget_2</zorder>
     <zorder>labelCarteraActual</zorder>
-    <zorder>labelSinCarteras</zorder>
-    <zorder>labelSinCarteras2</zorder>
     <zorder>buttonOpBasicaVenta</zorder>
     <zorder>label_7</zorder>
     <zorder>labelValorTotal</zorder>
@@ -1529,6 +1527,8 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <zorder>labelRendimientoTotal</zorder>
     <zorder>tableFondosCartera</zorder>
     <zorder>tableOperaciones</zorder>
+    <zorder>labelSinCarteras2</zorder>
+    <zorder>labelSinCarteras</zorder>
    </widget>
    <zorder>frameBarra</zorder>
    <zorder>line</zorder>

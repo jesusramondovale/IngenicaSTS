@@ -94,8 +94,9 @@ class MainView(QMainWindow):
         if loginResult.__len__() != 0:
             dlg = goodLoginDialog(self)
             if dlg.exec():
-                self.hide()
+                self.setWindowState(Qt.WindowMinimized)
                 loading = cargandoView(self)
+                loading.setWindowState(Qt.WindowActive)
                 self.app.processEvents()
                 self.showUserView()
                 loading.hide()

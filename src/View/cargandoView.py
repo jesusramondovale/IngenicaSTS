@@ -3,6 +3,10 @@
 ###############################################################################
 import sqlite3
 
+import ctypes
+
+
+
 # Importamos las librerías de carga y Widgets de Python QT v5
 # para graficar el contenido de los ficheros GUI
 from PyQt5 import uic, QtWebEngineWidgets

@@ -3,6 +3,7 @@
 ###############################################################################
 import sqlite3, time, datetime
 import PySide2
+import sys,os
 # Importamos las librerías de carga y Widgets de Python QT v5
 # para graficar el contenido de los ficheros GUI
 from PyQt5 import uic, QtWebEngineWidgets
@@ -10,6 +11,11 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+
+import ctypes
+
+myappid = u'IngenicaSTS.Software.GestorETF.v7'
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 # Importamos la lógica de otras vistas
 from highstock import Highstock
@@ -29,6 +35,7 @@ from src.View.AddISINViewReal import AddISINViewReal
 
 from src.util import fundUtils
 from src.util.dialogs import *
+
 
 '''
     - Ventana de Operaciones General para el Usuario 
@@ -193,8 +200,13 @@ class UserView(QMainWindow):
             view.button.clicked.connect(
                 lambda clicked, nombre_cartera=view.button.text(): view.UpdateTableOperaciones(nombre_cartera))
             view.layoutButtonsCarteras.addWidget(view.button)
+
             view.button.clicked.connect(
-                lambda clicked, view=view: view.refreshIsinsEnCartera())
+                lambda clicked, nombre_cartera=view.button.text(): view.refreshIsinsEnCartera(nombre_cartera))
+
+            view.button.clicked.connect(
+                lambda clicked, v=view: view.refreshButtons())
+
 
         view.frameButtonsCarteras.setLayout(view.layoutButtonsCarteras)
         view.frameRefreshModes.setLayout(view.layoutRefreshModes)
@@ -324,6 +336,8 @@ class UserView(QMainWindow):
             view.updatePieChart(view.nombres_carteras_real[0])
         else:
             view.updatePieChart()
+
+
         # Actualiza el estado de los botones y las etiquetas
 
         view.refreshButtons()
@@ -434,50 +448,109 @@ class UserView(QMainWindow):
             self.labelSinCarteras2.hide()
 
 
-    def refreshIsinsEnCartera(self):
+    def refreshIsinsEnCartera(self , cart=None):
 
         print('RefreshIsinsEnCartera()')
         # Conexión con la BD y creación de un cursor de consultas
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
 
-        sql = (
-            'SELECT ca.Nombre , ca.ISIN , f.Participaciones , f.Importe '
-            'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
-            '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
-            'from [' + str(self.id_usuario[0]) + "_" + str(self.currentCarteraReal) + '] t) t where rn = 1 order by ISIN) f USING(ISIN)'
-             )
-        try:
-            funds = db.execute(sql).fetchall()
-            self.tableFondosCartera.clear()
-            self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
-            self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
-            self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Partic.'))
-            self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Importe'))
-            self.tableFondosCartera.setColumnWidth(0, 200)
-            self.tableFondosCartera.setColumnWidth(1, 140)
-            self.tableFondosCartera.setColumnWidth(2, 60)
-            self.tableFondosCartera.setColumnWidth(3, 100)
-            self.tableFondosCartera.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        if cart:
+            sql = (
+                'SELECT ca.Nombre , ca.ISIN , f.Participaciones , f.Importe '
+                'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
+                '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
+                'from [' + str(self.id_usuario[0]) + "_" + str(cart) + '] t) t where rn = 1 order by ISIN) '
+                'f USING(ISIN) WHERE cr.id_usuario == ? AND cr.nombre_cartera == ? '
+                 )
+            try:
+                funds = db.execute(sql, [self.id_usuario[0], str(cart)]).fetchall()
+                self.tableFondosCartera.clear()
+                self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
+                self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
+                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Partic.'))
+                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Importe'))
+                self.tableFondosCartera.setColumnWidth(0, 200)
+                self.tableFondosCartera.setColumnWidth(1, 140)
+                self.tableFondosCartera.setColumnWidth(2, 60)
+                self.tableFondosCartera.setColumnWidth(3, 100)
+                self.tableFondosCartera.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-            self.tableFondosCartera.setRowCount(len(funds))
+                self.tableFondosCartera.setRowCount(len(funds))
 
-            f = 0
+                f = 0
 
-            filas = db.execute(sql, ([]))
+                filas = db.execute(sql, ([self.id_usuario[0] , str(cart)]))
 
-            for fila in filas:
-                self.tableFondosCartera.setItem(f, 0, QTableWidgetItem(str(fila[0])))
-                self.tableFondosCartera.setItem(f, 1, QTableWidgetItem(str(fila[1])))
-                self.tableFondosCartera.setItem(f, 2, QTableWidgetItem(str(fila[2])))
-                self.tableFondosCartera.setItem(f, 3, QTableWidgetItem(str(fila[3])))
+                for fila in filas:
+                    self.tableFondosCartera.setItem(f, 0, QTableWidgetItem(str(fila[0])))
+                    self.tableFondosCartera.setItem(f, 1, QTableWidgetItem(str(fila[1])))
+                    self.tableFondosCartera.setItem(f, 2, QTableWidgetItem(str(fila[2])))
+                    self.tableFondosCartera.setItem(f, 3, QTableWidgetItem(str(fila[3])))
 
-                f += 1
+                    f += 1
 
-        except sqlite3.OperationalError:
-            pass
+            except sqlite3.OperationalError:
+                self.tableFondosCartera.clear()
+                self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
+                self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
+                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Partic.'))
+                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Importe'))
+                self.tableFondosCartera.setColumnWidth(0, 200)
+                self.tableFondosCartera.setColumnWidth(1, 140)
+                self.tableFondosCartera.setColumnWidth(2, 60)
+                self.tableFondosCartera.setColumnWidth(3, 100)
 
-        db.close()
+            db.close()
+
+        else :
+            sql = (
+                    'SELECT ca.Nombre , ca.ISIN , f.Participaciones , f.Importe '
+                    'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
+                    '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
+                    'from [' + str(self.id_usuario[0]) + "_" + str(self.currentCarteraReal) + '] t) t where rn = 1 order by ISIN) '
+                     'f USING(ISIN) WHERE cr.id_usuario == ? AND cr.nombre_cartera == ? '
+            )
+            try:
+                funds = db.execute(sql, [self.id_usuario[0], self.currentCarteraReal ]).fetchall()
+                self.tableFondosCartera.clear()
+                self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
+                self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
+                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Partic.'))
+                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Importe'))
+                self.tableFondosCartera.setColumnWidth(0, 200)
+                self.tableFondosCartera.setColumnWidth(1, 140)
+                self.tableFondosCartera.setColumnWidth(2, 60)
+                self.tableFondosCartera.setColumnWidth(3, 100)
+                self.tableFondosCartera.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+                self.tableFondosCartera.setRowCount(len(funds))
+
+                f = 0
+
+                filas = db.execute(sql, ([self.id_usuario[0] , self.currentCarteraReal]))
+
+                for fila in filas:
+                    self.tableFondosCartera.setItem(f, 0, QTableWidgetItem(str(fila[0])))
+                    self.tableFondosCartera.setItem(f, 1, QTableWidgetItem(str(fila[1])))
+                    self.tableFondosCartera.setItem(f, 2, QTableWidgetItem(str(fila[2])))
+                    self.tableFondosCartera.setItem(f, 3, QTableWidgetItem(str(fila[3])))
+
+                    f += 1
+
+            except sqlite3.OperationalError:
+                self.tableFondosCartera.clear()
+                self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
+                self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
+                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Partic.'))
+                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Importe'))
+                self.tableFondosCartera.setColumnWidth(0, 200)
+                self.tableFondosCartera.setColumnWidth(1, 140)
+                self.tableFondosCartera.setColumnWidth(2, 60)
+                self.tableFondosCartera.setColumnWidth(3, 100)
+
+            db.close()
+
 
     '''
         - Actualiza el label indicador de Cartera Actual en la Vista (Real)
@@ -789,7 +862,11 @@ class UserView(QMainWindow):
                 self.layoutButtonsCarteras.addWidget(self.button)
 
                 self.button.clicked.connect(
-                    lambda clicked, isins_selected=self.isins_selected: self.refreshIsinsEnCartera())
+                    lambda clicked, nombre_cartera=self.button.text(): self.refreshIsinsEnCartera(nombre_cartera))
+
+                self.button.clicked.connect(
+                    lambda clicked, v=self: self.refreshButtons())
+
 
             self.frameButtonsCarteras.setLayout(self.layoutButtonsCarteras)
 
@@ -881,7 +958,7 @@ class UserView(QMainWindow):
         dlg = confirmLogoutDialog(self)
         if dlg.exec():
             self.hide()
-            self.parent().show()
+            self.parent().setWindowState(Qt.WindowActive)
         else:
             print('Cancelada operación de LogOut')
             pass

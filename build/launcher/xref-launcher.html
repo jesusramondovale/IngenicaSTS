@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>modulegraph cross reference for launcher.pyw, pyi_rth__tkinter.py, pyi_rth_inspect.py, pyi_rth_mplconfig.py, pyi_rth_multiprocessing.py, pyi_rth_pkgres.py, pyi_rth_pkgutil.py, pyi_rth_pyqt5.py, pyi_rth_pyqt5webengine.py, pyi_rth_subprocess.py</title>
+    <title>modulegraph cross reference for launcher.pyw, pyi_rth__tkinter.py, pyi_rth_inspect.py, pyi_rth_mplconfig.py, pyi_rth_multiprocessing.py, pyi_rth_pkgres.py, pyi_rth_pkgutil.py, pyi_rth_pyqt5.py, pyi_rth_pyqt5webengine.py, pyi_rth_pyside2.py, pyi_rth_subprocess.py</title>
     <style>
       .node { padding: 0.5em 0 0.5em; border-top: thin grey dotted; }
       .moduletype { font: smaller italic }
@@ -11,7 +11,7 @@
     </style>
   </head>
   <body>
-    <h1>modulegraph cross reference for launcher.pyw, pyi_rth__tkinter.py, pyi_rth_inspect.py, pyi_rth_mplconfig.py, pyi_rth_multiprocessing.py, pyi_rth_pkgres.py, pyi_rth_pkgutil.py, pyi_rth_pyqt5.py, pyi_rth_pyqt5webengine.py, pyi_rth_subprocess.py</h1>
+    <h1>modulegraph cross reference for launcher.pyw, pyi_rth__tkinter.py, pyi_rth_inspect.py, pyi_rth_mplconfig.py, pyi_rth_multiprocessing.py, pyi_rth_pkgres.py, pyi_rth_pkgutil.py, pyi_rth_pyqt5.py, pyi_rth_pyqt5webengine.py, pyi_rth_pyside2.py, pyi_rth_subprocess.py</h1>
 
 <div class="node">
   <a name="launcher.pyw"></a>
@@ -26,6 +26,7 @@ imports:
  &#8226;   <a href="#collections">collections</a>
  &#8226;   <a href="#collections.abc">collections.abc</a>
  &#8226;   <a href="#copyreg">copyreg</a>
+ &#8226;   <a href="#ctypes">ctypes</a>
  &#8226;   <a href="#encodings">encodings</a>
  &#8226;   <a href="#encodings.aliases">encodings.aliases</a>
  &#8226;   <a href="#encodings.ascii">encodings.ascii</a>
@@ -156,6 +157,7 @@ imports:
  &#8226;   <a href="#linecache">linecache</a>
  &#8226;   <a href="#locale">locale</a>
  &#8226;   <a href="#operator">operator</a>
+ &#8226;   <a href="#os">os</a>
  &#8226;   <a href="#pyi_rth__tkinter.py">pyi_rth__tkinter.py</a>
  &#8226;   <a href="#pyi_rth_inspect.py">pyi_rth_inspect.py</a>
  &#8226;   <a href="#pyi_rth_mplconfig.py">pyi_rth_mplconfig.py</a>
@@ -164,6 +166,7 @@ imports:
  &#8226;   <a href="#pyi_rth_pkgutil.py">pyi_rth_pkgutil.py</a>
  &#8226;   <a href="#pyi_rth_pyqt5.py">pyi_rth_pyqt5.py</a>
  &#8226;   <a href="#pyi_rth_pyqt5webengine.py">pyi_rth_pyqt5webengine.py</a>
+ &#8226;   <a href="#pyi_rth_pyside2.py">pyi_rth_pyside2.py</a>
  &#8226;   <a href="#pyi_rth_subprocess.py">pyi_rth_subprocess.py</a>
  &#8226;   <a href="#re">re</a>
  &#8226;   <a href="#reprlib">reprlib</a>
@@ -333,6 +336,23 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="pyi_rth_pyside2.py"></a>
+  <a target="code" href="///C:/Users/Usuario/Desktop/Demo/venv/Lib/site-packages/PyInstaller/hooks/rthooks/pyi_rth_pyside2.py" type="text/plain"><tt>pyi_rth_pyside2.py</tt></a>
+<span class="moduletype">Script</span>  <div class="import">
+imports:
+    <a href="#os">os</a>
+ &#8226;   <a href="#sys">sys</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#launcher.pyw">launcher.pyw</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="pyi_rth_subprocess.py"></a>
   <a target="code" href="///C:/Users/Usuario/Desktop/Demo/venv/Lib/site-packages/PyInstaller/hooks/rthooks/pyi_rth_subprocess.py" type="text/plain"><tt>pyi_rth_subprocess.py</tt></a>
 <span class="moduletype">Script</span>  <div class="import">
@@ -389,17 +409,6 @@ imported by:
 <div class="node">
   <a name="'PyQt6.QtGui'"></a>
   <a target="code" href="" type="text/plain"><tt>'PyQt6.QtGui'</tt></a>
-<span class="moduletype">MissingModule</span>  <div class="import">
-imported by:
-    <a href="#PIL.ImageQt">PIL.ImageQt</a>
-
-  </div>
-
-</div>
-
-<div class="node">
-  <a name="'PySide2.QtGui'"></a>
-  <a target="code" href="" type="text/plain"><tt>'PySide2.QtGui'</tt></a>
 <span class="moduletype">MissingModule</span>  <div class="import">
 imported by:
     <a href="#PIL.ImageQt">PIL.ImageQt</a>
@@ -468,7 +477,8 @@ imported by:
   <a target="code" href="" type="text/plain"><tt>'html5lib.treebuilders'</tt></a>
 <span class="moduletype">MissingModule</span>  <div class="import">
 imported by:
-    <a href="#lxml.html.html5parser">lxml.html.html5parser</a>
+    <a href="#lxml.html._html5builder">lxml.html._html5builder</a>
+ &#8226;   <a href="#lxml.html.html5parser">lxml.html.html5parser</a>
 
   </div>
 
@@ -638,7 +648,7 @@ imported by:
   <a target="code" href="" type="text/plain"><tt>'org.python'</tt></a>
 <span class="moduletype">MissingModule</span>  <div class="import">
 imported by:
-    <a href="#pickle">pickle</a>
+    <a href="#copy">copy</a>
  &#8226;   <a href="#setuptools.sandbox">setuptools.sandbox</a>
  &#8226;   <a href="#xml.sax">xml.sax</a>
 
@@ -937,6 +947,7 @@ imported by:
 imports:
     <a href="#PIL">PIL</a>
  &#8226;   <a href="#PIL.BmpImagePlugin">PIL.BmpImagePlugin</a>
+ &#8226;   <a href="#PIL.FitsImagePlugin">PIL.FitsImagePlugin</a>
  &#8226;   <a href="#PIL.GifImagePlugin">PIL.GifImagePlugin</a>
  &#8226;   <a href="#PIL.GimpGradientFile">PIL.GimpGradientFile</a>
  &#8226;   <a href="#PIL.GimpPaletteFile">PIL.GimpPaletteFile</a>
@@ -1218,7 +1229,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#PIL.FitsStubImagePlugin">PIL.FitsStubImagePlugin</a>
+    <a href="#PIL">PIL</a>
+ &#8226;   <a href="#PIL.FitsStubImagePlugin">PIL.FitsStubImagePlugin</a>
  &#8226;   <a href="#PIL.Image">PIL.Image</a>
 
   </div>
@@ -1859,7 +1871,6 @@ imported by:
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#'PyQt6.QtGui'">'PyQt6.QtGui'</a>
- &#8226;   <a href="#'PySide2.QtGui'">'PySide2.QtGui'</a>
  &#8226;   <a href="#'PySide6.QtGui'">'PySide6.QtGui'</a>
  &#8226;   <a href="#PIL">PIL</a>
  &#8226;   <a href="#PIL.Image">PIL.Image</a>
@@ -2865,6 +2876,7 @@ imported by:
  &#8226;   <a href="#src.View.AddCarterasView">src.View.AddCarterasView</a>
  &#8226;   <a href="#src.View.AddISINView">src.View.AddISINView</a>
  &#8226;   <a href="#src.View.AddISINViewReal">src.View.AddISINViewReal</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
  &#8226;   <a href="#src.View.ConfigView">src.View.ConfigView</a>
  &#8226;   <a href="#src.View.MainView">src.View.MainView</a>
  &#8226;   <a href="#src.View.OperacionesVentaView">src.View.OperacionesVentaView</a>
@@ -3000,7 +3012,9 @@ imported by:
  &#8226;   <a href="#PyQt5.uic">PyQt5.uic</a>
  &#8226;   <a href="#PyQt5.uic.Loader.loader">PyQt5.uic.Loader.loader</a>
  &#8226;   <a href="#matplotlib.backends.qt_compat">matplotlib.backends.qt_compat</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
  &#8226;   <a href="#src.View.MainView">src.View.MainView</a>
+ &#8226;   <a href="#src.View.UserView">src.View.UserView</a>
  &#8226;   <a href="#src.feather.logos">src.feather.logos</a>
  &#8226;   <a href="#src.util.dialogs">src.util.dialogs</a>
 
@@ -3070,6 +3084,8 @@ imported by:
  &#8226;   <a href="#PyQt5.uic.Loader.loader">PyQt5.uic.Loader.loader</a>
  &#8226;   <a href="#PyQt5.uic.Loader.qobjectcreator">PyQt5.uic.Loader.qobjectcreator</a>
  &#8226;   <a href="#matplotlib.backends.qt_compat">matplotlib.backends.qt_compat</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
+ &#8226;   <a href="#src.View.UserView">src.View.UserView</a>
 
   </div>
 
@@ -3570,6 +3586,7 @@ imported by:
     <a href="#PyQt5">PyQt5</a>
  &#8226;   <a href="#PyQt5.Qt">PyQt5.Qt</a>
  &#8226;   <a href="#PyQt5.QtWebEngineWidgets">PyQt5.QtWebEngineWidgets</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
  &#8226;   <a href="#src.View.OperacionesVentaView">src.View.OperacionesVentaView</a>
  &#8226;   <a href="#src.View.OperacionesView">src.View.OperacionesView</a>
  &#8226;   <a href="#src.View.TraspasosView">src.View.TraspasosView</a>
@@ -3629,6 +3646,7 @@ imported by:
  &#8226;   <a href="#src.View.AddCarterasView">src.View.AddCarterasView</a>
  &#8226;   <a href="#src.View.AddISINView">src.View.AddISINView</a>
  &#8226;   <a href="#src.View.AddISINViewReal">src.View.AddISINViewReal</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
  &#8226;   <a href="#src.View.ConfigView">src.View.ConfigView</a>
  &#8226;   <a href="#src.View.MainView">src.View.MainView</a>
  &#8226;   <a href="#src.View.OperacionesVentaView">src.View.OperacionesVentaView</a>
@@ -3741,6 +3759,7 @@ imported by:
  &#8226;   <a href="#src.View.AddCarterasView">src.View.AddCarterasView</a>
  &#8226;   <a href="#src.View.AddISINView">src.View.AddISINView</a>
  &#8226;   <a href="#src.View.AddISINViewReal">src.View.AddISINViewReal</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
  &#8226;   <a href="#src.View.ConfigView">src.View.ConfigView</a>
  &#8226;   <a href="#src.View.MainView">src.View.MainView</a>
  &#8226;   <a href="#src.View.OperacionesVentaView">src.View.OperacionesVentaView</a>
@@ -4242,10 +4261,106 @@ imported by:
 
 <div class="node">
   <a name="PySide2"></a>
-  <a target="code" href="" type="text/plain"><tt>PySide2</tt></a>
-<span class="moduletype">MissingModule</span>  <div class="import">
+  <a target="code" href="///C:/Users/Usuario/Desktop/Demo/venv/lib/site-packages/PySide2/__init__.py" type="text/plain"><tt>PySide2</tt></a>
+<span class="moduletype">Package</span>  <div class="import">
+imports:
+    <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#PySide2.QtNetwork">PySide2.QtNetwork</a>
+ &#8226;   <a href="#PySide2.QtWidgets">PySide2.QtWidgets</a>
+ &#8226;   <a href="#__future__">__future__</a>
+ &#8226;   <a href="#inspect">inspect</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
+ &#8226;   <a href="#sys">sys</a>
+ &#8226;   <a href="#textwrap">textwrap</a>
+
+  </div>
+  <div class="import">
 imported by:
-    <a href="#matplotlib.backends.qt_compat">matplotlib.backends.qt_compat</a>
+    <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#PySide2.QtCore">PySide2.QtCore</a>
+ &#8226;   <a href="#PySide2.QtGui">PySide2.QtGui</a>
+ &#8226;   <a href="#PySide2.QtNetwork">PySide2.QtNetwork</a>
+ &#8226;   <a href="#PySide2.QtWidgets">PySide2.QtWidgets</a>
+ &#8226;   <a href="#matplotlib.backends.qt_compat">matplotlib.backends.qt_compat</a>
+ &#8226;   <a href="#src.View.UserView">src.View.UserView</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="PySide2.QtCore"></a>
+  <tt>PySide2.QtCore</tt> <span class="moduletype"><tt>C:\Users\Usuario\Desktop\Demo\venv\lib\site-packages\PySide2\QtCore.pyd</tt></span>  <div class="import">
+imports:
+    <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#PySide2.QtCore">PySide2.QtCore</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#PySide2.QtCore">PySide2.QtCore</a>
+ &#8226;   <a href="#PySide2.QtGui">PySide2.QtGui</a>
+ &#8226;   <a href="#PySide2.QtNetwork">PySide2.QtNetwork</a>
+ &#8226;   <a href="#PySide2.QtWidgets">PySide2.QtWidgets</a>
+ &#8226;   <a href="#matplotlib.backends.qt_compat">matplotlib.backends.qt_compat</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="PySide2.QtGui"></a>
+  <tt>PySide2.QtGui</tt> <span class="moduletype"><tt>C:\Users\Usuario\Desktop\Demo\venv\lib\site-packages\PySide2\QtGui.pyd</tt></span>  <div class="import">
+imports:
+    <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#PySide2.QtCore">PySide2.QtCore</a>
+ &#8226;   <a href="#PySide2.QtGui">PySide2.QtGui</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#PySide2.QtGui">PySide2.QtGui</a>
+ &#8226;   <a href="#PySide2.QtWidgets">PySide2.QtWidgets</a>
+ &#8226;   <a href="#matplotlib.backends.qt_compat">matplotlib.backends.qt_compat</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="PySide2.QtNetwork"></a>
+  <tt>PySide2.QtNetwork</tt> <span class="moduletype"><tt>C:\Users\Usuario\Desktop\Demo\venv\lib\site-packages\PySide2\QtNetwork.pyd</tt></span>  <div class="import">
+imports:
+    <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#PySide2.QtCore">PySide2.QtCore</a>
+ &#8226;   <a href="#PySide2.QtNetwork">PySide2.QtNetwork</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#PySide2.QtNetwork">PySide2.QtNetwork</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="PySide2.QtWidgets"></a>
+  <tt>PySide2.QtWidgets</tt> <span class="moduletype"><tt>C:\Users\Usuario\Desktop\Demo\venv\lib\site-packages\PySide2\QtWidgets.pyd</tt></span>  <div class="import">
+imports:
+    <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#PySide2.QtCore">PySide2.QtCore</a>
+ &#8226;   <a href="#PySide2.QtGui">PySide2.QtGui</a>
+ &#8226;   <a href="#PySide2.QtWidgets">PySide2.QtWidgets</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#PySide2.QtWidgets">PySide2.QtWidgets</a>
+ &#8226;   <a href="#matplotlib.backends.qt_compat">matplotlib.backends.qt_compat</a>
 
   </div>
 
@@ -4325,7 +4440,8 @@ imported by:
   <a target="code" href="///C:/Users/Usuario/AppData/Local/Programs/Python/Python310/lib/__future__.py" type="text/plain"><tt>__future__</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imported by:
-    <a href="#attr">attr</a>
+    <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#attr">attr</a>
  &#8226;   <a href="#attr._cmp">attr._cmp</a>
  &#8226;   <a href="#attr._compat">attr._compat</a>
  &#8226;   <a href="#attr._config">attr._config</a>
@@ -9471,6 +9587,7 @@ imported by:
  &#8226;   <a href="#requests.auth">requests.auth</a>
  &#8226;   <a href="#secrets">secrets</a>
  &#8226;   <a href="#setuptools.package_index">setuptools.package_index</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#ssl">ssl</a>
  &#8226;   <a href="#urllib.request">urllib.request</a>
  &#8226;   <a href="#urllib3.util.request">urllib3.util.request</a>
@@ -11084,6 +11201,7 @@ imported by:
  &#8226;   <a href="#setuptools.depends">setuptools.depends</a>
  &#8226;   <a href="#setuptools.msvc">setuptools.msvc</a>
  &#8226;   <a href="#setuptools.sandbox">setuptools.sandbox</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#subprocess">subprocess</a>
  &#8226;   <a href="#test.support">test.support</a>
  &#8226;   <a href="#test.support.import_helper">test.support.import_helper</a>
@@ -11138,8 +11256,8 @@ imported by:
   <a target="code" href="///C:/Users/Usuario/AppData/Local/Programs/Python/Python310/lib/copy.py" type="text/plain"><tt>copy</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#copyreg">copyreg</a>
- &#8226;   <a href="#org">org</a>
+    <a href="#'org.python'">'org.python'</a>
+ &#8226;   <a href="#copyreg">copyreg</a>
  &#8226;   <a href="#types">types</a>
  &#8226;   <a href="#weakref">weakref</a>
 
@@ -11317,6 +11435,7 @@ imported by:
  &#8226;   <a href="#ctypes.util">ctypes.util</a>
  &#8226;   <a href="#ctypes.wintypes">ctypes.wintypes</a>
  &#8226;   <a href="#dateutil.tz.win">dateutil.tz.win</a>
+ &#8226;   <a href="#launcher.pyw">launcher.pyw</a>
  &#8226;   <a href="#matplotlib.backends.backend_qtagg">matplotlib.backends.backend_qtagg</a>
  &#8226;   <a href="#multiprocessing.sharedctypes">multiprocessing.sharedctypes</a>
  &#8226;   <a href="#numpy._distributor_init">numpy._distributor_init</a>
@@ -11330,6 +11449,8 @@ imported by:
  &#8226;   <a href="#pkg_resources._vendor.packaging._manylinux">pkg_resources._vendor.packaging._manylinux</a>
  &#8226;   <a href="#setuptools._vendor.packaging._manylinux">setuptools._vendor.packaging._manylinux</a>
  &#8226;   <a href="#setuptools.windows_support">setuptools.windows_support</a>
+ &#8226;   <a href="#src.View.UserView">src.View.UserView</a>
+ &#8226;   <a href="#src.View.cargandoView">src.View.cargandoView</a>
  &#8226;   <a href="#test.support">test.support</a>
  &#8226;   <a href="#test.support.os_helper">test.support.os_helper</a>
  &#8226;   <a href="#win32ctypes.core.ctypes._authentication">win32ctypes.core.ctypes._authentication</a>
@@ -11715,10 +11836,12 @@ imported by:
  &#8226;   <a href="#sqlite3.dbapi2">sqlite3.dbapi2</a>
  &#8226;   <a href="#src.View.AddCarterasRealesView">src.View.AddCarterasRealesView</a>
  &#8226;   <a href="#src.View.AddCarterasView">src.View.AddCarterasView</a>
+ &#8226;   <a href="#src.View.AddISINView">src.View.AddISINView</a>
  &#8226;   <a href="#src.View.AddISINViewReal">src.View.AddISINViewReal</a>
  &#8226;   <a href="#src.View.OperacionesVentaView">src.View.OperacionesVentaView</a>
  &#8226;   <a href="#src.View.OperacionesView">src.View.OperacionesView</a>
  &#8226;   <a href="#src.View.TraspasosView">src.View.TraspasosView</a>
+ &#8226;   <a href="#src.View.UserView">src.View.UserView</a>
  &#8226;   <a href="#src.util.fundUtils">src.util.fundUtils</a>
  &#8226;   <a href="#test.support.testresult">test.support.testresult</a>
  &#8226;   <a href="#tomli._re">tomli._re</a>
@@ -17020,6 +17143,7 @@ imported by:
  &#8226;   <a href="#setuptools.monkey">setuptools.monkey</a>
  &#8226;   <a href="#setuptools.package_index">setuptools.package_index</a>
  &#8226;   <a href="#setuptools.sandbox">setuptools.sandbox</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#six">six</a>
  &#8226;   <a href="#tempfile">tempfile</a>
  &#8226;   <a href="#test.support">test.support</a>
@@ -18804,6 +18928,7 @@ imported by:
  &#8226;   <a href="#random">random</a>
  &#8226;   <a href="#requests.auth">requests.auth</a>
  &#8226;   <a href="#setuptools.package_index">setuptools.package_index</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
  &#8226;   <a href="#src.View.MainView">src.View.MainView</a>
  &#8226;   <a href="#src.View.SignInView">src.View.SignInView</a>
  &#8226;   <a href="#urllib.request">urllib.request</a>
@@ -19430,8 +19555,7 @@ imported by:
   <a target="code" href="" type="text/plain"><tt>html5lib</tt></a>
 <span class="moduletype">MissingModule</span>  <div class="import">
 imported by:
-    <a href="#lxml.html._html5builder">lxml.html._html5builder</a>
- &#8226;   <a href="#lxml.html.html5parser">lxml.html.html5parser</a>
+    <a href="#lxml.html.html5parser">lxml.html.html5parser</a>
 
   </div>
 
@@ -20342,6 +20466,7 @@ imports:
   <div class="import">
 imported by:
     <a href="#PyInstaller.lib.modulegraph.util">PyInstaller.lib.modulegraph.util</a>
+ &#8226;   <a href="#PySide2">PySide2</a>
  &#8226;   <a href="#_pytest._code.code">_pytest._code.code</a>
  &#8226;   <a href="#_pytest._code.source">_pytest._code.source</a>
  &#8226;   <a href="#_pytest.compat">_pytest.compat</a>
@@ -21303,6 +21428,7 @@ imported by:
  &#8226;   <a href="#setuptools.dist">setuptools.dist</a>
  &#8226;   <a href="#setuptools.msvc">setuptools.msvc</a>
  &#8226;   <a href="#setuptools.package_index">setuptools.package_index</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#shlex">shlex</a>
  &#8226;   <a href="#six">six</a>
  &#8226;   <a href="#socket">socket</a>
@@ -22289,6 +22415,7 @@ imported by:
  &#8226;   <a href="#pandas._config.config">pandas._config.config</a>
  &#8226;   <a href="#pandas.core.computation.expr">pandas.core.computation.expr</a>
  &#8226;   <a href="#pandas.core.computation.parsing">pandas.core.computation.parsing</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
 
   </div>
 
@@ -22792,7 +22919,7 @@ imported by:
   <a target="code" href="///C:/Users/Usuario/Desktop/Demo/venv/lib/site-packages/lxml/html/_html5builder.py" type="text/plain"><tt>lxml.html._html5builder</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#html5lib">html5lib</a>
+    <a href="#'html5lib.treebuilders'">'html5lib.treebuilders'</a>
  &#8226;   <a href="#lxml">lxml</a>
  &#8226;   <a href="#lxml.etree">lxml.etree</a>
  &#8226;   <a href="#lxml.html">lxml.html</a>
@@ -23255,6 +23382,7 @@ imported by:
  &#8226;   <a href="#pkgutil">pkgutil</a>
  &#8226;   <a href="#setuptools.command.bdist_egg">setuptools.command.bdist_egg</a>
  &#8226;   <a href="#setuptools.depends">setuptools.depends</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#zipimport">zipimport</a>
 
   </div>
@@ -24632,6 +24760,9 @@ imports:
  &#8226;   <a href="#PyQt5.QtWidgets">PyQt5.QtWidgets</a>
  &#8226;   <a href="#PyQt6">PyQt6</a>
  &#8226;   <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#PySide2.QtCore">PySide2.QtCore</a>
+ &#8226;   <a href="#PySide2.QtGui">PySide2.QtGui</a>
+ &#8226;   <a href="#PySide2.QtWidgets">PySide2.QtWidgets</a>
  &#8226;   <a href="#PySide6">PySide6</a>
  &#8226;   <a href="#contextlib">contextlib</a>
  &#8226;   <a href="#functools">functools</a>
@@ -34250,7 +34381,7 @@ imported by:
   <a target="code" href="" type="text/plain"><tt>org</tt></a>
 <span class="moduletype">MissingModule</span>  <div class="import">
 imported by:
-    <a href="#copy">copy</a>
+    <a href="#pickle">pickle</a>
 
   </div>
 
@@ -34329,6 +34460,7 @@ imported by:
  &#8226;   <a href="#PyQt5">PyQt5</a>
  &#8226;   <a href="#PyQt5.uic">PyQt5.uic</a>
  &#8226;   <a href="#PyQt5.uic.uiparser">PyQt5.uic.uiparser</a>
+ &#8226;   <a href="#PySide2">PySide2</a>
  &#8226;   <a href="#_bootsubprocess">_bootsubprocess</a>
  &#8226;   <a href="#_distutils_hack">_distutils_hack</a>
  &#8226;   <a href="#_osx_support">_osx_support</a>
@@ -34441,6 +34573,7 @@ imported by:
  &#8226;   <a href="#jinja2.environment">jinja2.environment</a>
  &#8226;   <a href="#jinja2.loaders">jinja2.loaders</a>
  &#8226;   <a href="#jinja2.utils">jinja2.utils</a>
+ &#8226;   <a href="#launcher.pyw">launcher.pyw</a>
  &#8226;   <a href="#lib2to3.pgen2.driver">lib2to3.pgen2.driver</a>
  &#8226;   <a href="#lib2to3.pygram">lib2to3.pygram</a>
  &#8226;   <a href="#lib2to3.refactor">lib2to3.refactor</a>
@@ -34579,6 +34712,7 @@ imported by:
  &#8226;   <a href="#pyi_rth_pkgutil.py">pyi_rth_pkgutil.py</a>
  &#8226;   <a href="#pyi_rth_pyqt5.py">pyi_rth_pyqt5.py</a>
  &#8226;   <a href="#pyi_rth_pyqt5webengine.py">pyi_rth_pyqt5webengine.py</a>
+ &#8226;   <a href="#pyi_rth_pyside2.py">pyi_rth_pyside2.py</a>
  &#8226;   <a href="#pyparsing.core">pyparsing.core</a>
  &#8226;   <a href="#random">random</a>
  &#8226;   <a href="#requests.auth">requests.auth</a>
@@ -34607,10 +34741,12 @@ imported by:
  &#8226;   <a href="#setuptools.package_index">setuptools.package_index</a>
  &#8226;   <a href="#setuptools.sandbox">setuptools.sandbox</a>
  &#8226;   <a href="#setuptools.wheel">setuptools.wheel</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#shlex">shlex</a>
  &#8226;   <a href="#shutil">shutil</a>
  &#8226;   <a href="#socket">socket</a>
  &#8226;   <a href="#socketserver">socketserver</a>
+ &#8226;   <a href="#src.View.UserView">src.View.UserView</a>
  &#8226;   <a href="#ssl">ssl</a>
  &#8226;   <a href="#subprocess">subprocess</a>
  &#8226;   <a href="#sysconfig">sysconfig</a>
@@ -46498,14 +46634,14 @@ imported by:
   <a target="code" href="///C:/Users/Usuario/AppData/Local/Programs/Python/Python310/lib/pickle.py" type="text/plain"><tt>pickle</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#'org.python'">'org.python'</a>
- &#8226;   <a href="#_compat_pickle">_compat_pickle</a>
+    <a href="#_compat_pickle">_compat_pickle</a>
  &#8226;   <a href="#_pickle">_pickle</a>
  &#8226;   <a href="#codecs">codecs</a>
  &#8226;   <a href="#copyreg">copyreg</a>
  &#8226;   <a href="#functools">functools</a>
  &#8226;   <a href="#io">io</a>
  &#8226;   <a href="#itertools">itertools</a>
+ &#8226;   <a href="#org">org</a>
  &#8226;   <a href="#pprint">pprint</a>
  &#8226;   <a href="#re">re</a>
  &#8226;   <a href="#struct">struct</a>
@@ -47562,7 +47698,7 @@ imported by:
 <span class="moduletype">Package</span>  <div class="import">
 imports:
     <a href="#py">py</a>
- &#8226;   <a href="#py._path.common">py._path.common</a>
+ &#8226;   <a href="#py._path.svnwc">py._path.svnwc</a>
 
   </div>
   <div class="import">
@@ -47615,7 +47751,6 @@ imports:
   <div class="import">
 imported by:
     <a href="#py">py</a>
- &#8226;   <a href="#py._path">py._path</a>
  &#8226;   <a href="#py._path.local">py._path.local</a>
  &#8226;   <a href="#py._path.svnurl">py._path.svnurl</a>
  &#8226;   <a href="#py._path.svnwc">py._path.svnwc</a>
@@ -47713,6 +47848,7 @@ imports:
   <div class="import">
 imported by:
     <a href="#py">py</a>
+ &#8226;   <a href="#py._path">py._path</a>
  &#8226;   <a href="#py._path.svnurl">py._path.svnurl</a>
 
   </div>
@@ -49088,6 +49224,7 @@ imported by:
  &#8226;   <a href="#setuptools.package_index">setuptools.package_index</a>
  &#8226;   <a href="#setuptools.sandbox">setuptools.sandbox</a>
  &#8226;   <a href="#setuptools.wheel">setuptools.wheel</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#shlex">shlex</a>
  &#8226;   <a href="#src.View.SignInView">src.View.SignInView</a>
  &#8226;   <a href="#string">string</a>
@@ -49832,10 +49969,48 @@ imported by:
 
 <div class="node">
   <a name="shiboken2"></a>
-  <a target="code" href="" type="text/plain"><tt>shiboken2</tt></a>
-<span class="moduletype">MissingModule</span>  <div class="import">
+  <a target="code" href="///C:/Users/Usuario/Desktop/Demo/venv/lib/site-packages/shiboken2/__init__.py" type="text/plain"><tt>shiboken2</tt></a>
+<span class="moduletype">Package</span>  <div class="import">
+imports:
+    <a href="#base64">base64</a>
+ &#8226;   <a href="#contextlib">contextlib</a>
+ &#8226;   <a href="#functools">functools</a>
+ &#8226;   <a href="#io">io</a>
+ &#8226;   <a href="#keyword">keyword</a>
+ &#8226;   <a href="#marshal">marshal</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#re">re</a>
+ &#8226;   <a href="#shiboken2.shiboken2">shiboken2.shiboken2</a>
+ &#8226;   <a href="#struct">struct</a>
+ &#8226;   <a href="#sys">sys</a>
+ &#8226;   <a href="#tempfile">tempfile</a>
+ &#8226;   <a href="#textwrap">textwrap</a>
+ &#8226;   <a href="#traceback">traceback</a>
+ &#8226;   <a href="#types">types</a>
+ &#8226;   <a href="#typing">typing</a>
+ &#8226;   <a href="#zipfile">zipfile</a>
+
+  </div>
+  <div class="import">
 imported by:
-    <a href="#matplotlib.backends.qt_compat">matplotlib.backends.qt_compat</a>
+    <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#matplotlib.backends.qt_compat">matplotlib.backends.qt_compat</a>
+ &#8226;   <a href="#shiboken2.shiboken2">shiboken2.shiboken2</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="shiboken2.shiboken2"></a>
+  <tt>shiboken2.shiboken2</tt> <span class="moduletype"><tt>C:\Users\Usuario\Desktop\Demo\venv\lib\site-packages\shiboken2\shiboken2.pyd</tt></span>  <div class="import">
+imports:
+    <a href="#shiboken2">shiboken2</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#shiboken2">shiboken2</a>
 
   </div>
 
@@ -50230,6 +50405,7 @@ imported by:
  &#8226;   <a href="#src.View.AddCarterasView">src.View.AddCarterasView</a>
  &#8226;   <a href="#src.View.AddISINView">src.View.AddISINView</a>
  &#8226;   <a href="#src.View.AddISINViewReal">src.View.AddISINViewReal</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
  &#8226;   <a href="#src.View.MainView">src.View.MainView</a>
  &#8226;   <a href="#src.View.OperacionesVentaView">src.View.OperacionesVentaView</a>
  &#8226;   <a href="#src.View.OperacionesView">src.View.OperacionesView</a>
@@ -50307,6 +50483,7 @@ imported by:
  &#8226;   <a href="#src.View.AddCarterasView">src.View.AddCarterasView</a>
  &#8226;   <a href="#src.View.AddISINView">src.View.AddISINView</a>
  &#8226;   <a href="#src.View.AddISINViewReal">src.View.AddISINViewReal</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
  &#8226;   <a href="#src.View.ConfigView">src.View.ConfigView</a>
  &#8226;   <a href="#src.View.MainView">src.View.MainView</a>
  &#8226;   <a href="#src.View.OperacionesVentaView">src.View.OperacionesVentaView</a>
@@ -50372,6 +50549,7 @@ imports:
     <a href="#PyQt5">PyQt5</a>
  &#8226;   <a href="#PyQt5.QtWidgets">PyQt5.QtWidgets</a>
  &#8226;   <a href="#PyQt5.uic">PyQt5.uic</a>
+ &#8226;   <a href="#datetime">datetime</a>
  &#8226;   <a href="#pycountry_convert">pycountry_convert</a>
  &#8226;   <a href="#sqlite3">sqlite3</a>
  &#8226;   <a href="#src.View">src.View</a>
@@ -50416,6 +50594,31 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="src.View.ChangeUsersView"></a>
+  <a target="code" href="///C:/Users/Usuario/Desktop/Demo/src/View/ChangeUsersView.py" type="text/plain"><tt>src.View.ChangeUsersView</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#PyQt5">PyQt5</a>
+ &#8226;   <a href="#PyQt5.QtCore">PyQt5.QtCore</a>
+ &#8226;   <a href="#PyQt5.QtGui">PyQt5.QtGui</a>
+ &#8226;   <a href="#PyQt5.QtWebEngineWidgets">PyQt5.QtWebEngineWidgets</a>
+ &#8226;   <a href="#PyQt5.QtWidgets">PyQt5.QtWidgets</a>
+ &#8226;   <a href="#PyQt5.uic">PyQt5.uic</a>
+ &#8226;   <a href="#hashlib">hashlib</a>
+ &#8226;   <a href="#sqlite3">sqlite3</a>
+ &#8226;   <a href="#src.View">src.View</a>
+ &#8226;   <a href="#src.util.dialogs">src.util.dialogs</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#src.View.ConfigView">src.View.ConfigView</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="src.View.ConfigView"></a>
   <a target="code" href="///C:/Users/Usuario/Desktop/Demo/src/View/ConfigView.py" type="text/plain"><tt>src.View.ConfigView</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
@@ -50424,6 +50627,7 @@ imports:
  &#8226;   <a href="#PyQt5.QtWidgets">PyQt5.QtWidgets</a>
  &#8226;   <a href="#PyQt5.uic">PyQt5.uic</a>
  &#8226;   <a href="#src.View">src.View</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
  &#8226;   <a href="#src.View.SignInView">src.View.SignInView</a>
 
   </div>
@@ -50571,12 +50775,18 @@ imported by:
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#PyQt5">PyQt5</a>
+ &#8226;   <a href="#PyQt5.QtCore">PyQt5.QtCore</a>
+ &#8226;   <a href="#PyQt5.QtGui">PyQt5.QtGui</a>
  &#8226;   <a href="#PyQt5.QtWebEngineWidgets">PyQt5.QtWebEngineWidgets</a>
  &#8226;   <a href="#PyQt5.QtWidgets">PyQt5.QtWidgets</a>
  &#8226;   <a href="#PyQt5.uic">PyQt5.uic</a>
  &#8226;   <a href="#PyQt5.uic.uiparser">PyQt5.uic.uiparser</a>
+ &#8226;   <a href="#PySide2">PySide2</a>
+ &#8226;   <a href="#ctypes">ctypes</a>
+ &#8226;   <a href="#datetime">datetime</a>
  &#8226;   <a href="#highcharts">highcharts</a>
  &#8226;   <a href="#highstock">highstock</a>
+ &#8226;   <a href="#os">os</a>
  &#8226;   <a href="#sqlite3">sqlite3</a>
  &#8226;   <a href="#src.View">src.View</a>
  &#8226;   <a href="#src.View.AddCarterasRealesView">src.View.AddCarterasRealesView</a>
@@ -50591,6 +50801,8 @@ imports:
  &#8226;   <a href="#src.util">src.util</a>
  &#8226;   <a href="#src.util.dialogs">src.util.dialogs</a>
  &#8226;   <a href="#src.util.fundUtils">src.util.fundUtils</a>
+ &#8226;   <a href="#sys">sys</a>
+ &#8226;   <a href="#time">time</a>
 
   </div>
   <div class="import">
@@ -50611,6 +50823,7 @@ imports:
  &#8226;   <a href="#PyQt5.QtWebEngineWidgets">PyQt5.QtWebEngineWidgets</a>
  &#8226;   <a href="#PyQt5.QtWidgets">PyQt5.QtWidgets</a>
  &#8226;   <a href="#PyQt5.uic">PyQt5.uic</a>
+ &#8226;   <a href="#ctypes">ctypes</a>
  &#8226;   <a href="#sqlite3">sqlite3</a>
  &#8226;   <a href="#src.View">src.View</a>
 
@@ -50699,6 +50912,7 @@ imported by:
  &#8226;   <a href="#src.View.AddCarterasView">src.View.AddCarterasView</a>
  &#8226;   <a href="#src.View.AddISINView">src.View.AddISINView</a>
  &#8226;   <a href="#src.View.AddISINViewReal">src.View.AddISINViewReal</a>
+ &#8226;   <a href="#src.View.ChangeUsersView">src.View.ChangeUsersView</a>
  &#8226;   <a href="#src.View.MainView">src.View.MainView</a>
  &#8226;   <a href="#src.View.OperacionesVentaView">src.View.OperacionesVentaView</a>
  &#8226;   <a href="#src.View.OperacionesView">src.View.OperacionesView</a>
@@ -51042,6 +51256,7 @@ imported by:
  &#8226;   <a href="#setuptools._vendor.packaging._manylinux">setuptools._vendor.packaging._manylinux</a>
  &#8226;   <a href="#setuptools._vendor.packaging._musllinux">setuptools._vendor.packaging._musllinux</a>
  &#8226;   <a href="#setuptools.command.easy_install">setuptools.command.easy_install</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#six">six</a>
  &#8226;   <a href="#tarfile">tarfile</a>
  &#8226;   <a href="#test.support">test.support</a>
@@ -51198,6 +51413,7 @@ imported by:
  &#8226;   <a href="#PyQt5.uic.Loader.qobjectcreator">PyQt5.uic.Loader.qobjectcreator</a>
  &#8226;   <a href="#PyQt5.uic.properties">PyQt5.uic.properties</a>
  &#8226;   <a href="#PyQt5.uic.uiparser">PyQt5.uic.uiparser</a>
+ &#8226;   <a href="#PySide2">PySide2</a>
  &#8226;   <a href="#__main__">__main__</a>
  &#8226;   <a href="#_aix_support">_aix_support</a>
  &#8226;   <a href="#_collections_abc">_collections_abc</a>
@@ -51492,6 +51708,7 @@ imported by:
  &#8226;   <a href="#pyi_rth_pkgutil.py">pyi_rth_pkgutil.py</a>
  &#8226;   <a href="#pyi_rth_pyqt5.py">pyi_rth_pyqt5.py</a>
  &#8226;   <a href="#pyi_rth_pyqt5webengine.py">pyi_rth_pyqt5webengine.py</a>
+ &#8226;   <a href="#pyi_rth_pyside2.py">pyi_rth_pyside2.py</a>
  &#8226;   <a href="#pyi_rth_subprocess.py">pyi_rth_subprocess.py</a>
  &#8226;   <a href="#pyparsing.core">pyparsing.core</a>
  &#8226;   <a href="#pyparsing.exceptions">pyparsing.exceptions</a>
@@ -51527,11 +51744,13 @@ imported by:
  &#8226;   <a href="#setuptools.package_index">setuptools.package_index</a>
  &#8226;   <a href="#setuptools.sandbox">setuptools.sandbox</a>
  &#8226;   <a href="#setuptools.unicode_utils">setuptools.unicode_utils</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#shlex">shlex</a>
  &#8226;   <a href="#shutil">shutil</a>
  &#8226;   <a href="#six">six</a>
  &#8226;   <a href="#socket">socket</a>
  &#8226;   <a href="#socketserver">socketserver</a>
+ &#8226;   <a href="#src.View.UserView">src.View.UserView</a>
  &#8226;   <a href="#sre_compile">sre_compile</a>
  &#8226;   <a href="#ssl">ssl</a>
  &#8226;   <a href="#subprocess">subprocess</a>
@@ -51740,6 +51959,7 @@ imported by:
  &#8226;   <a href="#setuptools.command.easy_install">setuptools.command.easy_install</a>
  &#8226;   <a href="#setuptools.installer">setuptools.installer</a>
  &#8226;   <a href="#setuptools.sandbox">setuptools.sandbox</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#test.support.os_helper">test.support.os_helper</a>
  &#8226;   <a href="#test.test_support">test.test_support</a>
  &#8226;   <a href="#urllib.request">urllib.request</a>
@@ -52071,6 +52291,7 @@ imports:
   <div class="import">
 imported by:
     <a href="#PyInstaller.utils.hooks">PyInstaller.utils.hooks</a>
+ &#8226;   <a href="#PySide2">PySide2</a>
  &#8226;   <a href="#_pytest._code.source">_pytest._code.source</a>
  &#8226;   <a href="#_pytest.config">_pytest.config</a>
  &#8226;   <a href="#_pytest.config.argparsing">_pytest.config.argparsing</a>
@@ -52123,6 +52344,7 @@ imported by:
  &#8226;   <a href="#setuptools.command.easy_install">setuptools.command.easy_install</a>
  &#8226;   <a href="#setuptools.dist">setuptools.dist</a>
  &#8226;   <a href="#setuptools.sandbox">setuptools.sandbox</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#test.test_support">test.test_support</a>
 
   </div>
@@ -52296,6 +52518,7 @@ imported by:
  &#8226;   <a href="#src.View.OperacionesVentaView">src.View.OperacionesVentaView</a>
  &#8226;   <a href="#src.View.OperacionesView">src.View.OperacionesView</a>
  &#8226;   <a href="#src.View.TraspasosView">src.View.TraspasosView</a>
+ &#8226;   <a href="#src.View.UserView">src.View.UserView</a>
  &#8226;   <a href="#ssl">ssl</a>
  &#8226;   <a href="#subprocess">subprocess</a>
  &#8226;   <a href="#tarfile">tarfile</a>
@@ -52556,6 +52779,7 @@ imported by:
  &#8226;   <a href="#pydoc">pydoc</a>
  &#8226;   <a href="#pyparsing.core">pyparsing.core</a>
  &#8226;   <a href="#setuptools._vendor.pyparsing">setuptools._vendor.pyparsing</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#socketserver">socketserver</a>
  &#8226;   <a href="#test.support.testresult">test.support.testresult</a>
  &#8226;   <a href="#threading">threading</a>
@@ -52726,6 +52950,7 @@ imported by:
  &#8226;   <a href="#setuptools._vendor.pyparsing">setuptools._vendor.pyparsing</a>
  &#8226;   <a href="#setuptools.command.bdist_egg">setuptools.command.bdist_egg</a>
  &#8226;   <a href="#setuptools.monkey">setuptools.monkey</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#six">six</a>
  &#8226;   <a href="#subprocess">subprocess</a>
  &#8226;   <a href="#sysconfig">sysconfig</a>
@@ -53080,6 +53305,7 @@ imported by:
  &#8226;   <a href="#setuptools._vendor.packaging.utils">setuptools._vendor.packaging.utils</a>
  &#8226;   <a href="#setuptools._vendor.packaging.version">setuptools._vendor.packaging.version</a>
  &#8226;   <a href="#setuptools.dist">setuptools.dist</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#tomli._parser">tomli._parser</a>
  &#8226;   <a href="#tomli._re">tomli._re</a>
  &#8226;   <a href="#tomli._types">tomli._types</a>
@@ -59397,6 +59623,7 @@ imported by:
  &#8226;   <a href="#setuptools.command.bdist_egg">setuptools.command.bdist_egg</a>
  &#8226;   <a href="#setuptools.command.easy_install">setuptools.command.easy_install</a>
  &#8226;   <a href="#setuptools.wheel">setuptools.wheel</a>
+ &#8226;   <a href="#shiboken2">shiboken2</a>
  &#8226;   <a href="#shutil">shutil</a>
  &#8226;   <a href="#test.support.script_helper">test.support.script_helper</a>
 

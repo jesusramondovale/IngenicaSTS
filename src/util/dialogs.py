@@ -490,7 +490,7 @@ class CarteraAddedSuccesfully(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Éxito!")
-        self.setFixedWidth(380)
+        self.setFixedWidth(390)
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
@@ -518,7 +518,7 @@ class TickerAddedSuccesfully(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Éxito!")
-        self.setFixedWidth(330)
+        self.setFixedWidth(380)
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)

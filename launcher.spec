@@ -8,7 +8,7 @@ a = Analysis(
     ['launcher.pyw'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('mainLogo.ico' , '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -37,6 +37,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='mainLogo.ico',
 )
 coll = COLLECT(
     exe,

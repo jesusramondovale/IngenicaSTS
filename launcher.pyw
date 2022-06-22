@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
-import sys
+import sys, os
 from PyQt5.QtWidgets import *
 # Importamos el objeto de Interfaz MainView (la vista + lógica de programación de la ventana LogIn)
 from src.View.MainView import MainView
+
+import ctypes
+
+myappid = u'IngenicaSTS.Software.GestorETF.v7'
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 '''
  - Clase principal de lanzamiento, el hilo de ejecución comienza aquí.
