@@ -209,12 +209,12 @@ class AddISINViewReal(QMainWindow):
 
                     #self.parent().ISINS_real.append(ISIN)
                     self.parent().refreshIsinsEnCartera()
+
                     # Avisa al usuario de la operación completada con éxito y
                     # esconde la ventana actual (vuelve a UserView)
                     dlg = TickerAddedSuccesfully(self)
                     dlg.exec()
                     self.hide()
-
 
 
                 # Captura del Error lanzado por la API de investing.com

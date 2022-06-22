@@ -205,6 +205,7 @@ class OperacionesVentaView(QMainWindow):
                 self.parent().refreshLabelCartera(self.parent().currentCarteraReal)
                 self.parent().UpdateTableOperaciones(self.parent().currentCarteraReal)
                 self.parent().updatePieChart(self.parent().currentCarteraReal)
+                self.parent().refreshIsinsEnCartera()
 
                 self.hide()
             else:

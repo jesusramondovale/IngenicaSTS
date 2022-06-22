@@ -27,12 +27,14 @@ class ConfigView(QMainWindow):
         view.cbTema.addItems(['Dark', 'Light'])
 
         if view.parent().id_usuario[0] == 5:
-            view.buttonNewUser.show()
-            view.buttonResetPass.show()
+            view.gpAdmin.show()
+
+
 
         else:
-            view.buttonNewUser.hide()
-            view.buttonResetPass.hide()
+            view.gpAdmin.hide()
+            view.setFixedHeight(170)
+
 
 
         # Conexión de los eventos de botones clickados a la lógica de los controladores

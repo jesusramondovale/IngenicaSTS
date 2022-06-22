@@ -17,11 +17,12 @@ class badOperationDialog(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Vaya..")
-        self.setFixedWidth(350)
+        self.setFixedWidth(400)
 
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -49,6 +50,7 @@ class badRVdialog(QDialog):
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -72,11 +74,16 @@ class confirmAutoRefresh(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("¿Seguro?")
-        self.setFixedWidth(350)
+        self.setFixedWidth(380)
 
         # CONTENIDO
         btnYes = QPushButton('Confirmar')
         btnNo = QPushButton('Cancelar')
+        btnYes.setFixedWidth(100)
+        btnYes.setFixedHeight(20)
+        btnNo.setFixedWidth(100)
+        btnNo.setFixedHeight(20)
+
 
         btnYes.clicked.connect(self.accept)
         btnNo.clicked.connect(self.reject)
@@ -100,11 +107,12 @@ class badPasswords(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Vaya..")
-        self.setFixedWidth(300)
+        self.setFixedWidth(330)
 
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -119,11 +127,12 @@ class userChangedSuccesfully(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Éxito!")
-        self.setFixedWidth(300)
+        self.setFixedWidth(330)
 
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -138,11 +147,12 @@ class userNotFound(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Vaya..")
-        self.setFixedWidth(300)
+        self.setFixedWidth(330)
 
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -166,11 +176,11 @@ class connectionError(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Vaya..")
-        self.setFixedWidth(300)
-
+        self.setFixedWidth(330)
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -195,11 +205,15 @@ class confirmLogoutDialog(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("¿Seguro?")
-        self.setFixedWidth(300)
+        self.setFixedWidth(330)
 
         # CONTENIDO
         btnYes = QPushButton('Confirmar')
         btnNo = QPushButton('Cancelar')
+        btnYes.setFixedWidth(100)
+        btnYes.setFixedHeight(20)
+        btnNo.setFixedWidth(100)
+        btnNo.setFixedHeight(20)
 
         btnYes.clicked.connect(self.accept)
         btnNo.clicked.connect(self.reject)
@@ -237,6 +251,7 @@ class selectAnyDialog(QDialog):
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -259,11 +274,15 @@ class confirmDeleteCarteraDialog(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("¿Seguro?")
-        self.setFixedWidth(300)
+        self.setFixedWidth(330)
 
         # CONTENIDO
         btnYes = QPushButton('Confirmar')
         btnNo = QPushButton('Cancelar')
+        btnYes.setFixedWidth(100)
+        btnYes.setFixedHeight(20)
+        btnNo.setFixedWidth(100)
+        btnNo.setFixedHeight(20)
 
         btnYes.clicked.connect(self.accept)
         btnNo.clicked.connect(self.reject)
@@ -300,7 +319,10 @@ class confirmDeleteFundDialog(QDialog):
         # CONTENIDO
         btnYes = QPushButton('Confirmar')
         btnNo = QPushButton('Cancelar')
-
+        btnYes.setFixedWidth(100)
+        btnYes.setFixedHeight(20)
+        btnNo.setFixedWidth(100)
+        btnNo.setFixedHeight(20)
         btnYes.clicked.connect(self.accept)
         btnNo.clicked.connect(self.reject)
 
@@ -335,6 +357,7 @@ class downloadingIsinDialog(QDialog):
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -360,6 +383,7 @@ class ISINAlready(QDialog):
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -387,6 +411,7 @@ class isinNotFoundDialog(QDialog):
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -414,6 +439,7 @@ class carteraAlreadyExistsDialog(QDialog):
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -440,6 +466,8 @@ class errorInesperado(QDialog):
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
+
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -462,10 +490,11 @@ class CarteraAddedSuccesfully(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Éxito!")
-        self.setFixedWidth(350)
+        self.setFixedWidth(380)
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -493,6 +522,7 @@ class TickerAddedSuccesfully(QDialog):
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel(
@@ -515,10 +545,11 @@ class registerCompleteDialog(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Éxito!")
-        self.setFixedWidth(300)
+        self.setFixedWidth(330)
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel("El Registro se ha realizado\nadecuadamente"))
@@ -541,10 +572,11 @@ class operationCompleteDialog(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Éxito!")
-        self.setFixedWidth(360)
+        self.setFixedWidth(410)
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel("La operación se ha realizado adecuadamente"))
@@ -567,10 +599,11 @@ class refreshCompleteDialog(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Éxito!")
-        self.setFixedWidth(360)
+        self.setFixedWidth(390)
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel("Los datos se han actualizado adecuadamente"))
@@ -593,11 +626,12 @@ class badEmailDialog(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Error!")
-        self.setFixedWidth(300)
+        self.setFixedWidth(350)
 
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
 
         self.layout = QGridLayout()
@@ -622,10 +656,11 @@ class badQueryDialog(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Vaya...")
-        self.setFixedWidth(340)
+        self.setFixedWidth(380)
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
         self.layout = QHBoxLayout()
         self.layout.addWidget(QLabel("Rellene todos los campos primero!"))
@@ -648,12 +683,13 @@ class badLoginDialog(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("Error!")
-        self.setFixedWidth(300)
+        self.setFixedWidth(330)
         self.setFixedHeight(100)
 
         # CONTENIDO
         btnOK = QPushButton('OK')
         btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
         btnOK.clicked.connect(self.accept)
 
         self.layout = QGridLayout()
@@ -682,7 +718,10 @@ class goodLoginDialog(QDialog):
         # CONTENIDO
         btnEntrar = QPushButton('Entrar')
         btnSalir = QPushButton('Salir')
-
+        btnEntrar.setFixedWidth(100)
+        btnEntrar.setFixedHeight(20)
+        btnSalir.setFixedWidth(100)
+        btnSalir.setFixedHeight(20)
         btnEntrar.clicked.connect(self.accept)
         btnSalir.clicked.connect(self.reject)
 

@@ -194,7 +194,7 @@ class UserView(QMainWindow):
                 lambda clicked, nombre_cartera=view.button.text(): view.UpdateTableOperaciones(nombre_cartera))
             view.layoutButtonsCarteras.addWidget(view.button)
             view.button.clicked.connect(
-                lambda clicked, isins_selected=view.isins_selected: view.refreshIsinsEnCartera())
+                lambda clicked, view=view: view.refreshIsinsEnCartera())
 
         view.frameButtonsCarteras.setLayout(view.layoutButtonsCarteras)
         view.frameRefreshModes.setLayout(view.layoutRefreshModes)
@@ -332,6 +332,7 @@ class UserView(QMainWindow):
         view.browserPie.setHtml(view.Pie.htmlcontent)
         view.layoutPieChart.addWidget(view.browserPie)
         fundUtils.refreshHistoricsNoConfirm(view)
+        view.refreshIsinsEnCartera()
         view.browserPie.show()
 
 
@@ -434,20 +435,48 @@ class UserView(QMainWindow):
 
 
     def refreshIsinsEnCartera(self):
+
         print('RefreshIsinsEnCartera()')
         # Conexión con la BD y creación de un cursor de consultas
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
 
-        lista_Isins_cartera = db.execute(
-            "SELECT ca.Nombre FROM carteras_usuario_real cr " +
-            "INNER JOIN caracterizacion ca USING(ISIN) " +
-            "WHERE cr.id_usuario = ? AND cr.nombre_cartera = ?",
-            ([self.id_usuario[0], self.currentCarteraReal])).fetchall()
+        sql = (
+            'SELECT ca.Nombre , ca.ISIN , f.Participaciones , f.Importe '
+            'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
+            '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
+            'from [' + str(self.id_usuario[0]) + "_" + str(self.currentCarteraReal) + '] t) t where rn = 1 order by ISIN) f USING(ISIN)'
+             )
+        try:
+            funds = db.execute(sql).fetchall()
+            self.tableFondosCartera.clear()
+            self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
+            self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
+            self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Partic.'))
+            self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Importe'))
+            self.tableFondosCartera.setColumnWidth(0, 200)
+            self.tableFondosCartera.setColumnWidth(1, 140)
+            self.tableFondosCartera.setColumnWidth(2, 60)
+            self.tableFondosCartera.setColumnWidth(3, 100)
+            self.tableFondosCartera.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        self.listFondosCartera.clear()
-        for e in lista_Isins_cartera:
-            self.listFondosCartera.addItem((e[0]) + ' (' + fundUtils.FundtoISINOffline(e[0]) + ')')
+            self.tableFondosCartera.setRowCount(len(funds))
+
+            f = 0
+
+            filas = db.execute(sql, ([]))
+
+            for fila in filas:
+                self.tableFondosCartera.setItem(f, 0, QTableWidgetItem(str(fila[0])))
+                self.tableFondosCartera.setItem(f, 1, QTableWidgetItem(str(fila[1])))
+                self.tableFondosCartera.setItem(f, 2, QTableWidgetItem(str(fila[2])))
+                self.tableFondosCartera.setItem(f, 3, QTableWidgetItem(str(fila[3])))
+
+                f += 1
+
+        except sqlite3.OperationalError:
+            pass
+
         db.close()
 
     '''
@@ -891,7 +920,7 @@ class UserView(QMainWindow):
 
             sql = 'SELECT fecha , orden , titular , incidencias , ISINorigen, ISINdestino, origenParticipaciones , origenImporte ' \
                   'FROM operaciones ' \
-                  'WHERE id_usuario == ? AND nombre_cartera == ?'
+                  'WHERE id_usuario == ? AND nombre_cartera == ? ORDER BY fecha Desc'
 
             try:
                 funds = db.execute(sql, ([view.id_usuario[0], nombre_cartera])).fetchall()
@@ -901,11 +930,19 @@ class UserView(QMainWindow):
                 view.tableOperaciones.setHorizontalHeaderItem(1, QTableWidgetItem('Estado'))
                 view.tableOperaciones.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
                 view.tableOperaciones.setHorizontalHeaderItem(3, QTableWidgetItem('Incidencias'))
-                view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Fondo (Origen)'))
+                view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Fondo (Origen.)'))
                 view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Fondo (Destino)'))
-                view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Participaciones (Origen)'))
-                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Participaciones (Destino)'))
-                view.tableOperaciones.setColumnWidth(2, 350)
+                view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Particip. (Origen)'))
+                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Importe. (Origen)'))
+                view.tableOperaciones.setColumnWidth(0, 120)
+                view.tableOperaciones.setColumnWidth(1, 100)
+                view.tableOperaciones.setColumnWidth(2, 160)
+                view.tableOperaciones.setColumnWidth(3, 100)
+                view.tableOperaciones.setColumnWidth(4, 160)
+                view.tableOperaciones.setColumnWidth(5, 160)
+                view.tableOperaciones.setColumnWidth(6, 160)
+                view.tableOperaciones.setColumnWidth(7, 160)
+
                 view.tableOperaciones.setRowCount(len(funds))
 
                 f = 0
@@ -965,7 +1002,7 @@ class UserView(QMainWindow):
 
         if not fecha:
             print('updatePieChart(sin fecha) en Cartera --> ' + str(nombre_cartera))
-            self.Pie = Highchart(width=420, height=420)
+            self.Pie = Highchart(width=440, height=440)
             self.currentCarteraReal = nombre_cartera
             if self.theme == 'Light':
                 options = {
@@ -1038,7 +1075,7 @@ class UserView(QMainWindow):
         # Hay fecha
         else:
             print('updatePieChart(con fecha)' + str(fecha) + 'en Cartera --> ' + str(nombre_cartera))
-            self.Pie = Highchart(width=420, height=420)
+            self.Pie = Highchart(width=440, height=440)
             self.currentCarteraReal = nombre_cartera
             if self.theme == 'Light':
                 options = {

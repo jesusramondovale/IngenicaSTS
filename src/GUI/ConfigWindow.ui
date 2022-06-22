@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>346</width>
-    <height>220</height>
+    <width>342</width>
+    <height>297</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,7 +67,7 @@ QPushButton:checked {
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QGroupBox" name="gpUsers">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -117,73 +117,66 @@ QPushButton:checked {
     <property name="geometry">
      <rect>
       <x>200</x>
-      <y>170</y>
+      <y>100</y>
       <width>112</width>
       <height>34</height>
      </rect>
     </property>
     <property name="text">
-     <string>Aplicar</string>
+     <string>Aplicar Tema</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="buttonCancelar">
+   <widget class="QGroupBox" name="gpAdmin">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>170</y>
-      <width>112</width>
-      <height>34</height>
+      <y>150</y>
+      <width>291</width>
+      <height>131</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Cancelar</string>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
-   </widget>
-   <widget class="QPushButton" name="buttonNewUser">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>110</y>
-      <width>121</width>
-      <height>34</height>
-     </rect>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255)</string>
     </property>
-    <property name="text">
-     <string>Nuevo Usuario</string>
+    <property name="title">
+     <string>Ajustes de Administrador</string>
     </property>
-   </widget>
-   <widget class="QPushButton" name="buttonResetPass">
-    <property name="geometry">
-     <rect>
-      <x>171</x>
-      <y>110</y>
-      <width>141</width>
-      <height>34</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Reset Contraseñas</string>
-    </property>
+    <widget class="QPushButton" name="buttonResetPass">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>131</width>
+       <height>34</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Editar Usuarios</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="buttonNewUser">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>80</y>
+       <width>131</width>
+       <height>34</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Nuevo Usuario</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonCancelar</sender>
-   <signal>clicked()</signal>
-   <receiver>ConfigWindow</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>75</x>
-     <y>186</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>172</x>
-     <y>109</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

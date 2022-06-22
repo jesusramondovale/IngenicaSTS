@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1370</width>
+    <width>1381</width>
     <height>724</height>
    </rect>
   </property>
@@ -984,14 +984,15 @@ background: rgb(206, 206, 206)
      </property>
      <property name="font">
       <font>
-       <family>Yu Gothic UI Light</family>
+       <family>Yu Gothic UI</family>
        <pointsize>12</pointsize>
-       <weight>50</weight>
+       <weight>9</weight>
+       <italic>false</italic>
        <bold>false</bold>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">font: 75 12pt &quot;Yu Gothic UI&quot;;</string>
      </property>
      <property name="text">
       <string>Cartera Actual:</string>
@@ -1059,25 +1060,26 @@ background: rgb(206, 206, 206)
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>530</x>
+       <x>450</x>
        <y>190</y>
-       <width>191</width>
+       <width>271</width>
        <height>21</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <family>Yu Gothic UI Light</family>
+       <family>Yu Gothic UI</family>
        <pointsize>12</pointsize>
-       <weight>50</weight>
+       <weight>9</weight>
+       <italic>false</italic>
        <bold>false</bold>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">font: 75 12pt &quot;Yu Gothic UI&quot;;</string>
      </property>
      <property name="text">
-      <string> Fondos en Cartera</string>
+      <string> Fondos en Cartera Activos</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_5">
@@ -1114,6 +1116,12 @@ background: rgb(206, 206, 206)
        <height>291</height>
       </rect>
      </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
      <column>
       <property name="text">
        <string>Fecha</string>
@@ -1166,14 +1174,15 @@ background: rgb(206, 206, 206)
      </property>
      <property name="font">
       <font>
-       <family>Yu Gothic UI Light</family>
+       <family>Yu Gothic UI</family>
        <pointsize>12</pointsize>
-       <weight>50</weight>
+       <weight>9</weight>
+       <italic>false</italic>
        <bold>false</bold>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">font: 75 12pt &quot;Yu Gothic UI&quot;;</string>
      </property>
      <property name="text">
       <string>-- NOMBRE USUARIO --</string>
@@ -1182,7 +1191,7 @@ background: rgb(206, 206, 206)
     <widget class="QLabel" name="labelEmailReal">
      <property name="geometry">
       <rect>
-       <x>40</x>
+       <x>20</x>
        <y>40</y>
        <width>291</width>
        <height>31</height>
@@ -1263,22 +1272,18 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
      </property>
      <property name="font">
       <font>
-       <family>Yu Gothic UI Light</family>
+       <family>Yu Gothic UI</family>
        <pointsize>12</pointsize>
+       <weight>9</weight>
+       <italic>false</italic>
+       <bold>false</bold>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 75 12pt &quot;Yu Gothic UI&quot;;</string>
      </property>
      <property name="text">
       <string>Ninguna</string>
-     </property>
-    </widget>
-    <widget class="QListWidget" name="listFondosCartera">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>220</y>
-       <width>531</width>
-       <height>191</height>
-      </rect>
      </property>
     </widget>
     <widget class="QLabel" name="labelSinCarteras">
@@ -1341,25 +1346,25 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QLabel" name="label_7">
      <property name="geometry">
       <rect>
-       <x>460</x>
-       <y>100</y>
-       <width>261</width>
+       <x>310</x>
+       <y>10</y>
+       <width>231</width>
        <height>31</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 75 14pt &quot;Yu Gothic UI&quot;;</string>
+      <string notr="true">font: 75 12pt &quot;Yu Gothic UI&quot;;</string>
      </property>
      <property name="text">
-      <string>Valor Total de Cartera:</string>
+      <string>Valor Total de Cartera</string>
      </property>
     </widget>
     <widget class="QLabel" name="labelValorTotal">
      <property name="geometry">
       <rect>
-       <x>280</x>
-       <y>130</y>
-       <width>441</width>
+       <x>313</x>
+       <y>40</y>
+       <width>221</width>
        <height>31</height>
       </rect>
      </property>
@@ -1420,14 +1425,15 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
      </property>
      <property name="font">
       <font>
-       <family>Yu Gothic UI Light</family>
+       <family>Yu Gothic UI</family>
        <pointsize>12</pointsize>
-       <weight>50</weight>
+       <weight>9</weight>
+       <italic>false</italic>
        <bold>false</bold>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">font: 75 12pt &quot;Yu Gothic UI&quot;;</string>
      </property>
      <property name="text">
       <string>Fecha de Estado</string>
@@ -1436,9 +1442,9 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QLabel" name="labelRendimientoTotal">
      <property name="geometry">
       <rect>
-       <x>497</x>
-       <y>160</y>
-       <width>221</width>
+       <x>420</x>
+       <y>70</y>
+       <width>111</width>
        <height>20</height>
       </rect>
      </property>
@@ -1452,6 +1458,77 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
+    <widget class="QTableWidget" name="tableFondosCartera">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>221</y>
+       <width>531</width>
+       <height>191</height>
+      </rect>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="gridStyle">
+      <enum>Qt::DotLine</enum>
+     </property>
+     <property name="columnCount">
+      <number>8</number>
+     </property>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Fondo</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>ISIN</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Partic.</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Importe</string>
+      </property>
+     </column>
+     <column/>
+     <column/>
+     <column/>
+     <column/>
+    </widget>
+    <zorder>buttonAddISINReal</zorder>
+    <zorder>label_3</zorder>
+    <zorder>buttonBorrarCarteraReal</zorder>
+    <zorder>buttonOpBasica</zorder>
+    <zorder>label_4</zorder>
+    <zorder>label_5</zorder>
+    <zorder>labelUsuarioReal</zorder>
+    <zorder>labelEmailReal</zorder>
+    <zorder>buttonOpTraspaso</zorder>
+    <zorder>horizontalLayoutWidget_2</zorder>
+    <zorder>labelCarteraActual</zorder>
+    <zorder>labelSinCarteras</zorder>
+    <zorder>labelSinCarteras2</zorder>
+    <zorder>buttonOpBasicaVenta</zorder>
+    <zorder>label_7</zorder>
+    <zorder>labelValorTotal</zorder>
+    <zorder>line_4</zorder>
+    <zorder>frameFecha</zorder>
+    <zorder>label_8</zorder>
+    <zorder>labelRendimientoTotal</zorder>
+    <zorder>tableFondosCartera</zorder>
+    <zorder>tableOperaciones</zorder>
    </widget>
    <zorder>frameBarra</zorder>
    <zorder>line</zorder>

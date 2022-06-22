@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>356</width>
-    <height>205</height>
+    <width>379</width>
+    <height>226</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -126,16 +126,23 @@ QPushButton:hover {
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>120</x>
-       <y>160</y>
-       <width>131</width>
+       <x>130</x>
+       <y>180</y>
+       <width>141</width>
        <height>41</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>11</pointsize>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>12</pointsize>
+       <weight>3</weight>
+       <italic>false</italic>
+       <bold>false</bold>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 25 12pt &quot;Yu Gothic UI Light&quot;;</string>
      </property>
      <property name="text">
       <string>Cargando ...</string>
@@ -144,7 +151,7 @@ QPushButton:hover {
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>30</x>
        <y>20</y>
        <width>321</width>
        <height>121</height>
@@ -178,9 +185,9 @@ image: url(:/mainLogo.ico);</string>
      <property name="geometry">
       <rect>
        <x>60</x>
-       <y>110</y>
-       <width>251</width>
-       <height>31</height>
+       <y>120</y>
+       <width>271</width>
+       <height>21</height>
       </rect>
      </property>
      <property name="text">

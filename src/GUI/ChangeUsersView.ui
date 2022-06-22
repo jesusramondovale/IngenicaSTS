@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Reset Users</string>
+   <string>Editar Usuario</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -288,8 +288,8 @@ QPushButton:checked {
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>75</x>
-     <y>186</y>
+     <x>95</x>
+     <y>256</y>
     </hint>
     <hint type="destinationlabel">
      <x>203</x>
