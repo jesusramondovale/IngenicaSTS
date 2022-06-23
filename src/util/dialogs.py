@@ -6,6 +6,26 @@ from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayo
 from PyQt5 import QtCore
 
 
+class avisoOperacionDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Error!")
+        self.setFixedWidth(360)
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel("No puede almacenarse la operación\nporque no existen valores del fondo."))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
+
+
 '''
     - Avisa al Usuario de que está a punto de actualizar 
     los registros de la tabla operaciones

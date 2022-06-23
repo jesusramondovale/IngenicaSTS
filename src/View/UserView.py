@@ -180,8 +180,10 @@ class UserView(QMainWindow):
         view.nombres_carteras_real = []
         for e in view.carteras_usuario_real:
             view.nombres_carteras_real.append(e[1])
+
         if len(view.nombres_carteras_real) > 0:
             view.labelCarteraActual.setText(view.nombres_carteras_real[0])
+            view.UpdateTableOperaciones(nombre_cartera=view.nombres_carteras_real[0])
 
         if len(view.nombres_carteras) > 0:
             view.labelCartera.setText('Fondos en ' + view.nombres_carteras[0])
@@ -263,9 +265,10 @@ class UserView(QMainWindow):
             fundUtils.graphHistoricalISIN(view, view.isins_selected, False)
 
             # Actualiza las Tablas de Fondos
-
             if len(view.nombres_carteras_real) > 0:
                 view.UpdateTableOperaciones(view.nombres_carteras_real[0])
+
+
 
         # Activa el botón de borrar Carteras si hay alguna Cartera
         if len(view.nombres_carteras) > 0:
@@ -358,7 +361,7 @@ class UserView(QMainWindow):
     def saveOperaciones(self):
 
         if confirmSaveDialog(self).exec():
-
+            completado = True
             columna = self.tableOperaciones.currentColumn()
             fila  = self.tableOperaciones.currentRow()
 
@@ -377,44 +380,206 @@ class UserView(QMainWindow):
                 db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
                                  self.id_usuario[0],
                                  self.tableOperaciones.item(fila, 0).text()])
-
+                db.execute('UPDATE operaciones SET Estado = ? WHERE id_usuario == ? AND ID == ? ',
+                           ['EJECUTADA',
+                            self.id_usuario[0],
+                            self.tableOperaciones.item(fila, 0).text()])
             if columna == 4:
                 sql = 'UPDATE operaciones SET Incidencias = ? WHERE id_usuario == ? AND ID == ? '
                 db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
                                  self.id_usuario[0],
                                  self.tableOperaciones.item(fila, 0).text()])
-
+                db.execute('UPDATE operaciones SET Estado = ? WHERE id_usuario == ? AND ID == ? ',
+                           ['EJECUTADA',
+                            self.id_usuario[0],
+                            self.tableOperaciones.item(fila, 0).text()])
             if columna == 5:
                 sql = 'UPDATE operaciones SET Origen = ? WHERE id_usuario == ? AND ID == ? '
                 db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
                                  self.id_usuario[0],
                                  self.tableOperaciones.item(fila, 0).text()])
-
+                db.execute('UPDATE operaciones SET Estado = ? WHERE id_usuario == ? AND ID == ? ',
+                           ['EJECUTADA',
+                            self.id_usuario[0],
+                            self.tableOperaciones.item(fila, 0).text()])
             if columna == 6:
                 sql = 'UPDATE operaciones SET Destino = ? WHERE id_usuario == ? AND ID == ? '
                 db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
                                  self.id_usuario[0],
                                  self.tableOperaciones.item(fila, 0).text()])
-
+                db.execute('UPDATE operaciones SET Estado = ? WHERE id_usuario == ? AND ID == ? ',
+                           ['EJECUTADA',
+                            self.id_usuario[0],
+                            self.tableOperaciones.item(fila, 0).text()])
             if columna == 7:
-                sql = 'UPDATE operaciones SET Titular = ? WHERE id_usuario == ? AND ID == ? '
+                sql = 'UPDATE operaciones SET Participaciones = ? WHERE id_usuario == ? AND ID == ? '
                 db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
                                  self.id_usuario[0],
                                  self.tableOperaciones.item(fila, 0).text()])
+                completado = self.refreshDesfaseOperacion(
+                    ID=self.tableOperaciones.item(fila, 0).text(),
+                    tipo='Participaciones',
+                    fecha=self.tableOperaciones.item(fila, 1).text(),
+                    D=self.tableOperaciones.item(fila, 9).text(),
+                    fondo=self.tableOperaciones.item(fila, 6).text())
+
+                db.execute('UPDATE operaciones SET Estado = ? WHERE id_usuario == ? AND ID == ? ',
+                           ['EJECUTADA',
+                            self.id_usuario[0],
+                            self.tableOperaciones.item(fila, 0).text()])
+
 
             if columna == 8:
-                sql = 'UPDATE operaciones SET Titular = ? WHERE id_usuario == ? AND ROWID == ? '
+                sql = 'UPDATE operaciones SET Importe = ? WHERE id_usuario == ? AND ID == ? '
                 db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
                                  self.id_usuario[0],
                                  self.tableOperaciones.item(fila, 0).text()])
+
+                db.execute('UPDATE operaciones SET Estado = ? WHERE id_usuario == ? AND ID == ? ',
+                           ['EJECUTADA',
+                            self.id_usuario[0],
+                            self.tableOperaciones.item(fila, 0).text()])
+
+            if columna == 9:
+
+                if self.tableOperaciones.item(fila, 5).text() == 'Monedero':
+                    completado = self.refreshDesfaseOperacion(
+                                            ID = self.tableOperaciones.item(fila, 0).text(),
+                                            tipo='Compra',
+                                            fecha=self.tableOperaciones.item(fila, 1).text(),
+                                            D=self.tableOperaciones.item(fila, 9).text(),
+                                            fondo=self.tableOperaciones.item(fila, 6).text())
+
+                if self.tableOperaciones.item(fila, 6).text() == 'Monedero':
+                    completado = self.refreshDesfaseOperacion(
+                                            ID=self.tableOperaciones.item(fila, 0).text(),
+                                            tipo='Venta',
+                                            fecha=self.tableOperaciones.item(fila, 1).text(),
+                                            D=self.tableOperaciones.item(fila, 9).text(),
+                                            fondo=self.tableOperaciones.item(fila, 5).text())
+                if completado:
+                    sql = 'UPDATE operaciones SET valorOrigen = ? WHERE id_usuario == ? AND ID == ? '
+                    db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
+                                     self.id_usuario[0],
+                                     self.tableOperaciones.item(fila, 0).text()])
+                    db.execute('UPDATE operaciones SET Estado = ? WHERE id_usuario == ? AND ID == ? ',
+                               ['EJECUTADA',
+                                self.id_usuario[0],
+                                self.tableOperaciones.item(fila, 0).text()])
+            if columna == 10:
+                sql = 'UPDATE operaciones SET valorDestino = ? WHERE id_usuario == ? AND ID == ? '
+                db.execute(sql, [self.tableOperaciones.item(fila, columna).text(),
+                                 self.id_usuario[0],
+                                 self.tableOperaciones.item(fila, 0).text()])
+
+                completado = self.refreshDesfaseOperacion(
+                        ID=self.tableOperaciones.item(fila, 0).text(),
+                        tipo='Traspaso',
+                        fecha=self.tableOperaciones.item(fila, 1).text(),
+                        D=self.tableOperaciones.item(fila, 10).text(),
+                        fondo=self.tableOperaciones.item(fila, 6).text())
+
+                if completado:
+                    db.execute('UPDATE operaciones SET Estado = ? WHERE id_usuario == ? AND ID == ? ',
+                               ['EJECUTADA',
+                                self.id_usuario[0],
+                                self.tableOperaciones.item(fila, 0).text()])
+
+
             else:
                 pass
 
-            operationCompleteDialog(self).exec()
+            if completado:
+                operationCompleteDialog(self).exec()
+                self.UpdateTableOperaciones(self.currentCarteraReal)
 
         else:
             print('Cancelada operación guardado operaciones')
             pass
+
+
+    def refreshDesfaseOperacion(self , ID , tipo , fecha, D, fondo):
+
+            print('refreshDesfaseOperacion()' + str(fecha))
+            completado = True
+            dateFecha = datetime.datetime.strptime(str(fecha), '%d/%m/%Y')
+
+            # Conexión con la BD y creación de un cursor de consultas
+            db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+            db = db_connection.cursor()
+
+            #Buscar y calcular el valor de fondo a fecha
+            closeFecha = db.execute('SELECT Close FROM [' + fondo + '] WHERE Date <= ? ORDER BY Date Desc LIMIT 1', [dateFecha]).fetchone()[0]
+
+
+            #Buscar y calcular el valor de fondo a fecha +/- D
+            D = D[1:]
+            if len(D) > 1:
+                D = int(D)
+            else:
+                D=0
+
+            dateFecha = dateFecha + datetime.timedelta(days=D)
+            closeFechaDesf = db.execute('SELECT Close FROM [' + fondo + '] WHERE Date >= ? LIMIT 1', [dateFecha]).fetchone()
+
+            if closeFechaDesf is not None:
+                closeFechaDesf = closeFechaDesf[0]
+            else:
+                closeFechaDesf = closeFecha
+                avisoOperacionDialog(self).exec()
+                completado = False
+
+            # Calcular la diferencia y añadírselo/restárselo al monedero de usuario
+            dif = closeFecha-closeFechaDesf
+            if tipo == 'Compra':
+                monedero = db.execute('SELECT monedero FROM users WHERE id == ?' , [self.id_usuario[0]]).fetchone()
+
+                p = db.execute('SELECT Participaciones FROM operaciones WHERE id_usuario == ? AND ID == ? ' ,
+                               [self.id_usuario[0] , ID]).fetchone()[0]
+
+                db.execute('UPDATE operaciones SET Importe = ? WHERE id_usuario == ? AND ID == ? ' ,
+                           [(p*closeFechaDesf) , self.id_usuario[0] , ID])
+
+                db.execute('UPDATE users SET monedero = ? WHERE id == ? ' , [(monedero[0] + dif*p) , self.id_usuario[0]])
+                self.monedero = monedero[0] + dif*p
+                self.refreshLabelCartera(self.currentCarteraReal)
+
+            if tipo == 'Venta':
+                monedero = db.execute('SELECT monedero FROM users WHERE id == ?', [self.id_usuario[0]]).fetchone()
+
+
+                p = db.execute('SELECT Participaciones FROM operaciones WHERE id_usuario == ? AND ID == ? ' ,
+                               [self.id_usuario[0], ID]).fetchone()[0]
+
+                db.execute('UPDATE operaciones SET Importe = ? WHERE id_usuario == ? AND ID == ? ',
+                           [(p * closeFechaDesf), self.id_usuario[0], ID])
+
+                db.execute('UPDATE users SET monedero = ? WHERE id == ? ' , [(monedero[0] - dif*p), self.id_usuario[0]])
+                self.monedero = monedero[0] - dif*p
+                self.refreshLabelCartera(self.currentCarteraReal)
+
+            if tipo == 'Traspaso':
+
+
+                p = db.execute('SELECT Participaciones FROM operaciones WHERE id_usuario == ? AND ID == ? ' ,
+                               [self.id_usuario[0], ID]).fetchone()[0]
+
+                db.execute('UPDATE operaciones SET Importe = ? WHERE id_usuario == ? AND ID == ? ',
+                           [(p * closeFechaDesf), self.id_usuario[0], ID])
+
+            if tipo == 'Participaciones':
+
+
+                p = db.execute('SELECT Participaciones FROM operaciones WHERE id_usuario == ? AND ID == ? ' ,
+                               [self.id_usuario[0], ID]).fetchone()[0]
+
+                db.execute('UPDATE operaciones SET Importe = ? WHERE id_usuario == ? AND ID == ? ',
+                           [(p * closeFechaDesf), self.id_usuario[0], ID])
+
+
+            return completado
+
+
 
     def refreshRendimientoTotal(self, fechaIni=None, fechaFin=None):
 
@@ -1059,7 +1224,7 @@ class UserView(QMainWindow):
             db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
             db = db_connection.cursor()
 
-            sql = 'SELECT ID , Fecha , Estado , Titular , Incidencias , Origen, Destino, Participaciones , Importe ' \
+            sql = 'SELECT ID , Fecha , Estado , Titular , Incidencias , Origen, Destino, Participaciones , Importe , valorOrigen , valorDestino ' \
                   'FROM operaciones ' \
                   'WHERE id_usuario == ? AND nombre_cartera == ? ORDER BY Fecha Desc '
 
@@ -1074,18 +1239,23 @@ class UserView(QMainWindow):
                 view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Incidencias'))
                 view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Origen'))
                 view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Destino'))
-                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Participaciones'))
+                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Particip.'))
                 view.tableOperaciones.setHorizontalHeaderItem(8, QTableWidgetItem('Importe'))
+                view.tableOperaciones.setHorizontalHeaderItem(9, QTableWidgetItem('V Orig.'))
+                view.tableOperaciones.setHorizontalHeaderItem(10, QTableWidgetItem('V Dest.'))
 
                 view.tableOperaciones.setColumnWidth(0, 0)
                 view.tableOperaciones.setColumnWidth(1, 120)
-                view.tableOperaciones.setColumnWidth(2, 100)
-                view.tableOperaciones.setColumnWidth(3, 160)
-                view.tableOperaciones.setColumnWidth(4, 100)
+                view.tableOperaciones.setColumnWidth(2, 110)
+                view.tableOperaciones.setColumnWidth(3, 150)
+                view.tableOperaciones.setColumnWidth(4, 110)
                 view.tableOperaciones.setColumnWidth(5, 140)
                 view.tableOperaciones.setColumnWidth(6, 140)
-                view.tableOperaciones.setColumnWidth(7, 140)
-                view.tableOperaciones.setColumnWidth(8, 140)
+                view.tableOperaciones.setColumnWidth(7, 110)
+                view.tableOperaciones.setColumnWidth(8, 90)
+                view.tableOperaciones.setColumnWidth(9, 90)
+                view.tableOperaciones.setColumnWidth(10, 90)
+
 
                 view.tableOperaciones.setRowCount(len(funds))
 
@@ -1101,6 +1271,9 @@ class UserView(QMainWindow):
                     view.tableOperaciones.setItem(f, 6, QTableWidgetItem(str(fila[6])))
                     view.tableOperaciones.setItem(f, 7, QTableWidgetItem(str(fila[7])))
                     view.tableOperaciones.setItem(f, 8, QTableWidgetItem(str(fila[8])))
+                    view.tableOperaciones.setItem(f, 9, QTableWidgetItem(str(fila[9])))
+                    view.tableOperaciones.setItem(f, 10, QTableWidgetItem(str(fila[10])))
+
 
                     f += 1
 
@@ -1116,18 +1289,22 @@ class UserView(QMainWindow):
                 view.tableOperaciones.setHorizontalHeaderItem(4, QTableWidgetItem('Incidencias'))
                 view.tableOperaciones.setHorizontalHeaderItem(5, QTableWidgetItem('Origen'))
                 view.tableOperaciones.setHorizontalHeaderItem(6, QTableWidgetItem('Destino'))
-                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Participaciones'))
+                view.tableOperaciones.setHorizontalHeaderItem(7, QTableWidgetItem('Particip.'))
                 view.tableOperaciones.setHorizontalHeaderItem(8, QTableWidgetItem('Importe'))
+                view.tableOperaciones.setHorizontalHeaderItem(9, QTableWidgetItem('V Orig.'))
+                view.tableOperaciones.setHorizontalHeaderItem(10, QTableWidgetItem('V Dest.'))
 
                 view.tableOperaciones.setColumnWidth(0, 0)
                 view.tableOperaciones.setColumnWidth(1, 120)
-                view.tableOperaciones.setColumnWidth(2, 100)
-                view.tableOperaciones.setColumnWidth(3, 160)
-                view.tableOperaciones.setColumnWidth(4, 100)
+                view.tableOperaciones.setColumnWidth(2, 110)
+                view.tableOperaciones.setColumnWidth(3, 150)
+                view.tableOperaciones.setColumnWidth(4, 110)
                 view.tableOperaciones.setColumnWidth(5, 140)
                 view.tableOperaciones.setColumnWidth(6, 140)
-                view.tableOperaciones.setColumnWidth(7, 140)
-                view.tableOperaciones.setColumnWidth(8, 140)
+                view.tableOperaciones.setColumnWidth(7, 110)
+                view.tableOperaciones.setColumnWidth(8, 90)
+                view.tableOperaciones.setColumnWidth(9, 90)
+                view.tableOperaciones.setColumnWidth(10, 90)
 
                 f = 0
 
@@ -1140,7 +1317,10 @@ class UserView(QMainWindow):
                     view.tableOperaciones.setItem(f, 5, QTableWidgetItem(str(fila[5])))
                     view.tableOperaciones.setItem(f, 6, QTableWidgetItem(str(fila[6])))
                     view.tableOperaciones.setItem(f, 7, QTableWidgetItem(str(fila[7])))
-                    view.tableOperaciones.setItem(f, 8,QTableWidgetItem(str(fila[8])))
+                    view.tableOperaciones.setItem(f, 8, QTableWidgetItem(str(fila[8])))
+                    view.tableOperaciones.setItem(f, 9, QTableWidgetItem(str(fila[9])))
+                    view.tableOperaciones.setItem(f, 10, QTableWidgetItem(str(fila[10])))
+
                     f += 1
 
             db.close()

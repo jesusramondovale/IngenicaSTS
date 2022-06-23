@@ -1120,7 +1120,7 @@ background: rgb(206, 206, 206)
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="columnCount">
-      <number>9</number>
+      <number>11</number>
      </property>
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
@@ -1170,6 +1170,8 @@ background: rgb(206, 206, 206)
        <string>Importe</string>
       </property>
      </column>
+     <column/>
+     <column/>
     </widget>
     <widget class="QLabel" name="labelUsuarioReal">
      <property name="geometry">
