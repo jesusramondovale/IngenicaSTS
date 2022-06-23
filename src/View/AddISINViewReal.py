@@ -5,7 +5,6 @@
 import sqlite3
 import pycountry_convert as pc
 
-
 # Importamos las librerías de carga y Widgets de Python QT v5
 # para graficar el contenido de los ficheros GUI
 import threading
@@ -44,9 +43,26 @@ class AddISINViewReal(QMainWindow):
         # Carga de la interfaz gráfica
         uic.loadUi("src/GUI/AddISINView.ui", view)
 
+        # Conexión con la BD y creación de un cursor de consultas
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+
+        ISINS_copia_virtual = db.execute('SELECT ISIN FROM carteras_usuario WHERE id_usuario == ? AND nombre_cartera == ?',
+                   [view.parent().id_usuario[0], view.parent().currentCarteraReal]).fetchall()
+
+        for isin in ISINS_copia_virtual:
+            view.cbCopiaVirtual.addItem(isin[0])
+
+        view.cbCopiaVirtual.currentIndexChanged.connect(view.copiarVirtual)
+
         # Conexión del Botón AÑADIR y REFRESH a la lógica de control
         view.buttonAnadir.clicked.connect(lambda clicked, ticker=view.tfISIN.text(): view.addTicker(parent))
         view.buttonRefresh.clicked.connect(view.refresh)
+
+
+    def copiarVirtual(self):
+        self.tfISIN.setText(self.cbCopiaVirtual.currentText())
+        self.refresh()
 
     '''
     - Comprueba que todos los campos del formulario han sido rellenados
@@ -57,22 +73,22 @@ class AddISINViewReal(QMainWindow):
 
     def camposLlenos(self):
 
-            if (self.tfNombre.text() == '' or
-                    self.tfISIN.text() == '' or
-                    self.tfTipoAct.text() == '' or
-                    self.tfDivisa.text() == '' or
-                    self.tfCubierta.text() == '' or
-                    self.tfRV.text() == ''):
+        if (self.tfNombre.text() == '' or
+                self.tfISIN.text() == '' or
+                self.tfTipoAct.text() == '' or
+                self.tfDivisa.text() == '' or
+                self.tfCubierta.text() == '' or
+                self.tfRV.text() == ''):
+            return False
+
+        else:
+            try:
+                float(self.tfRV.text())
+                return True
+
+            except ValueError:
+                badRVdialog(self).exec()
                 return False
-
-            else:
-                try:
-                    float(self.tfRV.text())
-                    return True
-
-                except ValueError:
-                    badRVdialog(self).exec()
-                    return False
 
     '''
         - Controlador del evento clicked sobre el botón REFRESH de la vista AddISINView
@@ -92,7 +108,6 @@ class AddISINViewReal(QMainWindow):
                 name = fundUtils.getFundINFO(self, ISIN).at[0, 'name']
                 currency = fundUtils.getFundINFO(self, ISIN).at[0, 'currency']
                 country = fundUtils.getFundINFO(self, ISIN).at[0, 'country'].title()
-                sector = fundUtils.getFundINFO(self, ISIN).at[0, 'asset_class'].capitalize()
                 issuer = fundUtils.getFundINFO(self, ISIN).at[0, 'issuer']
 
                 self.tfNombre.setText(name)
@@ -100,7 +115,6 @@ class AddISINViewReal(QMainWindow):
                 self.tfPais.setText(country)
                 self.tfTipoAct.setText('Fondo')
                 self.tfGestora.setText(issuer)
-                self.tfSector.setText(sector)
 
                 try:
                     zona = pc.country_alpha2_to_continent_code(pc.country_name_to_country_alpha2(country))
@@ -182,26 +196,26 @@ class AddISINViewReal(QMainWindow):
                                    (id[0], parent.currentCarteraReal, ISIN.lower()))
 
                     # Si el ISIN no ha sido grabado previamente en la tabla caracterización
-                    if len(db.execute('SELECT * FROM caracterizacion WHERE ISIN == ?' ,
+                    if len(db.execute('SELECT * FROM caracterizacion WHERE ISIN == ?',
                                       ([self.tfISIN.text()])).fetchall()) == 0:
-
-                        #Inserción de las características del fondo en la tabla caracterización
-                        db.execute("INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ? , ?  , ? , ? , ?)",
-                                       (date.today().strftime('%d/%m/%Y'),
-                                        self.tfISIN.text(),
-                                        self.tfNombre.text(),
-                                        self.tfGestora.text(),
-                                        'F',
-                                        self.tfRV.text(),
-                                        self.tfPais.text().lower(),
-                                        self.tfZona.text(),
-                                        self.tfEstilo.text(),
-                                        self.tfSector.text(),
-                                        self.tfTamano.text(),
-                                        self.tfDivisa.text(),
-                                        self.tfCubierta.text(),
-                                        self.tfDuracion.text(),
-                                        ))
+                        # Inserción de las características del fondo en la tabla caracterización
+                        db.execute(
+                            "INSERT INTO caracterizacion VALUES (?, ?,  ? , ? , ? , ? , ? , ? , ? , ? , ?  , ? , ? , ?)",
+                            (date.today().strftime('%d/%m/%Y'),
+                             self.tfISIN.text(),
+                             self.tfNombre.text(),
+                             self.tfGestora.text(),
+                             'F',
+                             self.tfRV.text(),
+                             self.tfPais.text().lower(),
+                             self.tfZona.text(),
+                             self.tfEstilo.text(),
+                             self.tfSector.text(),
+                             self.tfTamano.text(),
+                             self.tfDivisa.text(),
+                             self.tfCubierta.text(),
+                             self.tfDuracion.text(),
+                             ))
 
                     db.close()
 
@@ -213,7 +227,7 @@ class AddISINViewReal(QMainWindow):
                     # Añade el NOMBRE del Fondo introducido en la Lista de Cartera de Usuario
                     self.parent().isin_list.append(ISIN)
 
-                    #self.parent().ISINS_real.append(ISIN)
+                    # self.parent().ISINS_real.append(ISIN)
                     self.parent().refreshIsinsEnCartera()
 
                     # Avisa al usuario de la operación completada con éxito y

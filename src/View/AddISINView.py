@@ -43,6 +43,7 @@ class AddISINView(QMainWindow):
 
         # Carga de la interfaz gráfica
         uic.loadUi("src/GUI/AddISINView.ui", view)
+        view.cbCopiaVirtual.hide()
 
         # Conexión del Botón AÑADIR y REFRESH a la lógica de control
         view.buttonAnadir.clicked.connect(lambda clicked, ticker=view.tfISIN.text(): view.addTicker(parent))
@@ -92,7 +93,6 @@ class AddISINView(QMainWindow):
                 name = fundUtils.getFundINFO(self, ISIN).at[0, 'name']
                 currency = fundUtils.getFundINFO(self, ISIN).at[0, 'currency']
                 country = fundUtils.getFundINFO(self, ISIN).at[0, 'country'].title()
-                sector = fundUtils.getFundINFO(self, ISIN).at[0, 'asset_class'].capitalize()
                 issuer = fundUtils.getFundINFO(self, ISIN).at[0, 'issuer']
 
                 self.tfNombre.setText(name)
@@ -100,7 +100,6 @@ class AddISINView(QMainWindow):
                 self.tfPais.setText(country)
                 self.tfTipoAct.setText('Fondo')
                 self.tfGestora.setText(issuer)
-                self.tfSector.setText(sector)
 
                 try:
                     zona = pc.country_alpha2_to_continent_code(pc.country_name_to_country_alpha2(country))
@@ -224,9 +223,10 @@ class AddISINView(QMainWindow):
 
                     # Avisa al usuario de la operación completada con éxito y
                     # esconde la ventana actual (vuelve a UserView)
-                    dlg = TickerAddedSuccesfully(self)
-                    parent.checkAll()
-                    dlg.exec()
+
+                    self.parent().allChecked = False
+                    self.parent().checkAll()
+                    TickerAddedSuccesfully(self).exec()
                     self.hide()
 
 
