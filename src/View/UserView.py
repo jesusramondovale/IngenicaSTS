@@ -31,7 +31,7 @@ from src.View.cargandoView import cargandoView
 from src.View.TraspasosView import TraspasosView
 from src.View.OperacionesView import OperacionesView
 from src.View.OperacionesVentaView import OperacionesVentaView
-
+from src.View.ManualRefreshView import ManualRefreshView
 from src.View.AddCarterasRealesView import AddCarterasRealesView
 from src.View.AddISINViewReal import AddISINViewReal
 
@@ -119,6 +119,7 @@ class UserView(QMainWindow):
         view.buttonAddCarteraReal.clicked.connect(view.showAddCarterasReales)
         view.buttonBorrarCarteraReal.clicked.connect(view.borrarCarteraReal)
         view.buttonRefreshFake.clicked.connect(view.showRefreshModes)
+        view.buttonRefreshManual.clicked.connect(view.showRefreshManual)
         view.buttonBorrarFondo.clicked.connect(view.borrarFondo)
         view.listIsins.itemPressed.connect(view.addIsinsChecked)
         view.buttonCheckAll.clicked.connect(view.checkAll)
@@ -649,6 +650,10 @@ class UserView(QMainWindow):
             self.frameRefreshModes.show()
         else:
             self.frameRefreshModes.hide()
+
+    def showRefreshManual(self):
+        ref = ManualRefreshView(self)
+        ref.show()
 
     '''
         - Activa/desactiva los botones de operaciones 

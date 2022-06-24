@@ -129,12 +129,12 @@ QPushButton:checked {
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="leftMargin">
-        <number>25</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="QLabel" name="label_6">
          <property name="styleSheet">
-          <string notr="true">	font: 25 9pt &quot;Yu Gothic UI Light&quot;;</string>
+          <string notr="true">	font: 25 8pt &quot;Yu Gothic UI Light&quot;;</string>
          </property>
          <property name="text">
           <string>Monedero:</string>
@@ -144,10 +144,13 @@ QPushButton:checked {
        <item>
         <widget class="QLabel" name="labelMonederoTotal">
          <property name="styleSheet">
-          <string notr="true">	font: 25 9pt &quot;Yu Gothic UI Light&quot;;</string>
+          <string notr="true">font: 75 8pt &quot;Yu Gothic UI&quot;;</string>
          </property>
          <property name="text">
           <string>--€--</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -305,7 +308,7 @@ background: rgb(206, 206, 206)
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../feather/refresh-ccw.svg</normaloff>../feather/refresh-ccw.svg</iconset>
+         <normaloff>../feather/refresh-cw.svg</normaloff>../feather/refresh-cw.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -393,7 +396,7 @@ QPushButton:checked {
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="buttonRefreshManal">
+           <widget class="QPushButton" name="buttonRefreshManual">
             <property name="font">
              <font>
               <family>Yu Gothic UI Light</family>
@@ -1087,7 +1090,7 @@ background: rgb(206, 206, 206)
       <rect>
        <x>10</x>
        <y>390</y>
-       <width>181</width>
+       <width>111</width>
        <height>31</height>
       </rect>
      </property>
@@ -1104,7 +1107,7 @@ background: rgb(206, 206, 206)
       <string notr="true">font: 25 10pt &quot;Yu Gothic UI Light&quot;;</string>
      </property>
      <property name="text">
-      <string>Lista de Operaciones</string>
+      <string>Operaciones</string>
      </property>
     </widget>
     <widget class="QTableWidget" name="tableOperaciones">
@@ -1119,9 +1122,17 @@ background: rgb(206, 206, 206)
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
+     <property name="columnCount">
+      <number>11</number>
+     </property>
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
      </attribute>
+     <column>
+      <property name="text">
+       <string>#ID</string>
+      </property>
+     </column>
      <column>
       <property name="text">
        <string>Fecha</string>
@@ -1144,24 +1155,26 @@ background: rgb(206, 206, 206)
      </column>
      <column>
       <property name="text">
-       <string>Fondo (Origen)</string>
+       <string>Origen</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Fondo (Destino)</string>
+       <string>Destino</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Particip. (Origen)</string>
+       <string>Participaciones</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Importe (Origen)</string>
+       <string>Importe</string>
       </property>
      </column>
+     <column/>
+     <column/>
     </widget>
     <widget class="QLabel" name="labelUsuarioReal">
      <property name="geometry">
@@ -1289,11 +1302,14 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QLabel" name="labelSinCarteras">
      <property name="geometry">
       <rect>
-       <x>350</x>
-       <y>290</y>
+       <x>200</x>
+       <y>180</y>
        <width>241</width>
        <height>21</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;MS Shell Dlg 2&quot;;</string>
      </property>
      <property name="text">
       <string>Añada primero una nueva cartera</string>
@@ -1302,11 +1318,14 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QLabel" name="labelSinCarteras2">
      <property name="geometry">
       <rect>
-       <x>360</x>
-       <y>310</y>
+       <x>210</x>
+       <y>200</y>
        <width>211</width>
        <height>21</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 8pt &quot;MS Shell Dlg 2&quot;;</string>
      </property>
      <property name="text">
       <string>utilizando el menú a la izqda.</string>
@@ -1507,6 +1526,23 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
      <column/>
      <column/>
     </widget>
+    <widget class="QPushButton" name="buttonSaveOperaciones">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>390</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../feather/save.svg</normaloff>../feather/save.svg</iconset>
+     </property>
+    </widget>
     <zorder>buttonAddISINReal</zorder>
     <zorder>label_3</zorder>
     <zorder>buttonBorrarCarteraReal</zorder>
@@ -1518,8 +1554,6 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <zorder>buttonOpTraspaso</zorder>
     <zorder>horizontalLayoutWidget_2</zorder>
     <zorder>labelCarteraActual</zorder>
-    <zorder>labelSinCarteras</zorder>
-    <zorder>labelSinCarteras2</zorder>
     <zorder>buttonOpBasicaVenta</zorder>
     <zorder>label_7</zorder>
     <zorder>labelValorTotal</zorder>
@@ -1529,6 +1563,9 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <zorder>labelRendimientoTotal</zorder>
     <zorder>tableFondosCartera</zorder>
     <zorder>tableOperaciones</zorder>
+    <zorder>labelSinCarteras</zorder>
+    <zorder>labelSinCarteras2</zorder>
+    <zorder>buttonSaveOperaciones</zorder>
    </widget>
    <zorder>frameBarra</zorder>
    <zorder>line</zorder>

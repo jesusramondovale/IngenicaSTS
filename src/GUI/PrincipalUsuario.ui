@@ -129,7 +129,7 @@ QPushButton:checked {
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="leftMargin">
-        <number>25</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="QLabel" name="label_6">
@@ -148,6 +148,9 @@ QPushButton:checked {
          </property>
          <property name="text">
           <string>--€--</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
         </widget>
        </item>
@@ -393,7 +396,7 @@ QPushButton:checked {
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="buttonRefreshManal">
+           <widget class="QPushButton" name="buttonRefreshManual">
             <property name="font">
              <font>
               <family>Yu Gothic UI Light</family>
@@ -1526,9 +1529,9 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QPushButton" name="buttonSaveOperaciones">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>160</x>
        <y>390</y>
-       <width>41</width>
+       <width>31</width>
        <height>31</height>
       </rect>
      </property>

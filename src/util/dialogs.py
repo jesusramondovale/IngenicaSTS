@@ -5,6 +5,41 @@
 from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayout, QVBoxLayout
 from PyQt5 import QtCore
 
+class badFileDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Error!")
+        self.setFixedWidth(360)
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel("El fichero o el Fondo son incorrectos!"))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
+class badDateDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Error!")
+        self.setFixedWidth(390)
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel("El formato de fechas del fichero es incorrecto!\nDebe ser [AAAA-MM-DD hh:mm:ss]"))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
 
 class avisoOperacionDialog(QDialog):
     def __init__(self, parent=None):
