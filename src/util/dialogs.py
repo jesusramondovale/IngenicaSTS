@@ -5,6 +5,40 @@
 from PyQt5.QtWidgets import QDialog, QPushButton, QGridLayout, QLabel, QHBoxLayout, QVBoxLayout
 from PyQt5 import QtCore
 
+'''
+    - Avisa al usuario de debe introducir parámetros
+    en la lista antes de crear una nueva consulta
+
+    @parent: ConfigView
+'''
+
+
+class badParamsList(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # TITULO  DE  LA VENTANA
+        self.setWindowTitle("Vaya..")
+        self.setFixedWidth(370)
+
+        # CONTENIDO
+        btnOK = QPushButton('OK')
+        btnOK.setFixedWidth(50)
+        btnOK.setFixedHeight(20)
+        btnOK.clicked.connect(self.accept)
+        self.layout = QGridLayout()
+        self.layout.addWidget(QLabel(
+            "Debe añadir parámetros a la lista primero!"))
+        self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
+        self.setLayout(self.layout)
+
+
+'''
+    - Avisa al Usuario de que el fichero.csv con el
+    que intenta modificar la DB es erróneo
+
+    @parent: UserView 
+'''
 class badFileDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -23,6 +57,14 @@ class badFileDialog(QDialog):
         self.setLayout(self.layout)
 
 
+
+'''
+    - Avisa al Usuario de que la fecha en el fichero.csv 
+    con el que intenta modificar la DB tiene un formato
+    inadecuado
+
+    @parent: UserView 
+'''
 class badDateDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -41,6 +83,14 @@ class badDateDialog(QDialog):
         self.setLayout(self.layout)
 
 
+
+'''
+    - Avisa al Usuario de que no puede grabarse la Ejecución
+    de Operación porque aún no existen valores en DB para el
+    desfase de cierre seleccionado
+
+    @parent: UserView 
+'''
 class avisoOperacionDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -67,7 +117,6 @@ class avisoOperacionDialog(QDialog):
 
     @parent: UserView 
 '''
-
 
 class confirmSaveDialog(QDialog):
     def __init__(self, parent=None):
@@ -173,7 +222,7 @@ class confirmAutoRefresh(QDialog):
 
         # TITULO  DE  LA VENTANA
         self.setWindowTitle("¿Seguro?")
-        self.setFixedWidth(380)
+        self.setFixedWidth(400)
 
         # CONTENIDO
         btnYes = QPushButton('Confirmar')
@@ -200,6 +249,12 @@ class confirmAutoRefresh(QDialog):
         self.setLayout(self.layoutVert)
 
 
+'''
+    - Avisa al usuario de que las contraseñas
+    introducidas no coinciden
+    
+    @parent: ConfigView
+'''
 class badPasswords(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -220,6 +275,10 @@ class badPasswords(QDialog):
         self.setLayout(self.layout)
 
 
+
+'''
+    
+'''
 class userChangedSuccesfully(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -239,7 +298,10 @@ class userChangedSuccesfully(QDialog):
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
 
-
+'''
+    - Avisa al usuario de que el usuario introducido
+    no existe en la base de datos
+'''
 class userNotFound(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -258,7 +320,6 @@ class userNotFound(QDialog):
             "No existe el usuario con \nnombre " + self.parent().tfNombre.text()))
         self.layout.addWidget(btnOK, 3, 0, 2, 0, QtCore.Qt.AlignRight)
         self.setLayout(self.layout)
-
 
 
 

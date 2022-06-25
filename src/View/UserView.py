@@ -34,6 +34,7 @@ from src.View.OperacionesVentaView import OperacionesVentaView
 from src.View.ManualRefreshView import ManualRefreshView
 from src.View.AddCarterasRealesView import AddCarterasRealesView
 from src.View.AddISINViewReal import AddISINViewReal
+from src.View.ConsultasView import ConsultasView
 
 from src.util import fundUtils
 from src.util.dialogs import *
@@ -129,6 +130,7 @@ class UserView(QMainWindow):
         view.buttonOpTraspaso.clicked.connect(view.showTraspasos)
         view.buttonCartReal.clicked.connect(view.showVistaReal)
         view.buttonCartVirt.clicked.connect(view.showVistaVirtual)
+        view.buttonConsultas.clicked.connect(view.showConsultas)
         view.buttonSaveOperaciones.clicked.connect(view.saveOperaciones)
 
         view.buttonCartReal.setAutoExclusive(True)
@@ -358,6 +360,10 @@ class UserView(QMainWindow):
         view.browserPie.show()
 
 
+    def showConsultas(self):
+        cons = ConsultasView(self)
+        cons.show()
+
 
     def saveOperaciones(self):
 
@@ -581,7 +587,6 @@ class UserView(QMainWindow):
             return completado
 
 
-
     def refreshRendimientoTotal(self, fechaIni=None, fechaFin=None):
 
         if self.currentCarteraReal is None:
@@ -650,6 +655,7 @@ class UserView(QMainWindow):
             self.frameRefreshModes.show()
         else:
             self.frameRefreshModes.hide()
+
 
     def showRefreshManual(self):
         ref = ManualRefreshView(self)

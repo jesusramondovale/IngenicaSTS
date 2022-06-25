@@ -7,9 +7,9 @@ import sqlite3, investpy, threading
 # Librería de Gráficos Útiles especializados en
 # la visualización de índices bursátiles
 from highstock import Highstock
+from highcharts import Highchart
 
 import requests.exceptions
-from highcharts import Highchart
 
 from PyQt5 import QtWebEngineWidgets
 from datetime import datetime, timedelta
@@ -364,9 +364,6 @@ def refreshHistoricsNoConfirm(view):
         UpdateGraph(view, None, view.isins_selected, True)
     else:
         UpdateGraph(view, None, view.isins_selected, False)
-
-
-
 
 
 '''

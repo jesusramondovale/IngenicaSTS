@@ -1543,6 +1543,36 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
        <normaloff>../../dist/launcher/src/feather/save.svg</normaloff>../../dist/launcher/src/feather/save.svg</iconset>
      </property>
     </widget>
+    <widget class="QPushButton" name="buttonConsultas">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>150</y>
+       <width>261</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">*{
+background: rgb(206, 206, 206)
+}</string>
+     </property>
+     <property name="text">
+      <string>Consultas sobre Cartera</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../../feather/eye.svg</normaloff>../../../feather/eye.svg</iconset>
+     </property>
+    </widget>
     <zorder>buttonAddISINReal</zorder>
     <zorder>label_3</zorder>
     <zorder>buttonBorrarCarteraReal</zorder>
@@ -1566,6 +1596,7 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <zorder>labelSinCarteras</zorder>
     <zorder>labelSinCarteras2</zorder>
     <zorder>buttonSaveOperaciones</zorder>
+    <zorder>buttonConsultas</zorder>
    </widget>
    <zorder>frameBarra</zorder>
    <zorder>line</zorder>
