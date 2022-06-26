@@ -171,13 +171,20 @@ class ConsultasView(QMainWindow):
                 for i in range(len(data1)):
                     for j in range(len(data1.columns)):
 
+                        self.tableConsultas.setItem(i, j, QTableWidgetItem(str(data1.iat[i, j])))
+
                         try:
-                            self.tableConsultas.setItem(i, j, QTableWidgetItem(str(data1.iat[i, j])))
-                            self.tableConsultas.item(i, j).setText(
-                                "{:.2f}".format(float(self.tableConsultas.item(i, j).text())))
+                            if data1.columns[j] == 'Importe':
+
+                                self.tableConsultas.item(i, j).setText(
+                                    "{:.2f}".format(float(self.tableConsultas.item(i, j).text())))
+
+                            if data1.columns[j] == 'Porcentaje':
+                                self.tableConsultas.item(i, j).setText(
+                                    "{:.2f}".format(float(self.tableConsultas.item(i, j).text())) + ' %')
 
                         except ValueError:
-                            self.tableConsultas.setItem(i, j, QTableWidgetItem(str(data1.iat[i, j])))
+                            pass
 
                 self.tableConsultas.verticalHeader().setVisible(False)
                 print(data1)
