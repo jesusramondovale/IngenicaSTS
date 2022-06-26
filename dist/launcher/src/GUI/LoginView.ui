@@ -104,7 +104,7 @@ QPushButton:checked {
      <string notr="true"/>
     </property>
     <property name="text">
-     <string>Borrar</string>
+     <string>Salir</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="textFieldPassword">
@@ -221,32 +221,16 @@ background-color: rgba(255, 255, 255, 0);</string>
   <connection>
    <sender>buttonBorrar</sender>
    <signal>clicked()</signal>
-   <receiver>textFieldPassword</receiver>
-   <slot>clear()</slot>
+   <receiver>MainView</receiver>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>73</x>
-     <y>125</y>
+     <x>85</x>
+     <y>315</y>
     </hint>
     <hint type="destinationlabel">
-     <x>235</x>
-     <y>63</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBorrar</sender>
-   <signal>clicked()</signal>
-   <receiver>textFieldUser</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>104</x>
-     <y>119</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>200</x>
-     <y>26</y>
+     <x>190</x>
+     <y>179</y>
     </hint>
    </hints>
   </connection>

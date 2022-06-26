@@ -18,53 +18,7 @@
     <normaloff>../../dist/launcher/src/feather/mainLogo.ico</normaloff>../../dist/launcher/src/feather/mainLogo.ico</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">* {
-	 background-color: rgb(151, 151, 151)
-}
-
-QLabel {
-	color: rgb(255, 255, 255);
-	
-	font: 75 10pt &quot;Yu Gothic UI&quot;;
-
-}
-
-QLineEdit {
-	border:  2px solid rgb(98, 98, 98);
-	border-radius: 15px;
-	color: rgb(255, 255, 255);
-	background-color: rgb(151, 151, 151)
-}
-QLineEdit:hover{
-	border: 2px solid rgb(48,50,62);
-}
-
-QLineEdit:focus {
-
-	border : 2px solid rgb(48,50,62)
-
-}
-
-
-QPushButton {
-
-	border-radius: 10px;
-	background-color: rgb(84, 84, 84);
-	color:rgb(255, 255, 255)
-
-}
-
-QPushButton:hover {
-	 background-color: rgb(0, 85,124);
-     color: rgb(255, 255, 255)
-}
-
-QPushButton:checked {
-                                    background-color: rgb(0, 85,124);
-                                    color: rgb(255, 255, 255)
-                                }
-
-</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="gpUsers">
