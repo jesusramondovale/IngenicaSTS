@@ -83,7 +83,7 @@ def refreshHistorics(view):
 
             # ValueError es arrojado si no hay resultados para concatenar
             except ValueError:
-                print('ValueError')
+                print('Fondo actualizado a última fecha!')
 
 
             # Captura del error por fallo de conexión
@@ -260,7 +260,7 @@ def refreshHistoricsNoConfirm(view):
 
         # ValueError es arrojado si no hay resultados para concatenar
         except ValueError:
-            print('ValueError')
+            print('Fondo actualizado a última fecha')
 
 
         # Captura del error por fallo de conexión

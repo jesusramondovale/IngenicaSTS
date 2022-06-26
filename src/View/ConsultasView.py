@@ -3,12 +3,16 @@
 ###################################################################################
 
 import sys, sqlite3
+
+import pandas
 import pandas as pd
+import PyQt5
 from PyQt5 import uic, QtWebEngineWidgets
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
 from PyQt5.Qt import *
 from src.util.dialogs import badParamsList
+
 
 class DragLabel(QLabel):
     def mousePressEvent(self, event):
@@ -66,8 +70,6 @@ class DropListBox(QListWidget):
             return super().dropMimeData(index, data, action)
 
 
-
-
 class ConsultasView(QMainWindow):
 
     def __init__(view, parent=QMainWindow):
@@ -75,7 +77,6 @@ class ConsultasView(QMainWindow):
 
         # Carga de la interfaz gráfica
         uic.loadUi("src/GUI/ConsultasView.ui", view)
-
 
         labelZona = DragLabel('Zona', view)
         labelZona.move(40, 40)
@@ -104,10 +105,8 @@ class ConsultasView(QMainWindow):
         view.buttonLimpiar.clicked.connect(
             lambda clicked, view=view: listCols.clear())
 
-
         view.buttonCrear.clicked.connect(
             lambda clicked, view=view: view.crearTablaAgregados(listCols))
-
 
     def crearTablaAgregados(self, listCols=None, fecha=None):
 
@@ -127,20 +126,23 @@ class ConsultasView(QMainWindow):
                 pass
 
             if not fecha and self.parent().currentCarteraReal is not None:
-                sql = pd.read_sql_query('select ISIN , c.Zona , c.RV , c.Estilo , c.Tamaño, c.Divisa, c.Sector , Participaciones , Importe '
-                                        'from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
-                                        'from [' + str(self.parent().id_usuario[0]) + '_' + str(
-                    self.parent().currentCarteraReal) +
-                                        '] t) t inner join caracterizacion c using (ISIN) '
-                                        'where rn = 1 order by ISIN', db_connection)
+                sql = pd.read_sql_query(
+                    'select ISIN , c.Zona , c.RV , c.Estilo , c.Tamaño, c.Divisa, c.Sector , Participaciones , Importe '
+                    'from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
+                    'from [' + str(self.parent().id_usuario[0]) + '_' + str(
+                        self.parent().currentCarteraReal) +
+                    '] t) t inner join caracterizacion c using (ISIN) '
+                    'where rn = 1 order by ISIN', db_connection)
 
-                tmp = db.execute('select ISIN , c.Zona , c.RV , c.Estilo , c.Tamaño, c.Divisa, c.Sector , Participaciones , Importe '
-                                 'from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
-                                 'from [' + str(self.parent().id_usuario[0]) + '_' + str(self.parent().currentCarteraReal) +
-                                 '] t) t inner join caracterizacion c using (ISIN) '
-                                 'where rn = 1 order by ISIN').fetchall()
+                tmp = db.execute(
+                    'select ISIN , c.Zona , c.RV , c.Estilo , c.Tamaño, c.Divisa, c.Sector , Participaciones , Importe '
+                    'from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
+                    'from [' + str(self.parent().id_usuario[0]) + '_' + str(self.parent().currentCarteraReal) +
+                    '] t) t inner join caracterizacion c using (ISIN) '
+                    'where rn = 1 order by ISIN').fetchall()
 
-                data = pd.DataFrame(tmp, columns=['ISIN', 'Zona', 'RV', 'Estilo', 'Tamaño', 'Divisa' , 'Sector' , 'Participaciones', 'Importe'])
+                data = pd.DataFrame(tmp, columns=['ISIN', 'Zona', 'RV', 'Estilo', 'Tamaño', 'Divisa', 'Sector',
+                                                  'Participaciones', 'Importe'])
 
                 params = [str(listCols.item(i).text()) for i in range(listCols.count())]
 
@@ -151,6 +153,33 @@ class ConsultasView(QMainWindow):
                          .reset_index()
                          .head())
 
+                porcentajes = []
+                for i in range(len(data1.index)):
+                    porcentajes.append(0)
+
+                data1.assign(Porcentaje=porcentajes)
+                data1['Porcentaje'] = data1.groupby(params[-1])['Importe'].apply(lambda x: x * 100 / x.sum())
+
+                params.append('Participaciones')
+                params.append('Importe')
+                params.append('Porcentaje')
+
+                self.tableConsultas.setColumnCount(len(params))
+                self.tableConsultas.setRowCount(len(data1))
+                self.tableConsultas.setHorizontalHeaderLabels(data1.columns)
+
+                for i in range(len(data1)):
+                    for j in range(len(data1.columns)):
+
+                        try:
+                            self.tableConsultas.setItem(i, j, QTableWidgetItem(str(data1.iat[i, j])))
+                            self.tableConsultas.item(i, j).setText(
+                                "{:.2f}".format(float(self.tableConsultas.item(i, j).text())))
+
+                        except ValueError:
+                            self.tableConsultas.setItem(i, j, QTableWidgetItem(str(data1.iat[i, j])))
+
+                self.tableConsultas.verticalHeader().setVisible(False)
                 print(data1)
 
             return
@@ -159,7 +188,7 @@ class ConsultasView(QMainWindow):
         else:
             badParamsList(self).exec()
 
-    def refreshButton(self , listCols):
+    def refreshButton(self, listCols):
 
         print('refreshButton()')
 
@@ -167,3 +196,25 @@ class ConsultasView(QMainWindow):
             self.buttonCrear.setEnabled(True)
         else:
             self.buttonCrear.setEnabled(False)
+
+
+class PandasModel(QtCore.QAbstractTableModel):
+    def __init__(self, data, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+        self._data = data
+
+    def rowCount(self, parent=None):
+        return len(self._data.values)
+
+    def columnCount(self, parent=None):
+        return self._data.columns.size
+
+    def data(self, index, role=Qt.DisplayRole):
+        if index.isValid():
+            if role == Qt.DisplayRole:
+                return QtCore.QVariant(str(
+                    self._data.iloc[index.row()][index.column()]))
+        return QtCore.QVariant()
+
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int = ..., params=list):
+        return params[section - 1]

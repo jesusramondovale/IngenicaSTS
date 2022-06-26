@@ -88,7 +88,7 @@
    <widget class="QTableWidget" name="tableConsultas">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>260</x>
       <y>20</y>
       <width>771</width>
       <height>341</height>
