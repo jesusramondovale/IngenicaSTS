@@ -98,5 +98,22 @@
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonLimpiar</sender>
+   <signal>clicked()</signal>
+   <receiver>tableConsultas</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>443</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
