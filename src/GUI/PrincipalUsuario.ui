@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1381</width>
+    <width>1409</width>
     <height>724</height>
    </rect>
   </property>
@@ -132,9 +132,22 @@ QPushButton:checked {
         <number>0</number>
        </property>
        <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
         <widget class="QLabel" name="label_6">
          <property name="styleSheet">
-          <string notr="true">	font: 25 8pt &quot;Yu Gothic UI Light&quot;;</string>
+          <string notr="true">font: 75 9pt &quot;Yu Gothic UI&quot;;</string>
          </property>
          <property name="text">
           <string>Monedero:</string>
@@ -1115,9 +1128,27 @@ background: rgb(206, 206, 206)
       <rect>
        <x>10</x>
        <y>420</y>
-       <width>1151</width>
+       <width>1201</width>
        <height>291</height>
       </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>1201</width>
+       <height>291</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1201</width>
+       <height>291</height>
+      </size>
      </property>
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>

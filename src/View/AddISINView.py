@@ -67,8 +67,10 @@ class AddISINView(QMainWindow):
 
         else:
             try:
-                float(self.tfRV.text())
-                return True
+                if float(self.tfRV.text()) >= 0 and float(self.tfRV.text()) <= 1:
+                    return True
+                else:
+                    raise ValueError
 
             except ValueError:
                 badRVdialog(self).exec()
@@ -182,7 +184,7 @@ class AddISINView(QMainWindow):
 
                     # Añade el NOMBRE del Fondo introducido en la Lista de Cartera de Usuario
                     parent.listIsins.addItem(str(fundUtils.getFundINFO(self, ISIN).at[0, 'name']) + "  (" + ISIN + ")")
-                    parent.isin_list.append(ISIN)
+                    parent.isins_selected.append(ISIN)
                     parent.ISINS.append((ISIN,0))
 
                     # Introduce, si existe, dicho ISIN/Symbol en la cartera actual

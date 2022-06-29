@@ -91,7 +91,7 @@ class UserView(QMainWindow):
 
         # Captura del monedero
         view.monedero = db.execute("SELECT monedero FROM users WHERE nombre = ?", [usuario]).fetchone()[0]
-        view.labelMonederoTotal.setText(str(view.monedero) + '€')
+        view.labelMonederoTotal.setText("{:.2f}".format(float(str(view.monedero))) + '€')
 
         # Captura de la Cartera Actual (la primera de todas las del Usuario)
         view.currentCartera = db.execute(
@@ -122,7 +122,7 @@ class UserView(QMainWindow):
         view.buttonRefreshFake.clicked.connect(view.showRefreshModes)
         view.buttonRefreshManual.clicked.connect(view.showRefreshManual)
         view.buttonBorrarFondo.clicked.connect(view.borrarFondo)
-        view.listIsins.itemPressed.connect(view.addIsinsChecked)
+        #view.listIsins.itemPressed.connect(view.addIsinsChecked)
         view.buttonCheckAll.clicked.connect(view.checkAll)
         view.buttonConfig.clicked.connect(view.showConfigView)
         view.buttonOpBasica.clicked.connect(view.showCompraventas)
@@ -256,8 +256,6 @@ class UserView(QMainWindow):
             # Carga el Widget de Selección de Fondos para graficar con los nombres de los Fondos en cartera
             for x in isin_list_view:
                 item = QListWidgetItem(str(x))
-                item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable | ~QtCore.Qt.ItemIsEnabled)
-                item.setCheckState(QtCore.Qt.Unchecked)
                 view.listIsins.addItem(item)
 
             # Comprueba si existe el Fondo en BD y lo descarga en caso negativo
@@ -270,7 +268,6 @@ class UserView(QMainWindow):
             # Actualiza las Tablas de Fondos
             if len(view.nombres_carteras_real) > 0:
                 view.UpdateTableOperaciones(view.nombres_carteras_real[0])
-
 
 
         # Activa el botón de borrar Carteras si hay alguna Cartera
@@ -801,13 +798,13 @@ class UserView(QMainWindow):
             self.selectorFecha.setDate(datetime.datetime.today())
             self.labelCarteraActual.setText(cart)
             self.labelValorTotal.setText("{:.2f}".format(self.importeTotalCartera(None)) + '€')
-            self.labelMonederoTotal.setText(str(self.monedero) + '€')
+            self.labelMonederoTotal.setText("{:.2f}".format(float(str(self.monedero))) + '€')
             self.refreshRendimientoTotal()
         else:
             self.selectorFecha.setDate(datetime.datetime.today())
             self.labelCarteraActual.setText('Ninguna')
             self.labelValorTotal.setText('0 €')
-            self.labelMonederoTotal.setText(str(self.monedero) + '€')
+            self.labelMonederoTotal.setText("{:.2f}".format(float(str(self.monedero))) + '€')
             self.labelRendimientoTotal.setText('')
     '''
         - Borra el fondo seleccionado del ComboBox de la vista
@@ -816,6 +813,7 @@ class UserView(QMainWindow):
         @params: view (UserView) 
         @returns: None
     '''
+
 
     def borrarFondo(view):
 
@@ -840,15 +838,24 @@ class UserView(QMainWindow):
                     db.execute("DROP TABLE " + ISIN)
 
                 view.listIsins.takeItem(view.listIsins.currentRow())
+
                 if ISIN in view.isins_selected:
                     view.isins_selected.remove(ISIN)
-                view.updateGraph(isin=None, isins_selected=[])
+
+                for i in view.ISINS:
+                    if ISIN == i[0]:
+                        view.ISINS.remove(i)
+
+                print('Tras borrar fondo -> (ISINS)' + str(view.ISINS))
+
+                print('Tras borrar fondo -> (isins_selected)' + str(view.isins_selected))
+                view.updateGraph(isin=None, isins_selected=view.isins_selected)
 
             else:
                 print('Cancelada la operación de borrar Fondo')
-                pass
 
-        except:
+
+        except AttributeError:
             dlg = selectAnyDialog(view)
             dlg.exec()
 
@@ -876,6 +883,8 @@ class UserView(QMainWindow):
                        ([view.id_usuario[0], cartera]))
 
             view.cbCarteras.removeItem(view.cbCarteras.currentIndex())
+            view.isins_selected = []
+            view.ISINS = []
 
             if view.cbCarteras.count() > 0:
                 view.buttonBorrarCartera.setEnabled(True)
@@ -945,12 +954,17 @@ class UserView(QMainWindow):
             for i in range(view.listIsins.count()):
                 view.listIsins.item(i).setCheckState(True)
 
-            view.updateGraph(None, view.isin_list)
             view.isins_selected = []
+
+            print('All Checked (view.ISINS): ' + str(view.ISINS))
+
             for e in view.ISINS:
                 view.isins_selected.append(e[0])
+
             view.allChecked = True
-            print('All Checked: ' + str(view.isins_selected))
+            view.updateGraph(None, view.isins_selected)
+
+            print('All Checked (view.isins_selected): ' + str(view.isins_selected))
         else:
             for i in range(view.listIsins.count()):
                 view.listIsins.item(i).setCheckState(False)
@@ -1257,8 +1271,8 @@ class UserView(QMainWindow):
 
                 view.tableOperaciones.setColumnWidth(0, 0)
                 view.tableOperaciones.setColumnWidth(1, 120)
-                view.tableOperaciones.setColumnWidth(2, 110)
-                view.tableOperaciones.setColumnWidth(3, 150)
+                view.tableOperaciones.setColumnWidth(2, 145)
+                view.tableOperaciones.setColumnWidth(3, 155)
                 view.tableOperaciones.setColumnWidth(4, 110)
                 view.tableOperaciones.setColumnWidth(5, 140)
                 view.tableOperaciones.setColumnWidth(6, 140)
@@ -1307,8 +1321,8 @@ class UserView(QMainWindow):
 
                 view.tableOperaciones.setColumnWidth(0, 0)
                 view.tableOperaciones.setColumnWidth(1, 120)
-                view.tableOperaciones.setColumnWidth(2, 110)
-                view.tableOperaciones.setColumnWidth(3, 150)
+                view.tableOperaciones.setColumnWidth(2, 145)
+                view.tableOperaciones.setColumnWidth(3, 155)
                 view.tableOperaciones.setColumnWidth(4, 110)
                 view.tableOperaciones.setColumnWidth(5, 140)
                 view.tableOperaciones.setColumnWidth(6, 140)
@@ -1347,7 +1361,7 @@ class UserView(QMainWindow):
 
         if not fecha:
             print('updatePieChart(sin fecha) en Cartera --> ' + str(nombre_cartera))
-            self.Pie = Highchart(width=440, height=440)
+            self.Pie = Highchart(width=460, height=440)
             self.currentCarteraReal = nombre_cartera
             if self.theme == 'Light':
                 options = {
@@ -1364,16 +1378,19 @@ class UserView(QMainWindow):
                         'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
                     },
                 }
-            if self.theme == 'Dark':
+            if self.theme == 'Blue':
                 options = {
                     'chart': {
-                        'plotBackgroundColor': '#222222',
-                        'backgroundColor': '#222222',
+                        'plotBackgroundColor': '#00496b',
+                        'backgroundColor': '#00496b',
                         'plotBorderWidth': None,
                         'plotShadow': False
                     },
                     'title': {
-                        'text': nombre_cartera
+                        'text': nombre_cartera,
+                        'style': {
+                            'color': '#FFFFFF',
+                        },
                     },
                     'tooltip': {
                         'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -1420,7 +1437,7 @@ class UserView(QMainWindow):
         # Hay fecha
         else:
             print('updatePieChart(con fecha)' + str(fecha) + 'en Cartera --> ' + str(nombre_cartera))
-            self.Pie = Highchart(width=440, height=440)
+            self.Pie = Highchart(width=460, height=440)
             self.currentCarteraReal = nombre_cartera
             if self.theme == 'Light':
                 options = {
@@ -1437,16 +1454,19 @@ class UserView(QMainWindow):
                         'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'
                     },
                 }
-            if self.theme == 'Dark':
+            if self.theme == 'Blue':
                 options = {
                     'chart': {
-                        'plotBackgroundColor': '#222222',
-                        'backgroundColor': '#222222',
+                        'plotBackgroundColor': '#00496b',
+                        'backgroundColor': '#00496b',
                         'plotBorderWidth': None,
                         'plotShadow': False
                     },
                     'title': {
-                        'text': nombre_cartera
+                        'text': names,
+                         'style': {
+                            'color': '#FFFFFF',
+                        },
                     },
                     'tooltip': {
                         'pointFormat': '{series.name}: <b>{point.percentage:.1f}%</b>'

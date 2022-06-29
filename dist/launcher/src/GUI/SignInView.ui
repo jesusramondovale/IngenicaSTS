@@ -130,7 +130,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Registrar</string>
+     <string>Registrarse</string>
     </property>
    </widget>
    <widget class="QPushButton" name="buttonSalir">

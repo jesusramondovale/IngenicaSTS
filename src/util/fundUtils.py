@@ -583,7 +583,8 @@ def graphHistoricalISIN(self, isins_selected, absolute):
                         'text': currency,
                         'align': 'middle',
                         'style': {
-                            'fontSize': '18px'
+                            'fontSize': '18px',
+
                         }
                     },
                     'labels': {
@@ -815,7 +816,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                 }
                 self.H.set_dict_options(options)
 
-            if absolute and self.theme == 'Dark':
+            if absolute and self.theme == 'Blue':
                 print('Mode: Absolute (Dark)')
                 options = {
                     # 'colors': ['#a0a0a0'],
@@ -825,15 +826,17 @@ def UpdateGraph(self, isin, isins_selected, absolute):
 
                     'chart': {
                         'zoomType': 'x',
-                        'backgroundColor': '#222222',
+                        'backgroundColor': '#00496b',
                         'animation': {
                             'duration': 2000
                         },
                     },
                     'title': {
-                        'text': names
+                        'text': names,
+                         'style': {
+                            'color': '#FFFFFF',
+                        },
                     },
-
                     "rangeSelector": {"selected": 6},
 
                     "yAxis": {
@@ -861,7 +864,7 @@ def UpdateGraph(self, isin, isins_selected, absolute):
                 }
                 self.H.set_dict_options(options)
 
-            if not absolute and self.theme == 'Dark':
+            if not absolute and self.theme == 'Blue':
                 print('Mode: Evolution (Dark)')
                 options = {
                     # 'colors': ['#a0a0a0'],
@@ -871,15 +874,17 @@ def UpdateGraph(self, isin, isins_selected, absolute):
 
                     'chart': {
                         'zoomType': 'x',
-                        'backgroundColor': '#222222',
+                        'backgroundColor': '#00496b',
                         'animation': {
                             'duration': 2000
                         },
                     },
                     'title': {
-                        'text': names
+                        'text': names,
+                        'style': {
+                            'color': '#FFFFFF',
+                        },
                     },
-
                     "rangeSelector": {"selected": 6},
 
                     "yAxis": {

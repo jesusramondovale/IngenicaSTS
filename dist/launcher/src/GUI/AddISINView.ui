@@ -111,6 +111,10 @@
         </item>
         <item>
          <widget class="QPushButton" name="buttonRefresh">
+          <property name="styleSheet">
+           <string notr="true">QPushButton{
+}</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -161,7 +165,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>150</width>
+            <width>120</width>
             <height>20</height>
            </size>
           </property>
@@ -221,7 +225,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>180</width>
+            <width>120</width>
             <height>20</height>
            </size>
           </property>
@@ -275,7 +279,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>272</width>
+            <width>300</width>
             <height>20</height>
            </size>
           </property>
@@ -332,7 +336,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>257</width>
+            <width>320</width>
             <height>20</height>
            </size>
           </property>
@@ -389,7 +393,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>257</width>
+            <width>310</width>
             <height>20</height>
            </size>
           </property>
@@ -446,7 +450,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>229</width>
+            <width>250</width>
             <height>20</height>
            </size>
           </property>
@@ -511,7 +515,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>200</width>
+            <width>390</width>
             <height>20</height>
            </size>
           </property>
@@ -523,7 +527,7 @@
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
           <property name="placeholderText">
-           <string>Ej. 0 - 0.1 - 0.4 - 0.7 - 1</string>
+           <string>R.V = {0 ..1}</string>
           </property>
          </widget>
         </item>
@@ -577,7 +581,7 @@
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
           <property name="placeholderText">
-           <string>Ej. Grande/mid/Peq.</string>
+           <string>Grande/Mid/Peq.</string>
           </property>
          </widget>
         </item>
@@ -619,7 +623,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>150</width>
+            <width>240</width>
             <height>20</height>
            </size>
           </property>
@@ -685,7 +689,7 @@
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
           <property name="placeholderText">
-           <string>Ej. Hedged / No Hedged</string>
+           <string>Hedged / No Hedged</string>
           </property>
          </widget>
         </item>
@@ -781,7 +785,7 @@
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>239</width>
+            <width>350</width>
             <height>20</height>
            </size>
           </property>

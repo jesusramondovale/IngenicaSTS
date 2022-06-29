@@ -24,7 +24,7 @@ class ConfigView(QMainWindow):
         uic.loadUi("src/GUI/ConfigWindow.ui", view)
 
         # Carga del Combobox de selección de Tema
-        view.cbTema.addItems(['Dark', 'Light'])
+        view.cbTema.addItems(['Blue', 'Light'])
 
         if view.parent().id_usuario[0] == 5:
             view.gpAdmin.show()
@@ -52,10 +52,10 @@ class ConfigView(QMainWindow):
         # Captura del Tema seleccionado
         tema = view.cbTema.currentText()
 
-        if tema == 'Dark':
+        if tema == 'Blue':
             view.parent().setStyleSheet("""
                                             * {
-                        	                background-color: rgb(34, 34, 34)
+                        	                background-color: rgb(0, 73, 107)
                                             }
 
                                             QLabel {
@@ -100,7 +100,7 @@ class ConfigView(QMainWindow):
                                             }
 
                                     """)
-            view.parent().theme = 'Dark'
+            view.parent().theme = 'Blue'
         if tema == 'Light':
             view.parent().setStyleSheet("""
                                 * {
