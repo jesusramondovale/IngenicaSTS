@@ -832,10 +832,11 @@ class UserView(QMainWindow):
                 db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
                            ([view.id_usuario[0], cartera, ISIN]))
 
-                temp = db.execute("SELECT * FROM carteras_usuario WHERE ISIN = ? ",
+                temp = db.execute("SELECT * FROM carteras_usuario INNER JOIN carteras_usuario_real USING (ISIN) "
+                                  "WHERE ISIN = ? ",
                                   ([ISIN])).fetchone()
                 if temp is None:
-                    db.execute("DROP TABLE " + ISIN)
+                    db.execute("DROP TABLE " + '[' + ISIN + ']')
 
                 view.listIsins.takeItem(view.listIsins.currentRow())
 
