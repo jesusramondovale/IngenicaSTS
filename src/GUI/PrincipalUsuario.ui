@@ -993,9 +993,9 @@ background: rgb(206, 206, 206)
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>110</y>
+       <y>80</y>
        <width>151</width>
-       <height>31</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
@@ -1308,9 +1308,9 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
     <widget class="QLabel" name="labelCarteraActual">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>140</y>
-       <width>151</width>
+       <x>150</x>
+       <y>70</y>
+       <width>141</width>
        <height>41</height>
       </rect>
      </property>
@@ -1527,7 +1527,7 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
       <enum>Qt::DotLine</enum>
      </property>
      <property name="columnCount">
-      <number>8</number>
+      <number>5</number>
      </property>
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
@@ -1544,6 +1544,11 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
      </column>
      <column>
       <property name="text">
+       <string>Titular</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Partic.</string>
       </property>
      </column>
@@ -1552,10 +1557,6 @@ rgba(255, 255, 255, 0), stop:1 rgba(177, 177, 177, 0))
        <string>Importe</string>
       </property>
      </column>
-     <column/>
-     <column/>
-     <column/>
-     <column/>
     </widget>
     <widget class="QPushButton" name="buttonSaveOperaciones">
      <property name="geometry">
@@ -1604,6 +1605,62 @@ background: rgb(206, 206, 206)
        <normaloff>../../../feather/eye.svg</normaloff>../../../feather/eye.svg</iconset>
      </property>
     </widget>
+    <widget class="QComboBox" name="cbTitular">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>140</y>
+       <width>131</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 75 12pt &quot;Yu Gothic UI&quot;;</string>
+     </property>
+     <property name="text">
+      <string>Titular</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="buttonAddTitular">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>130</y>
+       <width>41</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Yu Gothic UI Light</family>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">*{
+background: rgb(206, 206, 206)
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../../feather/plus-square.svg</normaloff>../../../feather/plus-square.svg</iconset>
+     </property>
+    </widget>
     <zorder>buttonAddISINReal</zorder>
     <zorder>label_3</zorder>
     <zorder>buttonBorrarCarteraReal</zorder>
@@ -1628,6 +1685,9 @@ background: rgb(206, 206, 206)
     <zorder>labelSinCarteras2</zorder>
     <zorder>buttonSaveOperaciones</zorder>
     <zorder>buttonConsultas</zorder>
+    <zorder>cbTitular</zorder>
+    <zorder>label_9</zorder>
+    <zorder>buttonAddTitular</zorder>
    </widget>
    <zorder>frameBarra</zorder>
    <zorder>line</zorder>

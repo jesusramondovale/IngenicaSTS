@@ -188,12 +188,12 @@ class AddISINViewReal(QMainWindow):
                     if len(ISIN) > 5:
 
                         # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
-                        db.execute("INSERT INTO carteras_usuario_real VALUES ( ? , ? , ? )",
-                                   (id[0], parent.currentCarteraReal, ISIN))
+                        db.execute("INSERT INTO carteras_usuario_real VALUES ( ? , ? , ? , ? )",
+                                   (id[0], parent.currentCarteraReal, ISIN , self.parent().cbTitular.currentText() ))
                     else:
                         # Introduce, si existe, dicho ISIN/Symbol en la cartera actual
-                        db.execute("INSERT INTO carteras_usuario_real VALUES ( ? , ? , ? )",
-                                   (id[0], parent.currentCarteraReal, ISIN.lower()))
+                        db.execute("INSERT INTO carteras_usuario_real VALUES (? , ? , ? , ? )",
+                                   (id[0], parent.currentCarteraReal, ISIN.lower() , self.parent().cbTitular.currentText()))
 
                     # Si el ISIN no ha sido grabado previamente en la tabla caracterización
                     if len(db.execute('SELECT * FROM caracterizacion WHERE ISIN == ?',

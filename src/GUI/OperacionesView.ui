@@ -46,25 +46,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tfTitular">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>60</y>
-      <width>191</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-    <property name="placeholderText">
-     <string>Nombre y Apellidos</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="labelOrigen_2">
     <property name="geometry">
      <rect>
@@ -242,6 +223,16 @@
      <string>Enviar Operación</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="cbTitular">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>60</y>
+      <width>181</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
@@ -307,22 +298,6 @@
     <hint type="destinationlabel">
      <x>106</x>
      <y>286</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBorrar</sender>
-   <signal>clicked()</signal>
-   <receiver>tfTitular</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>74</x>
-     <y>331</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>310</x>
-     <y>65</y>
     </hint>
    </hints>
   </connection>

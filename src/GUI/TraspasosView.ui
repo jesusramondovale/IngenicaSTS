@@ -282,19 +282,6 @@
      <string>Importe</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="tfTitular">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>60</y>
-      <width>241</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="placeholderText">
-     <string>Nombre y Apellidos</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="labelOrigen_6">
     <property name="geometry">
      <rect>
@@ -337,6 +324,16 @@
       <y>130</y>
       <width>51</width>
       <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cbTitular">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>60</y>
+      <width>181</width>
+      <height>22</height>
      </rect>
     </property>
    </widget>

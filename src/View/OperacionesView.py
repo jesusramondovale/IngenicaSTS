@@ -6,6 +6,7 @@ import datetime, time, datetime, sqlite3, random
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWebEngineWidgets
 
+from src.util.fundUtils import *
 from PyQt5.QtWidgets import *
 
 from src.util.dialogs import operationCompleteDialog, badQueryDialog, badOperationDialog
@@ -28,6 +29,8 @@ class OperacionesView(QMainWindow):
         # Conexión del Botón ENVIAR y el CheckBox Destino a la lógica de control
         view.buttonEnviar.clicked.connect(view.enviar)
 
+        view.tfParticipaciones.textChanged.connect(view.refreshImporte)
+
         # Conexión con la BD y creación de un cursor de consultas
         db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
         db = db_connection.cursor()
@@ -42,7 +45,45 @@ class OperacionesView(QMainWindow):
         for e in view.isins_usuario:
             view.cbOrigen.addItem(e[0])
 
+        tmp = db.execute('select titular from carteras_usuario_real where id_usuario == ? '
+                         'group by titular', ([view.parent().id_usuario[0]])).fetchall()
+
+        for e in tmp:
+            view.cbTitular.addItem(e[0])
+
         db.close()
+
+
+    '''
+        - Actualiza automáticamente el valor del campo 'Importe'
+        en función de las participaciones introducidas en el campo
+        tfParticipaciones, haciendo uso del último valor disponible 
+        del fondo en cuestión 
+
+        @ params: self
+        @ returns: None
+    '''
+
+    def refreshImporte(self):
+
+        # Conexión con la BD y creación de un cursor de consultas
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+
+        fondo = self.cbOrigen.currentText()
+        isin = FundtoISINOffline(fondo)
+
+        try:
+            part = int(self.tfParticipaciones.text())
+        except:
+            return
+
+        lastValue = db.execute('SELECT Close FROM ' + '[' + isin + '] '
+                               'ORDER BY Date DESC LIMIT 1').fetchone()
+        importe = part*lastValue[0]
+        self.tfImporte.setText(str(importe))
+
+
 
     '''
         - Ejecuta la operación demandada por el usuario
@@ -53,7 +94,6 @@ class OperacionesView(QMainWindow):
         @params: self (OperacionesView)
         @returns: None
     '''
-
     def enviar(self):
         print('Pulsación boton Enviar\n' +
               'Con Origen: ' + self.cbOrigen.currentText())
@@ -85,7 +125,7 @@ class OperacionesView(QMainWindow):
                     'ENVIADA',
                     self.parent().id_usuario[0],
                     self.parent().currentCarteraReal,
-                    self.tfTitular.text(),
+                    self.cbTitular.currentText(),
                     time.strftime('%H.%M', t),
                     self.tfHoraCorte.text(),
                     'I',
@@ -226,6 +266,7 @@ class OperacionesView(QMainWindow):
         else:
             badQueryDialog(self).exec()
 
+
     '''
         - Retorna cierto si todos los campos necesarios para 
         realizar la operación están cubiertos
@@ -233,7 +274,7 @@ class OperacionesView(QMainWindow):
 
     def camposLlenos(self):
 
-        if (self.tfTitular.text() and
+        if (
                 self.tfParticipaciones.text() and
                 self.tfImporte.text() and
                 self.tfValorOrigen.text() and

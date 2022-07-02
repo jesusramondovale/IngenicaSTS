@@ -45,6 +45,12 @@ class TraspasosView(QMainWindow):
             view.cbOrigen.addItem(e[0])
             view.cbDestino.addItem(e[0])
 
+        tmp = db.execute('select titular from carteras_usuario_real where id_usuario == ? '
+                         'group by titular', ([view.parent().id_usuario[0]])).fetchall()
+
+        for e in tmp:
+            view.cbTitular.addItem(e[0])
+
         db.close()
 
     '''
@@ -111,7 +117,7 @@ class TraspasosView(QMainWindow):
                     'ENVIADA',
                     self.parent().id_usuario[0],
                     self.parent().currentCarteraReal,
-                    self.tfTitular.text(),
+                    self.cbTitular.currentText(),
                     time.strftime('%H.%M', t),
                     self.tfHoraCorte.text(),
                     'I',
@@ -271,7 +277,7 @@ class TraspasosView(QMainWindow):
 
     def camposLlenos(self):
 
-        if (self.tfTitular.text() and
+        if (
                 self.tfParticipaciones.text() and
                 self.tfImporte.text() and
                 self.tfValorOrigen.text() and

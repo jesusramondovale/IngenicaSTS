@@ -35,6 +35,7 @@ from src.View.ManualRefreshView import ManualRefreshView
 from src.View.AddCarterasRealesView import AddCarterasRealesView
 from src.View.AddISINViewReal import AddISINViewReal
 from src.View.ConsultasView import ConsultasView
+from src.View.addTitularView import addTitularView
 
 from src.util import fundUtils
 from src.util.dialogs import *
@@ -72,6 +73,7 @@ class UserView(QMainWindow):
         view.selectorFecha.dateTimeChanged.connect(
             lambda dateTimeChanged, fecha=None: view.refreshFecha(
                 view.selectorFecha.dateTime().toString('yyyyMMdd 999999999999')))
+        view.tableFondosCartera.horizontalHeader().sectionClicked.connect(view.onHeaderClicked)
 
         # Esconde los submenús de Actualización hasta que se necesiten
         view.frameRefreshModes.hide()
@@ -132,6 +134,7 @@ class UserView(QMainWindow):
         view.buttonCartVirt.clicked.connect(view.showVistaVirtual)
         view.buttonConsultas.clicked.connect(view.showConsultas)
         view.buttonSaveOperaciones.clicked.connect(view.saveOperaciones)
+        view.buttonAddTitular.clicked.connect(view.addTitular)
 
         view.buttonCartReal.setAutoExclusive(True)
         view.buttonCartVirt.setAutoExclusive(True)
@@ -347,6 +350,12 @@ class UserView(QMainWindow):
 
         # Actualiza el estado de los botones y las etiquetas
 
+        tmp = db.execute('select titular from carteras_usuario_real where id_usuario == ? '
+                         'group by titular ', ([view.id_usuario[0]])).fetchall()
+
+        for e in tmp:
+            view.cbTitular.addItem(e[0])
+
         view.refreshButtons()
         view.refreshRendimientoTotal()
         view.labelValorTotal.setText("{:.2f}".format(view.importeTotalCartera(None)) + '€')
@@ -356,6 +365,93 @@ class UserView(QMainWindow):
         view.refreshIsinsEnCartera()
         view.browserPie.show()
 
+
+
+    def onHeaderClicked(self, logicalIndex):
+
+        # Conexión con la BD y creación de un cursor de consultas
+        db_connection = sqlite3.connect('DemoData.db', isolation_level=None)
+        db = db_connection.cursor()
+
+        if logicalIndex == 0:
+            sql = (
+                    'SELECT ca.Nombre , ca.ISIN , cr.titular,  f.Participaciones , f.Importe '
+                    'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
+                    '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
+                    'from [' + str(self.id_usuario[0]) + "_" + str(self.currentCarteraReal) + '] t) t where rn = 1 order by ISIN) '
+                    'f USING(ISIN) WHERE cr.id_usuario == ? AND cr.nombre_cartera == ? ORDER BY Nombre '
+            )
+        if logicalIndex == 1:
+            sql = (
+                    'SELECT ca.Nombre , ca.ISIN , cr.titular,  f.Participaciones , f.Importe '
+                    'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
+                    '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
+                    'from [' + str(self.id_usuario[0]) + "_" + str(self.currentCarteraReal) + '] t) t where rn = 1 order by ISIN) '
+                    'f USING(ISIN) WHERE cr.id_usuario == ? AND cr.nombre_cartera == ? ORDER BY ISIN '
+            )
+        if logicalIndex == 2:
+
+            sql = (
+                    'SELECT ca.Nombre , ca.ISIN , cr.titular,  f.Participaciones , f.Importe '
+                    'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
+                    '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
+                    'from [' + str(self.id_usuario[0]) + "_" + str(self.currentCarteraReal) + '] t) t where rn = 1 order by ISIN) '
+                    'f USING(ISIN) WHERE cr.id_usuario == ? AND cr.nombre_cartera == ? ORDER BY titular'
+            )
+        if logicalIndex == 3:
+            sql = (
+                    'SELECT ca.Nombre , ca.ISIN , cr.titular,  f.Participaciones , f.Importe '
+                    'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
+                    '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
+                    'from [' + str(self.id_usuario[0]) + "_" + str(self.currentCarteraReal) + '] t) t where rn = 1 order by ISIN) '
+                    'f USING(ISIN) WHERE cr.id_usuario == ? AND cr.nombre_cartera == ? ORDER BY Participaciones DESC'
+            )
+        if logicalIndex == 4:
+            sql = (
+                    'SELECT ca.Nombre , ca.ISIN , cr.titular,  f.Participaciones , f.Importe '
+                    'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
+                    '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
+                    'from [' + str(self.id_usuario[0]) + "_" + str(self.currentCarteraReal) + '] t) t where rn = 1 order by ISIN) '
+                    'f USING(ISIN) WHERE cr.id_usuario == ? AND cr.nombre_cartera == ? ORDER BY Importe DESC'
+            )
+
+        funds = db.execute(sql, [self.id_usuario[0], str(self.currentCarteraReal)]).fetchall()
+        self.tableFondosCartera.clear()
+        self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
+        self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
+        self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
+        self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Partic.'))
+        self.tableFondosCartera.setHorizontalHeaderItem(4, QTableWidgetItem('Importe'))
+
+        self.tableFondosCartera.setColumnWidth(0, 180)
+        self.tableFondosCartera.setColumnWidth(1, 110)
+        self.tableFondosCartera.setColumnWidth(2, 80)
+        self.tableFondosCartera.setColumnWidth(3, 75)
+        self.tableFondosCartera.setColumnWidth(4, 75)
+
+        self.tableFondosCartera.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+        self.tableFondosCartera.setRowCount(len(funds))
+
+        f = 0
+
+        filas = db.execute(sql, ([self.id_usuario[0], str(self.currentCarteraReal)]))
+
+        for fila in filas:
+            self.tableFondosCartera.setItem(f, 0, QTableWidgetItem(str(fila[0])))
+            self.tableFondosCartera.setItem(f, 1, QTableWidgetItem(str(fila[1])))
+            self.tableFondosCartera.setItem(f, 2, QTableWidgetItem(str(fila[2])))
+            self.tableFondosCartera.setItem(f, 3, QTableWidgetItem(str(fila[3])))
+            self.tableFondosCartera.setItem(f, 4, QTableWidgetItem(str(fila[4])))
+
+            f += 1
+
+        db.close()
+
+
+    def addTitular(self):
+        v = addTitularView(self)
+        v.show()
 
     def showConsultas(self):
         cons = ConsultasView(self)
@@ -694,7 +790,7 @@ class UserView(QMainWindow):
 
         if cart:
             sql = (
-                'SELECT ca.Nombre , ca.ISIN , f.Participaciones , f.Importe '
+                'SELECT ca.Nombre , ca.ISIN , cr.titular,  f.Participaciones , f.Importe '
                 'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
                 '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
                 'from [' + str(self.id_usuario[0]) + "_" + str(cart) + '] t) t where rn = 1 order by ISIN) '
@@ -705,12 +801,16 @@ class UserView(QMainWindow):
                 self.tableFondosCartera.clear()
                 self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
                 self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
-                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Partic.'))
-                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Importe'))
-                self.tableFondosCartera.setColumnWidth(0, 200)
-                self.tableFondosCartera.setColumnWidth(1, 140)
-                self.tableFondosCartera.setColumnWidth(2, 60)
-                self.tableFondosCartera.setColumnWidth(3, 100)
+                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
+                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Partic.'))
+                self.tableFondosCartera.setHorizontalHeaderItem(4, QTableWidgetItem('Importe'))
+
+                self.tableFondosCartera.setColumnWidth(0, 180)
+                self.tableFondosCartera.setColumnWidth(1, 110)
+                self.tableFondosCartera.setColumnWidth(2, 80)
+                self.tableFondosCartera.setColumnWidth(3, 75)
+                self.tableFondosCartera.setColumnWidth(4, 75)
+
                 self.tableFondosCartera.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
                 self.tableFondosCartera.setRowCount(len(funds))
@@ -724,6 +824,8 @@ class UserView(QMainWindow):
                     self.tableFondosCartera.setItem(f, 1, QTableWidgetItem(str(fila[1])))
                     self.tableFondosCartera.setItem(f, 2, QTableWidgetItem(str(fila[2])))
                     self.tableFondosCartera.setItem(f, 3, QTableWidgetItem(str(fila[3])))
+                    self.tableFondosCartera.setItem(f, 4, QTableWidgetItem(str(fila[4])))
+
 
                     f += 1
 
@@ -731,18 +833,20 @@ class UserView(QMainWindow):
                 self.tableFondosCartera.clear()
                 self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
                 self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
-                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Partic.'))
-                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Importe'))
-                self.tableFondosCartera.setColumnWidth(0, 200)
-                self.tableFondosCartera.setColumnWidth(1, 140)
-                self.tableFondosCartera.setColumnWidth(2, 60)
-                self.tableFondosCartera.setColumnWidth(3, 100)
+                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
+                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Partic.'))
+                self.tableFondosCartera.setHorizontalHeaderItem(4, QTableWidgetItem('Importe'))
+                self.tableFondosCartera.setColumnWidth(0, 180)
+                self.tableFondosCartera.setColumnWidth(1, 110)
+                self.tableFondosCartera.setColumnWidth(2, 80)
+                self.tableFondosCartera.setColumnWidth(3, 75)
+                self.tableFondosCartera.setColumnWidth(4, 75)
 
             db.close()
 
         else :
             sql = (
-                    'SELECT ca.Nombre , ca.ISIN , f.Participaciones , f.Importe '
+                    'SELECT ca.Nombre , ca.ISIN , cr.titular, f.Participaciones , f.Importe '
                     'FROM carteras_usuario_real cr INNER JOIN caracterizacion ca USING(ISIN) LEFT JOIN '
                     '(SELECT * from ( select t.*, row_number() over(partition by ISIN order by Fecha desc) rn '
                     'from [' + str(self.id_usuario[0]) + "_" + str(self.currentCarteraReal) + '] t) t where rn = 1 order by ISIN) '
@@ -753,12 +857,15 @@ class UserView(QMainWindow):
                 self.tableFondosCartera.clear()
                 self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
                 self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
-                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Partic.'))
-                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Importe'))
-                self.tableFondosCartera.setColumnWidth(0, 200)
-                self.tableFondosCartera.setColumnWidth(1, 140)
-                self.tableFondosCartera.setColumnWidth(2, 60)
-                self.tableFondosCartera.setColumnWidth(3, 100)
+                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
+                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Partic.'))
+                self.tableFondosCartera.setHorizontalHeaderItem(4, QTableWidgetItem('Importe'))
+                self.tableFondosCartera.setColumnWidth(0, 180)
+                self.tableFondosCartera.setColumnWidth(1, 110)
+                self.tableFondosCartera.setColumnWidth(2, 80)
+                self.tableFondosCartera.setColumnWidth(3, 75)
+                self.tableFondosCartera.setColumnWidth(4, 75)
+
                 self.tableFondosCartera.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
                 self.tableFondosCartera.setRowCount(len(funds))
@@ -772,6 +879,8 @@ class UserView(QMainWindow):
                     self.tableFondosCartera.setItem(f, 1, QTableWidgetItem(str(fila[1])))
                     self.tableFondosCartera.setItem(f, 2, QTableWidgetItem(str(fila[2])))
                     self.tableFondosCartera.setItem(f, 3, QTableWidgetItem(str(fila[3])))
+                    self.tableFondosCartera.setItem(f, 4, QTableWidgetItem(str(fila[4])))
+
 
                     f += 1
 
@@ -779,12 +888,15 @@ class UserView(QMainWindow):
                 self.tableFondosCartera.clear()
                 self.tableFondosCartera.setHorizontalHeaderItem(0, QTableWidgetItem('Fondo'))
                 self.tableFondosCartera.setHorizontalHeaderItem(1, QTableWidgetItem('ISIN'))
-                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Partic.'))
-                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Importe'))
-                self.tableFondosCartera.setColumnWidth(0, 200)
-                self.tableFondosCartera.setColumnWidth(1, 140)
-                self.tableFondosCartera.setColumnWidth(2, 60)
-                self.tableFondosCartera.setColumnWidth(3, 100)
+                self.tableFondosCartera.setHorizontalHeaderItem(2, QTableWidgetItem('Titular'))
+                self.tableFondosCartera.setHorizontalHeaderItem(3, QTableWidgetItem('Partic.'))
+                self.tableFondosCartera.setHorizontalHeaderItem(4, QTableWidgetItem('Importe'))
+                self.tableFondosCartera.setColumnWidth(0, 180)
+                self.tableFondosCartera.setColumnWidth(1, 110)
+                self.tableFondosCartera.setColumnWidth(2, 80)
+                self.tableFondosCartera.setColumnWidth(3, 75)
+                self.tableFondosCartera.setColumnWidth(4, 75)
+
 
             db.close()
 
@@ -832,10 +944,15 @@ class UserView(QMainWindow):
                 db.execute("DELETE FROM carteras_usuario WHERE id_usuario = ? AND nombre_cartera = ? AND ISIN = ?",
                            ([view.id_usuario[0], cartera, ISIN]))
 
-                temp = db.execute("SELECT * FROM carteras_usuario INNER JOIN carteras_usuario_real USING (ISIN) "
+                temp1 = db.execute("SELECT * FROM carteras_usuario "
                                   "WHERE ISIN = ? ",
                                   ([ISIN])).fetchone()
-                if temp is None:
+
+                temp2 = db.execute("SELECT * FROM carteras_usuario_real "
+                                  "WHERE ISIN = ? ",
+                                  ([ISIN])).fetchone()
+
+                if temp1 is None and temp2 is None:
                     db.execute("DROP TABLE " + '[' + ISIN + ']')
 
                 view.listIsins.takeItem(view.listIsins.currentRow())
